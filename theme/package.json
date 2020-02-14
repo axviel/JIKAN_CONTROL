@@ -1,0 +1,11 @@
+{
+  "name": "jikan_control_theme",
+  "version": "1.0.0",
+  "description": "Jikan Control App Theme",
+  "main": "index.js",
+  "scripts": {
+    "sass": "node-sass -w scss/ -o dist/assets/css/ --recursive"
+  },
+  "author": "",
+  "license": "ISC"
+}
