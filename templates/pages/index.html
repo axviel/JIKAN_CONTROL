@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  | Home
+{% endblock %}
+
+{% block content %}
+
+  <!-- Home Showcase -->
+  <section id="home">
+    <div class="home-image">
+      <div class="container text-center">
+        <div class="home-container p-5">
+          <div class="overlay p-5">
+            <h1 class="display-4 mb-4">
+              Control Your Time In Style
+            </h1>
+            <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Recusandae quas, asperiores eveniet vel nostrum magnam
+              voluptatum tempore! Consectetur, id commodi!</p>
+              <a href="{% url 'signup' %}" class="btn btn-secondary btn-block rounded-0">Sign Up</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alerts -->
+  {% include 'partials/_alerts.html' %}
+
+  <!-- Home Info -->
+  <div class="container my-4">
+    <h3>Lorem ipsum dolor sit.</h3>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas repellat dolores necessitatibus et magnam id provident vero ullam tenetur totam doloribus error, ad quasi fuga quos libero aperiam aut! Molestias soluta reiciendis aperiam iure facere doloribus ipsa dolor inventore. Assumenda, voluptate. Dolore nulla unde omnis libero id animi beatae amet? Eum, dolorem rerum voluptatem quidem aliquam atque asperiores odit corrupti molestiae. Dolores explicabo optio accusantium in corrupti earum quidem soluta, voluptate aut, facere vitae ab est quam exercitationem. Dolore nesciunt, quia itaque, neque fugiat sequi qui quam quis magni veniam deleniti. Numquam mollitia ipsum magnam minus praesentium quos tempora quam.</p>
+    
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas repellat dolores necessitatibus et magnam id provident vero ullam tenetur totam doloribus error, ad quasi fuga quos libero aperiam aut! Molestias soluta reiciendis aperiam iure facere doloribus ipsa dolor inventore. Assumenda, voluptate. Dolore nulla unde omnis libero id animi beatae amet? Eum, dolorem rerum voluptatem quidem aliquam atque asperiores odit corrupti molestiae. Dolores explicabo optio accusantium in corrupti earum quidem soluta, voluptate aut, facere vitae ab est quam exercitationem. Dolore nesciunt, quia itaque, neque fugiat sequi qui quam quis magni veniam deleniti. Numquam mollitia ipsum magnam minus praesentium quos tempora quam.</p>
+  </div>
+
+{% endblock %}
+

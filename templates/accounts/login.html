@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  | Login
+{% endblock %}
+
+{% block content %}
+
+  <!-- Login -->
+  <section id="login" class="py-5">
+    <div class="container">
+
+      <!-- Alerts -->
+      {% include 'partials/_alerts.html' %}
+
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <div class="card rounded-0">
+            <div class="card-header bg-primary text-white text-center rounded-0">
+              <h4>Login</h4>
+            </div>
+            <div class="card-body">
+              <form action="{% url 'login' %}" method="POST">
+
+                {% csrf_token %}
+
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input type="text" name="username" class="form-control rounded-0" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <input type="password" name="password" class="form-control rounded-0" required>
+                </div>
+
+                <input type="submit" value="Login" class="btn btn-secondary btn-block rounded-0">
+              </form>
+            </div>
+          </div>
+          <p class="text-center mt-4">Don't have an account? <a href="{% url 'signup' %}" class="text-secondary">Sign Up</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+{% endblock %}

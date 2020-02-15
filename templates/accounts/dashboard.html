@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  | Dashboard
+{% endblock %}
+
+{% block content %}
+
+  <!-- Dashboard Showcase -->
+  <section id="dashboard-showcase" class="mb-4">
+    <div class="dashboard-image">
+      <div class="container text-center">
+        <div class="dashboard-container p-5">
+          <div class="overlay p-5">
+            <h1 class="display-4 mb-4">
+              Welcome, User!
+            </h1>
+            <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Recusandae quas, asperiores eveniet vel nostrum magnam
+              voluptatum tempore! Consectetur, id commodi!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alerts -->
+  {% include 'partials/_alerts.html' %}
+
+  <!-- Dashboard Info -->
+  <section id="dashboard" class="py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Welcome, User</h2>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem, quasi.</p>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Task</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Placeat, beatae.</td>
+                <td>
+                  <a class="btn btn-light" href="#">View Task</a>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perferendis, alias?</td>
+                <td>
+                  <a class="btn btn-light" href="#">View Task</a>
+                </td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aliquam, nostrum?</td>
+                <td>
+                  <a class="btn btn-light" href="#">View Task</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

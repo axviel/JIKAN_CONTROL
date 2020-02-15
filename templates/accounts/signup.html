@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  | Sign Up
+{% endblock %}
+
+{% block content %}
+
+
+<!-- Sign Up -->
+<section id="signup" class="py-5">
+  <div class="container">
+
+    <!-- Alerts -->
+    {% include 'partials/_alerts.html' %}
+
+    <div class="row">
+      <div class="col-md-6 mx-auto">
+        <div class="card rounded-0">
+          <div class="card-header bg-primary text-white text-center rounded-0">
+            <h4>Sign Up</h4>
+          </div>
+          <div class="card-body">
+              <form action="{% url 'signup' %}" method="POST">
+
+                {% csrf_token %}
+
+                <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" name="first_name" class="form-control rounded-0" required>
+              </div>
+              <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" name="last_name" class="form-control rounded-0" required>
+              </div>
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" class="form-control rounded-0" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" class="form-control rounded-0" required>
+              </div>
+              <div class="form-group">
+                <label for="password2">Password</label>
+                <input type="password" name="password" class="form-control rounded-0" required>
+              </div>
+              <div class="form-group">
+                <label for="password">Confirm Password</label>
+                <input type="password" name="password2" class="form-control rounded-0" required>
+              </div>
+              <input type="submit" value="Sign Up" class="btn btn-secondary btn-block rounded-0">
+            </form>
+          </div>
+        </div>
+        <p class="text-center mt-4">Already have an account? <a href="{% url 'login' %}" class="text-secondary">Login</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}
