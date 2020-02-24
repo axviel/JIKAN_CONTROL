@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="assets/css/all.css">
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="assets/css/bootstrap.css">
+  <!-- Calendar -->
+  <link rel="stylesheet" href="assets/css/calendar.css">
+  <!-- Custom -->
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <title>Jikan Control | Home</title>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <h3>Jikan Control</h3>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active mr-3">
+            <a class="nav-link" href="calendar.html">Calendar</a>
+          </li>
+          <li class="nav-item mr-3">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item mr-3">
+            <a class="nav-link" href="about.html">About</a>
+          </li>
+          <li class="nav-item mr-3">
+            <a class="nav-link" href="signup.html">Sign Up</a>
+          </li>
+          <li class="nav-item mr-3">
+            <a class="nav-link" href="login.html">Login</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Calendar -->
+  <div class="calendar disable-selection" id="calendar">
+    <div class="left-side">
+        <div class="current-day text-center">
+            <h1 class="calendar-left-side-day"></h1>
+            <div class="calendar-left-side-day-of-week"></div>
+        </div>
+        <div class="current-day-events">
+            <div>Current Events:</div>
+            <div class="current-day-events-list"></div>
+        </div>
+        <div class="add-event-day text-center">
+            <input type="text" class="add-event-day-field" placeholder="Create an Event">
+            <!-- <span class="fa fa-plus-circle cursor-pointer add-event-day-field-btn"></span> -->
+            <button type="submit" value="Login" class="btn btn-primary add-event-day-field-btn rounded-0">New Event</button> 
+
+        </div>
+    </div>
+
+    <div class="right-side">
+        <div class="text-right calendar-change-year">
+            <div class="calendar-change-year-slider">
+                <span class="fa fa-caret-left cursor-pointer calendar-change-year-slider-prev"></span>
+                <span class="calendar-current-year"></span>
+                <span class="fa fa-caret-right cursor-pointer calendar-change-year-slider-next"></span>
+            </div>
+        </div>
+        <div class="calendar-month-list">
+        </div>
+        <div class="calendar-week-list">
+        </div>
+        <div class="calendar-day-list">
+        </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer id="main-footer" class="py-4 bg-primary text-white text-center">
+    Copyright &copy;
+    <span class="year"></span> Jikan Control
+  </footer>
+
+  <script src="assets/js/jquery-3.3.1.min.js "></script>
+  <script src="assets/js/bootstrap.bundle.min.js "></script>
+  <script src="assets/js/calendar.js "></script>
+  <script src="assets/js/main.js "></script>
+</body>
+
+</html>
