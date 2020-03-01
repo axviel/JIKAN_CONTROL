@@ -1,0 +1,128 @@
+#sidebar {
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: -250px;
+  height: 100vh;
+  z-index: 999;
+  background: $secondary;
+  color: #fff;
+  transition: all 0.3s;
+  overflow: hidden;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+
+  a, a:hover, a:focus{
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .sidebar-items {
+    padding: 20px 0;
+    border-bottom: 1px solid $light;
+
+    a {
+      color: inherit;
+    }
+
+    .active{
+      a {
+        color: #fff;
+        background: $hot-pink-dark;
+      }
+    }
+  }
+
+  &.active {
+    left: 0;
+  }
+
+  .sidebar-header {
+    padding: 20px;
+    background: $secondary;
+  }
+
+  .sidebar-items a,
+  .sidebar-buttons a{
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+
+    &:hover{
+      color: $secondary;
+      background: #fff;
+    }
+  }
+
+  // Put inside above ^
+  // .sidebar-items a:hover,
+  // .sidebar-buttons a:hover{
+  //   color: $secondary;
+  //   background: #fff;
+  // }
+
+  #dismiss {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    background: $secondary;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+
+    &:hover{
+      background: #fff;
+      color: $secondary;
+    }
+  }
+
+  // Put inside above ^
+  // #dismiss:hover {
+  //   background: #fff;
+  //   color: $secondary;
+  // }
+
+  .sidebar-buttons {
+    padding: 20px;
+
+    .sidebar-button-light,
+    .sidebar-button-dark {
+      text-align: center;
+      font-size: 0.9em !important;
+      display: block;
+      border-radius: 5px;
+      margin-bottom: 5px;
+    }
+
+    .sidebar-button-light {
+      background: #fff;
+      color: $hot-pink-dark;
+    }
+
+    .sidebar-button-dark {
+      background: $hot-pink-dark !important;
+      color: #fff;
+    }
+  }
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 998;
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+
+  &.active {
+    @extend .overlay;
+    display: block;
+    opacity: 1;
+  }
+}

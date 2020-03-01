@@ -1,89 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="assets/css/all.css">
-  <!-- Bootstrap -->
+
   <link rel="stylesheet" href="assets/css/bootstrap.css">
-  <!-- Custom -->
   <link rel="stylesheet" href="assets/css/style.css">
 
-  <title>Jikan Control | Login</title>
+  <title>Jikan Control</title>
 </head>
 
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">
-        <h3>Jikan Control</h3>
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item mr-3">
-            <a class="nav-link" href="index.html">Home</a>
-          </li>
-          <li class="nav-item mr-3">
-            <a class="nav-link" href="about.html">About</a>
-          </li>
-          <li class="nav-item mr-3">
-            <a class="nav-link" href="signup.html">Sign Up</a>
-          </li>
-          <li class="nav-item active mr-3">
-            <a class="nav-link" href="login.html">Login</a>
-          </li>
-        </ul>
-      </div>
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div id="dismiss">
+        <i class="fas fa-times fa-2x"></i>
     </div>
+
+    <div class="sidebar-header">
+        <h3>Username</h3>
+    </div>
+
+    <ul class="sidebar-items">
+        <li class="active">
+          <a href="index.html">Home</a>
+        </li>
+        <li>
+            <a href="about.html">About</a>
+        </li>
+        <li>
+            <a href="calendar.html">Calendar</a>
+        </li>
+        <li>
+            <a href="events.html">Events</a>
+        </li>
+        <li>
+            <a href="notes.html">Notes</a>
+        </li>
+        <li>
+            <a href="exams.html">Exams</a>
+        </li>
+    </ul>
+
+    <ul class="list-unstyled sidebar-buttons">
+        <li>
+          <a href="login.html" class="sidebar-button-light">Login</a>
+        </li>
+        <li>
+            <a href="signup.html" class="sidebar-button-dark">Sign Up</a>
+        </li>
+        <li>
+            <a href="index.html" class="sidebar-button-light">Logout</a>
+        </li>
+        <li>
+            <a href="profile.html" class="sidebar-button-dark">Profile</a>
+        </li>
+    </ul>
   </nav>
 
-  <!-- Login -->
-  <section id="login" class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6 mx-auto">
-          <div class="card rounded-0">
-            <div class="card-header bg-primary text-white text-center rounded-0">
-              <h4>Login</h4>
-            </div>
-            <div class="card-body">
-              <form action="index.html">
-                <div class="form-group">
-                  <label for="username">Username</label>
-                  <input type="text" name="username" class="form-control rounded-0" required>
-                </div>
+  <!-- Main page -->
+  <div id="main-page">
 
-                <div class="form-group">
-                  <label for="password">Password</label>
-                  <input type="password" name="password" class="form-control rounded-0" required>
-                </div>
+    <!-- Navbar -->
+    <nav id="main-nav" class="navbar navbar-dark bg-primary">
+      <!-- Sidebar expand button -->
+      <button type="button" id="sidebar-collapse" class="btn text-light">
+        <i class="fas fa-align-justify fa-2x"></i>
+      </button>
+  
+      <!-- Logo -->
+      <a class="navbar-brand text-center" href="index.html"><h3>Jikan Control</h3></a>
+    </nav>
+  
+    <!-- Login -->
+    <section id="login" class="py-5 main-content">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 mx-auto">
+            <div class="card">
+              <div class="card-header bg-primary text-white text-center">
+                <h4>Login</h4>
+              </div>
+              <div class="card-body">
+                <form action="index.html">
+                  <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" class="form-control" required>
+                  </div>
 
-                <input type="submit" value="Login" class="btn btn-secondary btn-block rounded-0">
-              </form>
+                  <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                  </div>
+
+                  <input type="submit" value="Login" class="btn btn-secondary btn-block">
+                </form>
+              </div>
             </div>
+            <p class="text-center mt-4">Don't have an account? <a href="signup.html" class="text-secondary">Sign Up</a></p>
           </div>
-          <p class="text-center mt-4">Don't have an account? <a href="signup.html" class="text-secondary">Sign Up</a></p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Footer -->
-  <footer id="main-footer" class="py-4 bg-primary text-white text-center">
-    Copyright &copy;
-    <span class="year"></span> Jikan Control
-  </footer>
+    <!-- Footer -->
+    <footer id="main-footer" class="footer bg-primary">
+      <div class="container text-center text-light">
+        Jikan Control
+      </div>
+    </footer>
 
-  <script src="assets/js/jquery-3.3.1.min.js "></script>
+  </div>
+
+  <!-- Sidebar overlay -->
+  <div class="overlay"></div>
+
+  <!-- Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <!-- Font Awesome JS -->
+  <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+  <!-- jQuery -->
+  <script src="assets/js/jquery-3.4.1.min.js"></script>
+  <!-- Bootstrap -->
   <script src="assets/js/bootstrap.bundle.min.js "></script>
-  <script src="assets/js/main.js "></script>
+  <!-- Sidebar -->
+  <script src="assets/js/main.js"></script>
 </body>
-
 </html>

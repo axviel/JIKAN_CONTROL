@@ -1,80 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="assets/css/all.css">
-  <!-- Bootstrap -->
+
   <link rel="stylesheet" href="assets/css/bootstrap.css">
-  <!-- Custom -->
   <link rel="stylesheet" href="assets/css/style.css">
 
-  <title>Jikan Control | About</title>
+  <title>Jikan Control</title>
 </head>
 
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">
-        <h3>Jikan Control</h3>
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item mr-3">
-            <a class="nav-link" href="index.html">Home</a>
-          </li>
-          <li class="nav-item active mr-3">
-            <a class="nav-link" href="about.html">About</a>
-          </li>
-          <li class="nav-item mr-3">
-            <a class="nav-link" href="signup.html">Sign Up</a>
-          </li>
-          <li class="nav-item mr-3">
-            <a class="nav-link" href="login.html">Login</a>
-          </li>
-        </ul>
-      </div>
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div id="dismiss">
+        <i class="fas fa-times fa-2x"></i>
     </div>
+
+    <div class="sidebar-header">
+        <h3>Username</h3>
+    </div>
+
+    <ul class="sidebar-items">
+        <li class="active">
+          <a href="index.html">Home</a>
+        </li>
+        <li>
+            <a href="about.html">About</a>
+        </li>
+        <li>
+            <a href="calendar.html">Calendar</a>
+        </li>
+        <li>
+            <a href="events.html">Events</a>
+        </li>
+        <li>
+            <a href="notes.html">Notes</a>
+        </li>
+        <li>
+            <a href="exams.html">Exams</a>
+        </li>
+    </ul>
+
+    <ul class="list-unstyled sidebar-buttons">
+        <li>
+          <a href="login.html" class="sidebar-button-light">Login</a>
+        </li>
+        <li>
+            <a href="signup.html" class="sidebar-button-dark">Sign Up</a>
+        </li>
+        <li>
+            <a href="index.html" class="sidebar-button-light">Logout</a>
+        </li>
+        <li>
+            <a href="profile.html" class="sidebar-button-dark">Profile</a>
+        </li>
+    </ul>
   </nav>
 
-  <!-- About -->
-  <section id="about" class="py-4">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-8">
-          <h2>About <span class="text-secondary">Jikan Control</span></h2>
-          <p >Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae, voluptas? Neque, reiciendis doloremque nam repellendus possimus explicabo aspernatur hic dolore ullam numquam modi iusto vitae vero aut consectetur optio ea voluptates dolor aliquam voluptatum suscipit. Cupiditate facere delectus accusamus vel omnis doloremque officia, culpa sunt veniam. Amet rerum corporis ea, sequi saepe officiis consectetur deleniti facere officia praesentium, suscipit accusamus est laudantium fugit dicta commodi illum laboriosam, id modi nihil quasi. Officiis officia deserunt sed excepturi explicabo quo sit assumenda quasi cum ullam. Ut at consequuntur ipsum molestias laudantium tempore voluptatibus, iste quod eos ullam, cupiditate similique eum, animi corporis aliquam sit dolorem voluptas minus.</p>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse voluptates consectetur odio doloremque voluptate porro accusamus recusandae amet corporis libero quasi quidem, tenetur perspiciatis. Voluptatem fugiat, at tempore itaque facilis amet sunt suscipit autem impedit molestiae facere fugit aliquam soluta qui non ipsa ipsam. Soluta quo reprehenderit commodi fuga, cum aliquid eos adipisci, praesentium tenetur fugit quod nisi, rem similique voluptas earum incidunt illo! Eaque mollitia asperiores eos, similique omnis expedita corrupti aut fugit dolorum beatae quaerat deleniti dolore veritatis excepturi architecto aliquam quod placeat nobis voluptatum impedit. Deserunt saepe modi obcaecati quos veritatis beatae at pariatur temporibus tenetur error!</p>
-        </div>
-        <div class="col-md-4">
-          <div class="card rounded-0">
-            <img class="card-img-top rounded-0" src="assets/img/general/clock.jpeg" alt="Seller of the month">
-            <div class="card-body">
-              <p>Sign up for Jikan Control today and become the master of your own time!</p>
-              <a href="signup.html" class="btn btn-secondary btn-block rounded-0" role="button">Sign Up</a>
-            </div>
-          </div>
-        </div>
+  <!-- Main page -->
+  <div id="main-page">
+
+    <!-- Navbar -->
+    <nav id="main-nav" class="navbar navbar-dark bg-primary">
+      <!-- Sidebar expand button -->
+      <button type="button" id="sidebar-collapse" class="btn text-light">
+        <i class="fas fa-align-justify fa-2x"></i>
+      </button>
+  
+      <!-- Logo -->
+      <a class="navbar-brand text-center" href="index.html"><h3>Jikan Control</h3></a>
+    </nav>
+  
+    <!-- About -->
+    <section id="about" class="py-4 main-content">
+      <div class="container">
+        <h2>About <span class="text-secondary">Jikan Control</span></h2>
+        <p >Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae, voluptas? Neque, reiciendis doloremque nam repellendus possimus explicabo aspernatur hic dolore ullam numquam modi iusto vitae vero aut consectetur optio ea voluptates dolor aliquam voluptatum suscipit. Cupiditate facere delectus accusamus vel omnis doloremque officia, culpa sunt veniam. Amet rerum corporis ea, sequi saepe officiis consectetur deleniti facere officia praesentium, suscipit accusamus est laudantium fugit dicta commodi illum laboriosam, id modi nihil quasi. Officiis officia deserunt sed excepturi explicabo quo sit assumenda quasi cum ullam. Ut at consequuntur ipsum molestias laudantium tempore voluptatibus, iste quod eos ullam, cupiditate similique eum, animi corporis aliquam sit dolorem voluptas minus.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse voluptates consectetur odio doloremque voluptate porro accusamus recusandae amet corporis libero quasi quidem, tenetur perspiciatis. Voluptatem fugiat, at tempore itaque facilis amet sunt suscipit autem impedit molestiae facere fugit aliquam soluta qui non ipsa ipsam. Soluta quo reprehenderit commodi fuga, cum aliquid eos adipisci, praesentium tenetur fugit quod nisi, rem similique voluptas earum incidunt illo! Eaque mollitia asperiores eos, similique omnis expedita corrupti aut fugit dolorum beatae quaerat deleniti dolore veritatis excepturi architecto aliquam quod placeat nobis voluptatum impedit. Deserunt saepe modi obcaecati quos veritatis beatae at pariatur temporibus tenetur error!</p>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Footer -->
-  <footer id="main-footer" class="py-4 bg-primary text-white text-center">
-    Copyright &copy;
-    <span class="year"></span> Jikan Control
-  </footer>
+    <!-- Footer -->
+    <footer id="main-footer" class="footer bg-primary">
+      <div class="container text-center text-light">
+        Jikan Control
+      </div>
+    </footer>
 
-  <script src="assets/js/jquery-3.3.1.min.js "></script>
+  </div>
+
+  <!-- Sidebar overlay -->
+  <div class="overlay"></div>
+
+  <!-- Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <!-- Font Awesome JS -->
+  <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+  <!-- jQuery -->
+  <script src="assets/js/jquery-3.4.1.min.js"></script>
+  <!-- Bootstrap -->
   <script src="assets/js/bootstrap.bundle.min.js "></script>
-  <script src="assets/js/main.js "></script>
+  <!-- Sidebar -->
+  <script src="assets/js/main.js"></script>
 </body>
-
 </html>

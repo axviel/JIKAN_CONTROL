@@ -1,101 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="assets/css/all.css">
-  <!-- Bootstrap -->
+
+  <!-- Font Awesome JS -->
+  <script src="https://kit.fontawesome.com/10644cbae9.js" crossorigin="anonymous"></script>
+
   <link rel="stylesheet" href="assets/css/bootstrap.css">
-  <!-- Calendar -->
-  <link rel="stylesheet" href="assets/css/calendar.css">
-  <!-- Custom -->
   <link rel="stylesheet" href="assets/css/style.css">
 
-  <title>Jikan Control | Home</title>
+  <title>Jikan Control</title>
 </head>
 
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">
-        <h3>Jikan Control</h3>
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active mr-3">
-            <a class="nav-link" href="calendar.html">Calendar</a>
-          </li>
-          <li class="nav-item mr-3">
-            <a class="nav-link" href="index.html">Home</a>
-          </li>
-          <li class="nav-item mr-3">
-            <a class="nav-link" href="about.html">About</a>
-          </li>
-          <li class="nav-item mr-3">
-            <a class="nav-link" href="signup.html">Sign Up</a>
-          </li>
-          <li class="nav-item mr-3">
-            <a class="nav-link" href="login.html">Login</a>
-          </li>
-        </ul>
+  <!-- Event Form Modal -->
+  <div class="modal fade" id="event-form-modal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="event-form-label">Event</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <input type="hidden" name="active-date" id="active-date">
+            <div class="form-group">
+              <label for="title" class="col-form-label">Title</label>
+              <input type="text" name="title" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="description" class="col-form-label">Description</label>
+              <textarea name="description" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="event-type">Type</label>
+              <select class="form-control" id="event-type">
+                <option>1: Task</option>
+                <option>2: Reminder</option>
+                <option>3: Study Time</option>
+                <option>4: Exam</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="event-date" class="col-form-label">Date</label>
+              <input type="date" name="event-date" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="start-time" class="col-form-label">Start Time</label>
+              <input type="time" name="start-time" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="end-time" class="col-form-label">End Time</label>
+              <input type="time" name="end-time" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="event-type">Repeat</label>
+              <select class="form-control" id="event-type">
+                <option>1: Does Not Repeat</option>
+                <option>2: Daily</option>
+                <option>3: Weekly</option>
+                <option>4: Monthly</option>
+                <option>5: Yearly</option>
+              </select>
+            </div>
+            <hr>
+            <input type="submit" value="Save" class="btn btn-block btn-secondary">
+          </form>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- Current Day Modal -->
+  <div class="modal fade" id="current-day-modal" tabindex="-1" role="dialog" aria-labelledby="current-day-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header current-day-header">
+          <h5 class="modal-title" id="current-day-modal-label">Day</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body current-day-body">
+
+            <div class="current-day text-center">
+                <h1 class="current-day-number"></h1>
+                <div class="current-day-of-week"></div>
+            </div>
+            <div class="current-day-events">
+                <div>Current Events:</div>
+                <div class="list-group current-day-events-list"></div>
+            </div>
+            <div class="add-event-day text-center">
+                <input type="text" class="add-event-day-field" placeholder="Create an Event">
+                <button type="submit" class="btn btn-primary add-event-day-field-btn">New Event</button> 
+            </div>
+
+        </div>
+        <div class="modal-footer current-day-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div id="dismiss">
+        <i class="fas fa-times fa-2x"></i>
+    </div>
+
+    <div class="sidebar-header">
+        <h3>Username</h3>
+    </div>
+
+    <ul class="sidebar-items">
+        <li class="active">
+          <a href="index.html">Home</a>
+        </li>
+        <li>
+            <a href="about.html">About</a>
+        </li>
+        <li>
+            <a href="calendar.html">Calendar</a>
+        </li>
+        <li>
+            <a href="events.html">Events</a>
+        </li>
+        <li>
+            <a href="notes.html">Notes</a>
+        </li>
+        <li>
+            <a href="exams.html">Exams</a>
+        </li>
+    </ul>
+
+    <ul class="list-unstyled sidebar-buttons">
+        <li>
+          <a href="login.html" class="sidebar-button-light">Login</a>
+        </li>
+        <li>
+            <a href="signup.html" class="sidebar-button-dark">Sign Up</a>
+        </li>
+        <li>
+            <a href="index.html" class="sidebar-button-light">Logout</a>
+        </li>
+        <li>
+            <a href="profile.html" class="sidebar-button-dark">Profile</a>
+        </li>
+    </ul>
   </nav>
 
-  <!-- Calendar -->
-  <div class="calendar disable-selection" id="calendar">
-    <div class="left-side">
-        <div class="current-day text-center">
-            <h1 class="calendar-left-side-day"></h1>
-            <div class="calendar-left-side-day-of-week"></div>
-        </div>
-        <div class="current-day-events">
-            <div>Current Events:</div>
-            <div class="current-day-events-list"></div>
-        </div>
-        <div class="add-event-day text-center">
-            <input type="text" class="add-event-day-field" placeholder="Create an Event">
-            <!-- <span class="fa fa-plus-circle cursor-pointer add-event-day-field-btn"></span> -->
-            <button type="submit" value="Login" class="btn btn-primary add-event-day-field-btn rounded-0">New Event</button> 
+  <!-- Main page -->
+  <div id="main-page">
 
-        </div>
-    </div>
+    <!-- Navbar -->
+    <nav id="main-nav" class="navbar navbar-dark bg-primary">
+      <!-- Sidebar expand button -->
+      <button type="button" id="sidebar-collapse" class="btn text-light">
+        <i class="fas fa-align-justify fa-2x"></i>
+      </button>
+  
+      <!-- Logo -->
+      <a class="navbar-brand text-center" href="index.html"><h3>Jikan Control</h3></a>
+    </nav>
+  
+    <!-- Calendar -->
+    <section id="calendar" class="disable-selection main-content">
 
-    <div class="right-side">
-        <div class="text-right calendar-change-year">
-            <div class="calendar-change-year-slider">
-                <span class="fa fa-caret-left cursor-pointer calendar-change-year-slider-prev"></span>
-                <span class="calendar-current-year"></span>
-                <span class="fa fa-caret-right cursor-pointer calendar-change-year-slider-next"></span>
-            </div>
-        </div>
-        <div class="calendar-month-list">
-        </div>
-        <div class="calendar-week-list">
-        </div>
-        <div class="calendar-day-list">
-        </div>
-    </div>
+      <div class="container-xl">
+
+          <div class="calendar-change-year">
+              <div class="calendar-change-year-slider">
+                  <button class="btn btn-primary calendar-today-btn">Today</button>
+                  <i class="fas fa-caret-left cursor-pointer calendar-change-month-slider-prev"></i>
+                  <i class="fas fa-caret-right cursor-pointer calendar-change-month-slider-next"></i>
+                  <span class="calendar-current-month"></span>
+                  <span class="calendar-current-year"></span>
+                  
+              </div>
+          </div>
+
+          <div class="calendar-week-list">
+          </div>
+
+          <div class="calendar-day-list">
+          </div>
+
+      </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer id="main-footer" class="footer bg-primary">
+      <div class="container text-center text-light">
+        Jikan Control
+      </div>
+    </footer>
 
   </div>
 
-  <!-- Footer -->
-  <footer id="main-footer" class="py-4 bg-primary text-white text-center">
-    Copyright &copy;
-    <span class="year"></span> Jikan Control
-  </footer>
+  <!-- Sidebar overlay -->
+  <div class="overlay"></div>
 
-  <script src="assets/js/jquery-3.3.1.min.js "></script>
+  <!-- Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <!-- jQuery -->
+  <script src="assets/js/jquery-3.4.1.min.js"></script>
+  <!-- Bootstrap -->
   <script src="assets/js/bootstrap.bundle.min.js "></script>
-  <script src="assets/js/calendar.js "></script>
-  <script src="assets/js/main.js "></script>
+  <!-- Calendar -->
+  <script src="assets/js/calendar.js"></script>
+  <!-- Sidebar -->
+  <script src="assets/js/main.js"></script>
 </body>
-
 </html>

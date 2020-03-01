@@ -1,23 +1,28 @@
 const AVAILABLE_WEEK_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const AVALIABLE_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+// todo
 const localStorageName = 'calendar-events';
 
 class CALENDAR {
     constructor(options) {
         this.options = options;
         this.elements = {
-            days: this.getFirstElementInsideIdByClassName('calendar-day-list'),
-            week: this.getFirstElementInsideIdByClassName('calendar-week-list'),
-            month: this.getFirstElementInsideIdByClassName('calendar-month-list'),
-            year: this.getFirstElementInsideIdByClassName('calendar-current-year'),
-            eventList: this.getFirstElementInsideIdByClassName('current-day-events-list'),
-            eventField: this.getFirstElementInsideIdByClassName('add-event-day-field'),
-            eventAddBtn: this.getFirstElementInsideIdByClassName('add-event-day-field-btn'),
-            currentDay: this.getFirstElementInsideIdByClassName('calendar-left-side-day'),
-            currentWeekDay: this.getFirstElementInsideIdByClassName('calendar-left-side-day-of-week'),
-            prevYear: this.getFirstElementInsideIdByClassName('calendar-change-year-slider-prev'),
-            nextYear: this.getFirstElementInsideIdByClassName('calendar-change-year-slider-next')
+            days: document.querySelector('.calendar-day-list'),
+            week: document.querySelector('.calendar-week-list'),
+            year: document.querySelector('.calendar-current-year'),
+            eventField: document.querySelector('.add-event-day-field'),
+            eventList: document.querySelector('.current-day-events-list'),
+            eventAddBtn: document.querySelector('.add-event-day-field-btn'),
+            todayBtn: document.querySelector('.calendar-today-btn'),
+            currentDay: document.querySelector('.current-day-number'),
+            currentWeekDay: document.querySelector('.current-day-of-week'),
+            prevMonth: document.querySelector('.calendar-change-month-slider-prev'),
+            nextMonth: document.querySelector('.calendar-change-month-slider-next'),
+            currentMonth: document.querySelector('.calendar-current-month')
         };
 
+        // todo
         this.eventList = JSON.parse(localStorage.getItem(localStorageName)) || {};
 
         this.date = +new Date();
@@ -25,7 +30,7 @@ class CALENDAR {
         this.init();
     }
 
-// App methods
+    // App methods
     init() {
         if (!this.options.id) return false;
         this.eventsTrigger();
@@ -35,7 +40,6 @@ class CALENDAR {
     // draw Methods
     drawAll() {
         this.drawWeekDays();
-        this.drawMonths();
         this.drawDays();
         this.drawYearAndCurrentDay();
         this.drawEvents();
@@ -47,7 +51,7 @@ class CALENDAR {
         let eventList = this.eventList[calendar.active.formatted] || ['There is not any events'];
         let eventTemplate = "";
         eventList.forEach(item => {
-            eventTemplate += `<div class="current-event-item">${item}</div>`;
+            eventTemplate += `<a href="#" class="list-group-item list-group-item-action current-event-item">${item} <i class="fa fa-remove remove-event"></i></a>`;
         });
 
         this.elements.eventList.innerHTML = eventTemplate;
@@ -55,6 +59,7 @@ class CALENDAR {
 
     drawYearAndCurrentDay() {
         let calendar = this.getCalendar();
+        this.elements.currentMonth.innerHTML = AVALIABLE_MONTHS[calendar.active.month];
         this.elements.year.innerHTML = calendar.active.year;
         this.elements.currentDay.innerHTML = calendar.active.day;
         this.elements.currentWeekDay.innerHTML = AVAILABLE_WEEK_DAYS[calendar.active.week];
@@ -109,35 +114,39 @@ class CALENDAR {
         let daysTemplate = "";
         let firstEvent = "";
         let secondEvent = "";
+        let smallEvent = "";
 
         days.forEach(day => {
 
             if(day.hasEvent){
-                firstEvent = `<div class="event">${'06:00 ' + day.hasEvent[0]}</div>`;
+                firstEvent = `<div class="event event-large">${'06:00 ' + day.hasEvent[0]}</div>`;
                 if(day.hasEvent.length > 1){
-                    secondEvent = `<div class="event">${day.hasEvent.length === 2 ? '06:00' + day.hasEvent[1] : (day.hasEvent.length - 1) + ' more events'}</div>`;
+                    secondEvent = `<div class="event event-large">${day.hasEvent.length === 2 ? '06:00 ' + day.hasEvent[1] : (day.hasEvent.length - 1) + ' more events'}</div>`;
                 }
-                
+                smallEvent = `<div class="event event-small">${day.hasEvent.length === 1 ? '1 event' : day.hasEvent.length + ' events'}</div>`;
             }
 
-            daysTemplate += `<div class="day-item ${day.currentMonth ? 'current-month' : 'another-month'}${day.today ? ' active-day ' : ''}${day.selected ? ' selected-day' : ''}${day.hasEvent ? ' event-day' : ''}" data-day="${day.dayNumber}" data-month="${day.month}" data-year="${day.year}">
+            daysTemplate += `
+            <div 
+            class="day-item 
+            ${day.currentMonth ? 'current-month' : 'another-month'}${day.today ? ' active-day ' : ''}
+            ${day.selected ? ' selected-day' : ''}${day.hasEvent ? ' event-day' : ''}" 
+            data-day="${day.dayNumber}" 
+            data-month="${day.month}" 
+            data-year="${day.year}"
+            data-toggle="modal" data-target="#current-day-modal"
+            >
                 <div class="day-number">${day.dayNumber}</div>
-                ${day.hasEvent ? firstEvent + secondEvent : ''}
-            </div>`
+                ${day.hasEvent ? firstEvent + secondEvent + smallEvent : ''}
+            </div>
+            `
+
+            firstEvent = '';
+            secondEvent = '';
+            smallEvent = '';
         });
 
         this.elements.days.innerHTML = daysTemplate;
-    }
-
-    drawMonths() {
-        let availableMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        let monthTemplate = "";
-        let calendar = this.getCalendar();
-        availableMonths.forEach((month, idx) => {
-            monthTemplate += `<div class="month-item ${idx === calendar.active.month ? 'active' : ''}" data-month="${idx}">${month}</div>`
-        });
-
-        this.elements.month.innerHTML = monthTemplate;
     }
 
     drawWeekDays() {
@@ -151,29 +160,22 @@ class CALENDAR {
 
     // Service methods
     eventsTrigger() {
-        this.elements.prevYear.addEventListener('click', e => {
+
+        // Show pervious month
+        this.elements.prevMonth.addEventListener('click', e => {
             let calendar = this.getCalendar();
-            this.updateTime(calendar.pYear);
+            this.updateTime(calendar.pMonth);
             this.drawAll()
         });
 
-        this.elements.nextYear.addEventListener('click', e => {
+        // Show next month
+        this.elements.nextMonth.addEventListener('click', e => {
             let calendar = this.getCalendar();
-            this.updateTime(calendar.nYear);
+            this.updateTime(calendar.nMonth);
             this.drawAll()
         });
 
-        this.elements.month.addEventListener('click', e => {
-            let calendar = this.getCalendar();
-            let month = e.srcElement.getAttribute('data-month');
-            if (!month || calendar.active.month == month) return false;
-
-            let newMonth = new Date(calendar.active.tm).setMonth(month);
-            this.updateTime(newMonth);
-            this.drawAll()
-        });
-
-
+        // Go to day
         this.elements.days.addEventListener('click', e => {
             let element = e.srcElement;
             // Event propagation when click day-number
@@ -187,7 +189,7 @@ class CALENDAR {
             this.drawAll()
         });
 
-
+        // Add event
         this.elements.eventAddBtn.addEventListener('click', e => {
             let fieldValue = this.elements.eventField.value;
             if (!fieldValue) return false;
@@ -196,9 +198,44 @@ class CALENDAR {
             this.eventList[dateFormatted].push(fieldValue);
             localStorage.setItem(localStorageName, JSON.stringify(this.eventList));
             this.elements.eventField.value = '';
-            this.drawAll()
+            this.drawAll();
         });
 
+        // Remove event
+        this.elements.eventList.addEventListener('click', e => {
+            if(e.target.classList.contains('remove-event')){
+                const eventElement = e.target.parentElement;
+                const eventName = eventElement.textContent;
+                const eventDate = this.getCalendar().active.formatted;
+
+                // Remove from UI
+                eventElement.remove();
+
+                // Remove from local storage
+                const eventDateList = this.eventList[eventDate];
+
+                eventDateList.forEach( (eventItem, index) => {
+                    if(eventItem === eventName || eventName.includes(eventItem)){
+                        eventDateList.splice(index, 1);
+                      }
+                });
+
+                //If eventDateList is empty,remove it from the eventList
+                if(eventDateList.length === 0){
+                    delete this.eventList[eventDate];
+                }
+
+                localStorage.setItem(localStorageName, JSON.stringify(this.eventList));
+
+                this.drawAll();
+            }
+        })
+
+        // Go to today
+        this.elements.todayBtn.addEventListener('click', e => {
+            this.updateTime(new Date());
+            this.drawAll()
+        });
 
     }
 
@@ -253,15 +290,26 @@ class CALENDAR {
     range(number) {
         return new Array(number).fill().map((e, i) => i);
     }
-
-    getFirstElementInsideIdByClassName(className) {
-        return document.getElementById(this.options.id).getElementsByClassName(className)[0];
-    }
 }
 
 
-(function () {
-    new CALENDAR({
+// (function () {
+//     new CALENDAR({
+//         id: "calendar"
+//     })
+// })();
+
+let calendar = (function () {
+    return new CALENDAR({
         id: "calendar"
     })
 })();
+
+//-------------
+
+
+$('#event-form-modal').on('show.bs.modal', function (event) {
+    var activeDate = calendar.getCalendar().active.formatted; 
+    var modal = $(this)
+    modal.find('#active-date').val(activeDate)
+  })

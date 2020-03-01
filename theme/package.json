@@ -1,11 +1,15 @@
 {
-  "name": "jikan_control_theme",
+  "name": "jc_theme_remade",
   "version": "1.0.0",
-  "description": "Jikan Control App Theme",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "sass": "node-sass -w scss/ -o dist/assets/css/ --recursive"
+    "sass": "node-sass -w scss/ -o dist/assets/css --recursive"
   },
+  "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "node-sass": "^4.13.1"
+  }
 }
