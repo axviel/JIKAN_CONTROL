@@ -76,55 +76,68 @@
     </nav>
 
     <!-- Event Section -->
-    <section id="events" class="py-4 main-content">
-      <div class="container-xl">
-        <div class="row justify-content-between pb-4">
-          <h2>Events</h2>
-          <a class="btn btn-secondary" href="event_detail.html">New Event</a>  
-        </div>
-
-        <!-- Event List -->
-        <table id="event-list" class="table table-bordered table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Title</th>
-              <th scope="col">Start</th>
-              <th scope="col">End</th>
-              <th scope="col">Date</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Event 1</td>
-              <td>8:00</td>
-              <td>10:00</td>
-              <td>February 29, 2020</td>
-              <td><i class="fas fa-info-circle show-event-detail"></i></td>
-            </tr>
-            <tr>
-              <td>Event 2</td>
-              <td>9:00</td>
-              <td>12:00</td>
-              <td>March 2, 2020</td>
-              <td><i class="fas fa-info-circle show-event-detail"></i></td>
-            </tr>
-            <tr>
-              <td>Event 3</td>
-              <td>13:00</td>
-              <td>14:00</td>
-              <td>March 2, 2020</td>
-              <td><i class="fas fa-info-circle show-event-detail"></i></td>
-            </tr>
-            <tr>
-              <td>Event 4</td>
-              <td>11:00</td>
-              <td>15:00</td>
-              <td>March 5, 2020</td>
-              <td><i class="fas fa-info-circle show-event-detail"></i></td>
-            </tr>
-          </tbody>
-        </table>
+    <section id="event-detail" class="py-4 main-content">
+      <div class="container">
+        <h3>Event</h3>
+        <form id="event-detail-form">
+          <div class="row">
+            <div class="col-12">
+              <div class="form-group">
+                <label for="title" class="col-form-label">Title</label>
+                <input type="text" name="title" class="form-control">
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <label for="description" class="col-form-label">Description</label>
+                <textarea name="description" class="form-control"></textarea>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="event-type">Type</label>
+                <select class="form-control" id="event-type">
+                  <option value="1">Task</option>
+                  <option value="2">Reminder</option>
+                  <option value="3">Study Time</option>
+                  <option value="4">Exam</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="event-type">Repeat</label>
+                <select class="form-control" id="event-type">
+                  <option value="1"> Does Not Repeat</option>
+                  <option value="2"> Daily</option>
+                  <option value="3"> Weekly</option>
+                  <option value="4"> Monthly</option>
+                  <option value="5"> Yearly</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <label for="event-date" class="col-form-label">Date</label>
+                <input type="date" name="event-date" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="start-time" class="col-form-label">Start Time</label>
+                <input type="time" name="start-time" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="end-time" class="col-form-label">End Time</label>
+                <input type="time" name="end-time" class="form-control">
+              </div>
+            </div>
+          </div>
+          <hr>
+          <input type="submit" value="Save" class="btn btn-block btn-secondary">
+        </form>
       </div>
     </section>
 
@@ -146,8 +159,6 @@
   <script src="assets/js/jquery-3.4.1.min.js"></script>
   <!-- Bootstrap -->
   <script src="assets/js/bootstrap.bundle.min.js "></script>
-  <!-- Events -->
-  <script src="assets/js/events.js"></script>
   <!-- Sidebar -->
   <script src="assets/js/main.js"></script>
 </body>
