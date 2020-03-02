@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+  | Notes
+{% endblock %}
+
+{% block content %}
+
+<!-- Note Section -->
+<section id="notes" class="py-4 main-content">
+  <div class="container-xl">
+    <div class="row justify-content-between pb-4">
+      <h2>Notes</h2>
+      <button class="btn btn-secondary" data-toggle="modal" data-target="#note-form-modal">New Note</button>  
+    </div>
+
+    <!-- Note List -->
+    <table id="note-list" class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Event</th>
+          <th scope="col">Created Date</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Note 2</td>
+          <td>Event 2</td>
+          <td>February 15, 2020</td>
+          <td><i class="fas fa-info-circle show-note-detail"></i></td>
+        </tr>
+        <tr>
+          <td>Note 3</td>
+          <td>Event 3</td>
+          <td>February 25, 2020</td>
+          <td><i class="fas fa-info-circle show-note-detail"></i></td>
+        </tr>
+        <tr>
+          <td>Note 4</td>
+          <td>Event 4</td>
+          <td>March 1, 2020</td>
+          <td><i class="fas fa-info-circle show-note-detail"></i></td>
+        </tr>
+        <tr>
+          <td>Note 5</td>
+          <td>Event 5</td>
+          <td>March 3, 2020</td>
+          <td><i class="fas fa-info-circle show-note-detail"></i></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Note Form Modal -->
+<div class="modal fade" id="note-form-modal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="event-form-label">Note</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'detail' %}" method="POST">
+          {% csrf_token %}
+
+          <input type="hidden" name="user_id" value="{{ user.id }}">
+
+          <div class="form-group">
+            <label for="title" class="col-form-label">Title</label>
+            <input type="text" name="title" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="description" class="col-form-label">Description</label>
+            <textarea name="description" class="form-control"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="event-type">Event</label>
+            <select class="form-control" id="event-type" name="event-type">
+              <option value="1">Event 1</option>
+              <option value="2">Event 2</option>
+              <option value="3">Event 3</option>
+              <option value="4">Event 4</option>
+            </select>
+          </div>
+          <hr>
+          <input type="submit" value="Save" class="btn btn-block btn-secondary">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/notes.js' %}"></script>
+
+{% endblock %}
+

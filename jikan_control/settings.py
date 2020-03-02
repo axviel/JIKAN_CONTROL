@@ -32,10 +32,13 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'pages.apps.PagesConfig',
+    'jikancalendar.apps.JikancalendarConfig',
     'events.apps.EventsConfig',
     'eventtypes.apps.EventtypesConfig',
     'repeattypes.apps.RepeattypesConfig',
     'accounts.apps.AccountsConfig',
+    'notes.apps.NotesConfig',
+    'exams.apps.ExamsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

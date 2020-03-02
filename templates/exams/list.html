@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+  | Exams
+{% endblock %}
+
+{% block content %}
+
+<!-- Exam Section -->
+<section id="exams" class="py-4 main-content">
+  <div class="container-xl">
+    <div class="row justify-content-between pb-4">
+      <h2>Exams</h2>
+      <button class="btn btn-secondary" data-toggle="modal" data-target="#exam-form-modal">New Exam</button>  
+    </div>
+
+    <!-- Exam List -->
+    <table id="exam-list" class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Description</th>
+          <th scope="col">Event</th>
+          <th scope="col">Created Date</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Exam 2</td>
+          <td>Event 2</td>
+          <td>February 15, 2020</td>
+          <td><i class="fas fa-info-circle show-exam-detail"></i></td>
+        </tr>
+        <tr>
+          <td>Exam 3</td>
+          <td>Event 3</td>
+          <td>February 25, 2020</td>
+          <td><i class="fas fa-info-circle show-exam-detail"></i></td>
+        </tr>
+        <tr>
+          <td>Exam 4</td>
+          <td>Event 4</td>
+          <td>March 1, 2020</td>
+          <td><i class="fas fa-info-circle show-exam-detail"></i></td>
+        </tr>
+        <tr>
+          <td>Exam 5</td>
+          <td>Event 5</td>
+          <td>March 3, 2020</td>
+          <td><i class="fas fa-info-circle show-exam-detail"></i></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Exam Form Modal -->
+<div class="modal fade" id="exam-form-modal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="event-form-label">Exam</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'detail' %}" method="POST">
+          {% csrf_token %}
+
+          <input type="hidden" name="user_id" value="{{ user.id }}">
+
+          <div class="form-group">
+            <label for="description" class="col-form-label">Description</label>
+            <textarea name="description" class="form-control"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="event-type">Event</label>
+            <select class="form-control" id="event-type" name="event-type">
+              <option value="1">Event 1</option>
+              <option value="2">Event 2</option>
+              <option value="3">Event 3</option>
+              <option value="4">Event 4</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="study_hours" class="col-form-label">Study Hours</label>
+            <input type="number" name="study_hours" id="study_hours">
+          </div>
+          <div class="form-group">
+            <label for="weeks" class="col-form-label">Study Hours</label>
+            <input type="number" name="weeks" id="weeks">
+          </div>
+          <div class="form-group">
+            <label for="score" class="col-form-label">Study Hours</label>
+            <input type="number" name="score" id="score">
+          </div>
+          <hr>
+          <input type="submit" value="Save" class="btn btn-block btn-secondary">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/exams.js' %}"></script>
+
+{% endblock %}
+

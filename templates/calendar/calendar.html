@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  | Events
+{% endblock %}
+
+{% block content %}
+
+{% load static %} 
+
+<!-- Event Form Modal -->
+<div class="modal fade" id="event-form-modal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="event-form-label">Event</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <input type="hidden" name="active-date" id="active-date">
+            <div class="form-group">
+              <label for="title" class="col-form-label">Title</label>
+              <input type="text" name="title" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="description" class="col-form-label">Description</label>
+              <textarea name="description" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="event-type">Type</label>
+              <select class="form-control" id="event-type">
+                <option>1: Task</option>
+                <option>2: Reminder</option>
+                <option>3: Study Time</option>
+                <option>4: Exam</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="event-date" class="col-form-label">Date</label>
+              <input type="date" name="event-date" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="start-time" class="col-form-label">Start Time</label>
+              <input type="time" name="start-time" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="end-time" class="col-form-label">End Time</label>
+              <input type="time" name="end-time" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="event-type">Repeat</label>
+              <select class="form-control" id="event-type">
+                <option>1: Does Not Repeat</option>
+                <option>2: Daily</option>
+                <option>3: Weekly</option>
+                <option>4: Monthly</option>
+                <option>5: Yearly</option>
+              </select>
+            </div>
+            <hr>
+            <input type="submit" value="Save" class="btn btn-block btn-secondary">
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Current Day Modal -->
+<div class="modal fade" id="current-day-modal" tabindex="-1" role="dialog" aria-labelledby="current-day-modal-label" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+    <div class="modal-header current-day-header">
+        <h5 class="modal-title" id="current-day-modal-label">Day</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body current-day-body">
+
+        <div class="current-day text-center">
+            <h1 class="current-day-number"></h1>
+            <div class="current-day-of-week"></div>
+        </div>
+        <div class="current-day-events">
+            <div>Current Events:</div>
+            <div class="list-group current-day-events-list"></div>
+        </div>
+        <div class="add-event-day text-center">
+            <input type="text" class="add-event-day-field" placeholder="Create an Event">
+            <button type="submit" class="btn btn-primary add-event-day-field-btn">New Event</button> 
+        </div>
+
+    </div>
+    <div class="modal-footer current-day-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+    </div>
+    </div>
+</div>
+</div>
+
+<!-- Calendar -->
+<section id="calendar" class="disable-selection main-content">
+
+  <div class="container-xl">
+
+      <div class="calendar-change-year">
+          <div class="calendar-change-year-slider">
+              <button class="btn btn-primary calendar-today-btn">Today</button>
+              <i class="fas fa-caret-left cursor-pointer calendar-change-month-slider-prev"></i>
+              <i class="fas fa-caret-right cursor-pointer calendar-change-month-slider-next"></i>
+              <span class="calendar-current-month"></span>
+              <span class="calendar-current-year"></span>
+              
+          </div>
+      </div>
+
+      <div class="calendar-week-list">
+      </div>
+
+      <div class="calendar-day-list">
+      </div>
+
+  </div>
+
+</section>
+
+<script src="{% static 'js/calendar.js' %}"></script>
+
+{% endblock %}

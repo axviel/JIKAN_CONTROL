@@ -1,0 +1,82 @@
+{% load static %} 
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div id="dismiss">
+      <i class="fas fa-times fa-2x"></i>
+  </div>
+
+  <div class="sidebar-header">
+    {% if user.is_authenticated %}
+      <h3>{{user.username}}</h3>
+    {% else %}
+      <h3>Jikan Control</h3>
+    {% endif %}
+  </div>
+
+  <ul class="sidebar-items">
+    {% if user.is_authenticated %}
+      <li
+      {% if 'calendar' in request.path %}
+        class="active"
+      {% endif %}
+      >
+        <a href="{% url 'calendar' %}">Calendar</a>
+      </li>
+      <li
+      {% if 'events' in request.path %}
+        class="active"
+      {% endif %}
+      >
+          <a href="{% url 'events' %}">Events</a>
+      </li>
+      <li
+      {% if 'notes' in request.path %}
+        class="active"
+      {% endif %}
+      >
+          <a href="{% url 'notes' %}">Notes</a>
+      </li>
+      <li>
+          <a href="{% url 'exams' %}">Exams</a>
+      </li>
+    {% else %}
+      <li
+      {% if '/' == request.path %}
+        class="active"
+      {% endif %}
+      >
+        <a href="{% url 'index' %}">Home</a>
+      </li>
+      <li
+      {% if 'about' in request.path %}
+        class="active"
+      {% endif %}
+      >
+          <a href="{% url 'about' %}">About</a>
+      </li>
+    {% endif %}
+  </ul>
+
+  <ul class="list-unstyled sidebar-buttons">
+    {% if user.is_authenticated %}
+      <li>
+        <a href="profile.html" class="sidebar-button-light">Profile</a>
+      </li>
+      <li>
+        <a class="sidebar-button-dark" href="javascript:{document.getElementById('logout').submit()}" id="logout-btn">Logout</a>
+        <form action="{% url 'logout' %}" id="logout" method="POST">
+          {% csrf_token %}
+          <input type="hidden">
+        </form>
+      </li>
+    {% else %}
+      <li>
+        <a href="{% url 'login' %}" class="sidebar-button-light">Login</a>
+      </li>
+      <li>
+          <a href="{% url 'signup' %}" class="sidebar-button-dark">Sign Up</a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>

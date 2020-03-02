@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+  | Events
+{% endblock %}
+
+{% block content %}
+
+<!-- Alerts -->
+{% include 'partials/_alerts.html' %}
+
+<!-- Event Section -->
+<section id="events" class="py-4 main-content">
+  <div class="container-xl">
+    <div class="row justify-content-between pb-4">
+      <h2>Events</h2>
+      <button class="btn btn-secondary" data-toggle="modal" data-target="#event-form-modal">New Event</button>  
+    </div>
+
+    <!-- Event List -->
+    <table id="event-list" class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Start</th>
+          <th scope="col">End</th>
+          <th scope="col">Date</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Event 1</td>
+          <td>8:00</td>
+          <td>10:00</td>
+          <td>February 29, 2020</td>
+          <td><i class="fas fa-info-circle show-event-detail"></i></td>
+        </tr>
+        <tr>
+          <td>Event 2</td>
+          <td>9:00</td>
+          <td>12:00</td>
+          <td>March 2, 2020</td>
+          <td><i class="fas fa-info-circle show-event-detail"></i></td>
+        </tr>
+        <tr>
+          <td>Event 3</td>
+          <td>13:00</td>
+          <td>14:00</td>
+          <td>March 2, 2020</td>
+          <td><i class="fas fa-info-circle show-event-detail"></i></td>
+        </tr>
+        <tr>
+          <td>Event 4</td>
+          <td>11:00</td>
+          <td>15:00</td>
+          <td>March 5, 2020</td>
+          <td><i class="fas fa-info-circle show-event-detail"></i></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Event Form Modal -->
+<div class="modal fade" id="event-form-modal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="event-form-label">Event</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'detail' %}" method="POST">
+          {% csrf_token %}
+
+          <input type="hidden" name="user_id" value="{{ user.id }}">
+
+          <div class="form-group">
+            <label for="title" class="col-form-label">Title</label>
+            <input type="text" name="title" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="description" class="col-form-label">Description</label>
+            <textarea name="description" class="form-control"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="event-type">Type</label>
+            <select class="form-control" id="event-type" name="event-type">
+              <option value="1">Task</option>
+              <option value="2">Reminder</option>
+              <option value="3" selected>Study Time</option>
+              <option value="4">Exam</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="event-date" class="col-form-label">Date</label>
+            <input type="date" name="event-date" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="start-time" class="col-form-label">Start Time</label>
+            <input type="time" name="start-time" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="end-time" class="col-form-label">End Time</label>
+            <input type="time" name="end-time" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="repeat-type">Repeat</label>
+            <select class="form-control" id="repeat-type" name="repeat-type">
+              <option value="1"> Does Not Repeat</option>
+              <option value="2"> Daily</option>
+              <option value="3" selected> Weekly</option>
+              <option value="4"> Monthly</option>
+              <option value="5"> Yearly</option>
+            </select>
+          </div>
+          <hr>
+          <input type="submit" value="Save" class="btn btn-block btn-secondary">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/events.js' %}"></script>
+
+{% endblock %}
+

@@ -11,7 +11,7 @@ class Event(models.Model):
   start_date = models.DateTimeField(default=datetime.now)
   end_date = models.DateTimeField(null=True)
   user_id = models.IntegerField()
-  is_hidden = models.BooleanField()
+  is_hidden = models.BooleanField(default=False)
 
   def __str__(self):
     return self.title

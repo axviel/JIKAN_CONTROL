@@ -1,78 +1,12 @@
 {% load static %} 
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container">
-    <a class="navbar-brand" href="{% url 'index' %}">
-      <h3>Jikan Control</h3>
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <ul class="navbar-nav ml-auto">
+<!-- Navbar -->
+<nav id="main-nav" class="navbar navbar-dark bg-primary">
+  <!-- Sidebar expand button -->
+  <button type="button" id="sidebar-collapse" class="btn text-light">
+    <i class="fas fa-align-justify fa-2x"></i>
+  </button>
 
-        {% if user.is_authenticated %}
-
-        <li 
-        {% if 'dashboard' in request.path %}
-          class="nav-item active mr-3"
-        {% else %}
-        class="nav-item mr-3"
-        {% endif %}
-        >
-          <a class="nav-link" href="{% url 'dashboard' %}"> {{user.username}} (Dashboard)</a>
-        </li>
-        
-        <li class="nav-item mr-3">
-          <a class="nav-link" href="javascript:{document.getElementById('logout').submit()}" id="logout-btn">Logout</a>
-          <form action="{% url 'logout' %}" id="logout" method="POST">
-            {% csrf_token %}
-            <input type="hidden">
-          </form>
-        </li>
-
-        {% else %}
-
-        <li 
-        {% if '/' == request.path %}
-          class="nav-item active mr-3"
-        {% else %}
-          class="nav-item mr-3"
-        {% endif %}
-        >
-          <a class="nav-link" href="{% url 'index' %}">Home</a>
-        </li>
-        <li 
-        {% if 'about' in request.path %}
-          class="nav-item active mr-3"
-        {% else %}
-          class="nav-item mr-3"
-        {% endif %}
-        >
-          <a class="nav-link" href="{% url 'about' %}">About</a>
-        </li>
-        <li 
-        {% if 'signup' in request.path %}
-          class="nav-item active mr-3"
-        {% else %}
-          class="nav-item mr-3"
-        {% endif %}
-        >
-          <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
-        </li>
-        <li 
-        {% if 'login' in request.path %}
-          class="nav-item active mr-3"
-        {% else %}
-          class="nav-item mr-3"
-        {% endif %}
-        >
-          <a class="nav-link" href="{% url 'login' %}">Login</a>
-        </li>
-
-        {% endif %}
-
-      </ul>
-    </div>
-  </div>
+  <!-- Logo -->
+  <a class="navbar-brand text-center" href="{% url 'index' %}"><h3>Jikan Control</h3></a>
 </nav>
