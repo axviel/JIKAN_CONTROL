@@ -1,8 +1,11 @@
 from django.db import models
 from datetime import datetime
 
+from events.models import Event
+
 class Exam(models.Model):
-  event_type_id = models.IntegerField()
+  event = models.ForeignKey(Event, on_delete=models.DO_NOTHING)
+  title = models.CharField(max_length=200)
   description = models.TextField()
   predicted_study_hours = models.IntegerField()
   predicted_weeks = models.IntegerField()
@@ -15,4 +18,4 @@ class Exam(models.Model):
   is_hidden = models.BooleanField(default=False)
 
   def __str__(self):
-    return self.description
+    return self.title

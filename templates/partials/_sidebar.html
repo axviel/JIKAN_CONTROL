@@ -28,17 +28,17 @@
         class="active"
       {% endif %}
       >
-          <a href="{% url 'events' %}">Events</a>
+          <a href="{% url 'event_list' %}">Events</a>
       </li>
       <li
       {% if 'notes' in request.path %}
         class="active"
       {% endif %}
       >
-          <a href="{% url 'notes' %}">Notes</a>
+          <a href="{% url 'note_list' %}">Notes</a>
       </li>
       <li>
-          <a href="{% url 'exams' %}">Exams</a>
+          <a href="{% url 'exam_list' %}">Exams</a>
       </li>
     {% else %}
       <li
