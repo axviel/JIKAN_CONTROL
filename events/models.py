@@ -18,5 +18,5 @@ class Event(models.Model):
   is_hidden = models.BooleanField(default=False)
 
   def __str__(self):
-    # Main field that's display in admin page
+    # Main field that's displayed in admin page
     return self.title

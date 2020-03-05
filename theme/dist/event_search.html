@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Font Awesome JS -->
+  <script src="https://kit.fontawesome.com/10644cbae9.js" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="assets/css/bootstrap.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <title>Jikan Control</title>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div id="dismiss">
+        <i class="fas fa-times fa-2x"></i>
+    </div>
+
+    <div class="sidebar-header">
+        <h3>Username</h3>
+    </div>
+
+    <ul class="sidebar-items">
+        <li class="active">
+          <a href="index.html">Home</a>
+        </li>
+        <li>
+            <a href="about.html">About</a>
+        </li>
+        <li>
+            <a href="calendar.html">Calendar</a>
+        </li>
+        <li>
+            <a href="events.html">Events</a>
+        </li>
+        <li>
+            <a href="notes.html">Notes</a>
+        </li>
+        <li>
+            <a href="exams.html">Exams</a>
+        </li>
+    </ul>
+
+    <ul class="list-unstyled sidebar-buttons">
+        <li>
+          <a href="login.html" class="sidebar-button-light">Login</a>
+        </li>
+        <li>
+            <a href="signup.html" class="sidebar-button-dark">Sign Up</a>
+        </li>
+        <li>
+            <a href="index.html" class="sidebar-button-light">Logout</a>
+        </li>
+        <li>
+            <a href="profile.html" class="sidebar-button-dark">Profile</a>
+        </li>
+    </ul>
+  </nav>
+
+  <!-- Main page -->
+  <div id="main-page">
+
+    <!-- Navbar -->
+    <nav id="main-nav" class="navbar navbar-dark bg-primary">
+      <!-- Sidebar expand button -->
+      <button type="button" id="sidebar-collapse" class="btn text-light">
+        <i class="fas fa-align-justify fa-2x"></i>
+      </button>
+  
+      <!-- Logo -->
+      <a class="navbar-brand text-center" href="index.html"><h3>Jikan Control</h3></a>
+    </nav>
+
+    <!-- Search form Section -->
+    <div class="container">
+      <h3>Event Search</h3>
+      <form action="" id="event-search-form">
+        <div class="row">
+          <div class="col-4">
+            <div class="form-group">
+              <label for="title" class="col-form-label">Title</label>
+              <input type="text" name="title" class="form-control">
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label for="event-type">Type</label>
+              <select class="form-control" id="event-type">
+                <option value="1">Task</option>
+                <option value="2">Reminder</option>
+                <option value="3">Study Time</option>
+                <option value="4">Exam</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label for="event-type">Repeat</label>
+              <select class="form-control" id="event-type">
+                <option value="1"> Does Not Repeat</option>
+                <option value="2"> Daily</option>
+                <option value="3"> Weekly</option>
+                <option value="4"> Monthly</option>
+                <option value="5"> Yearly</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4">
+            <div class="form-group">
+              <label for="event-date" class="col-form-label">Date</label>
+              <input type="date" name="event-date" class="form-control" required>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label for="start-time" class="col-form-label">Start Time</label>
+              <input type="time" name="start-time" class="form-control" required>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label for="end-time" class="col-form-label">End Time</label>
+              <input type="time" name="end-time" class="form-control">
+            </div>
+          </div>
+        </div>
+        <input type="submit" value="Search" class="btn btn-block btn-secondary">
+      </form>
+    </div>
+
+    <!-- Event Section -->
+    <section id="events" class="py-4 main-content">
+      <div class="container">
+        <div class="row justify-content-between pb-4">
+          <h2>Events</h2>
+          <a class="btn btn-secondary" href="event_detail.html">New Event</a>  
+        </div>
+
+        <!-- Event List -->
+        <table id="event-list" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Start</th>
+              <th scope="col">End</th>
+              <th scope="col">Date</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Event 1</td>
+              <td>8:00</td>
+              <td>10:00</td>
+              <td>February 29, 2020</td>
+              <td><i class="fas fa-info-circle show-event-detail"></i></td>
+            </tr>
+            <tr>
+              <td>Event 2</td>
+              <td>9:00</td>
+              <td>12:00</td>
+              <td>March 2, 2020</td>
+              <td><i class="fas fa-info-circle show-event-detail"></i></td>
+            </tr>
+            <tr>
+              <td>Event 3</td>
+              <td>13:00</td>
+              <td>14:00</td>
+              <td>March 2, 2020</td>
+              <td><i class="fas fa-info-circle show-event-detail"></i></td>
+            </tr>
+            <tr>
+              <td>Event 4</td>
+              <td>11:00</td>
+              <td>15:00</td>
+              <td>March 5, 2020</td>
+              <td><i class="fas fa-info-circle show-event-detail"></i></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="main-footer" class="footer bg-primary">
+      <div class="container text-center text-light">
+        Jikan Control
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Sidebar overlay -->
+  <div class="overlay"></div>
+
+  <!-- Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <!-- jQuery -->
+  <script src="assets/js/jquery-3.4.1.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="assets/js/bootstrap.bundle.min.js "></script>
+  <!-- Events -->
+  <script src="assets/js/events.js"></script>
+  <!-- Sidebar -->
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
