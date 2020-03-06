@@ -25,6 +25,7 @@ def index(request):
   # Renders the template with the data that can be accesed
   return render(request, 'events/event_list.html', context)
 
+# Returns the detail info of an Event. Also used to create and update events
 def event(request, event_id=0):
   if request.method == "POST":
     # Kick user if not logged in
@@ -120,6 +121,94 @@ def event(request, event_id=0):
 
     return render(request, 'events/event_detail.html', context)
 
-# todo Search for events 
+# Search for events 
 def search(request):
-  return render(request, 'events/event_search.html')
+  queryset_list = Event.objects.order_by('-start_date')
+
+  # Title
+  if 'title' in request.GET:
+    title = request.GET['title']
+    # Check if empty string
+    if title:
+      # Search title for anything that matches a keyword
+      queryset_list = queryset_list.filter(title__icontains=title)
+
+  # Event Type
+  if 'event_type' in request.GET:
+    event_type = request.GET['event_type']
+    if event_type:
+      queryset_list = queryset_list.filter(event_type__exact=event_type)
+
+  # Repeat Type
+  if 'repeat_type' in request.GET:
+    repeat_type = request.GET['repeat_type']
+    if repeat_type:
+      queryset_list = queryset_list.filter(repeat_type__exact=repeat_type)
+
+  # Start Date
+  if 'start_date' in request.GET:
+    start_date = request.GET['start_date']
+    if start_date:
+      queryset_list = queryset_list.filter(start_date__exact=start_date)
+
+  # End Date
+  if 'end_date' in request.GET:
+    end_date = request.GET['end_date']
+    if end_date:
+      queryset_list = queryset_list.filter(end_date__exact=end_date)
+
+  # Start Time
+  if 'start_time' in request.GET:
+    start_time = request.GET['start_time']
+    if start_time:
+      queryset_list = queryset_list.filter(start_time__lte=start_time)
+
+  # End Time
+  if 'end_time' in request.GET:
+    end_time = request.GET['end_time']
+    if end_time:
+      queryset_list = queryset_list.filter(end_time__lte=end_time)
+
+  context = {
+    'events': queryset_list,
+  }
+
+  # Request contains at least one form field, return the form with its field values
+  if 'title' in request.GET:
+    form = EventForm(initial={
+          'title': request.GET['title'],
+          'event_type': request.GET['event_type'],
+          'repeat_type': request.GET['repeat_type'],
+          'start_date': request.GET['start_date'],
+          'end_date': request.GET['end_date'],
+          'start_time': request.GET['start_time'],
+          'end_time': request.GET['end_time']
+        })
+
+    search_form_defaults(form)
+
+    context['form'] = form
+
+  # Request does not contain form submission, return empty form
+  else:
+    form = EventForm()
+
+    search_form_defaults(form)
+
+    context['form'] = form
+
+
+  return render(request, 'events/event_search.html', context)
+
+# Marks are required fields as not required and adds an 'Any' value to the drop down lists
+def search_form_defaults(form):
+  form.fields['title'].required = False
+  form.fields['event_type'].required = False
+  form.fields['repeat_type'].required = False
+  form.fields['start_date'].required = False
+  form.fields['end_date'].required = False
+  form.fields['start_time'].required = False
+  form.fields['end_time'].required = False
+
+  form.fields['event_type'].empty_label = 'Any Type'
+  form.fields['repeat_type'].empty_label = 'Any Type'

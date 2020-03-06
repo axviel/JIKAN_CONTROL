@@ -48,6 +48,13 @@ class EventForm(forms.Form):
       'id': 'start_date', 
       'class': 'form-control'})
       )
+  end_date = forms.DateTimeField(
+    label='End Date', 
+    widget=DateInput(attrs={
+      'id': 'end_date', 
+      'class': 'form-control'}),
+    required=False
+      )
   event_type = forms.ModelChoiceField(
     label='Event Type', 
     empty_label=None, 
