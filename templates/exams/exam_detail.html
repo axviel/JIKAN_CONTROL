@@ -1,1 +1,84 @@
-<h1>exam detail</h1>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Alerts -->
+{% include 'partials/_alerts.html' %}
+
+<!-- Breadcrumb -->
+<section id="bc" class="mt-3">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{% url 'calendar' %}">
+            <i class="fas fa-home"></i> Home</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="{% url 'exam_list' %}">Exams</a>
+        </li>
+        <li class="breadcrumb-item active">{{ form.title.value }}</li>
+      </ol>
+    </nav>
+  </div>
+</section>
+
+<!-- Exam Section -->
+<section id="exam-detail" class="py-4 main-content">
+  <div class="container">
+    <h3>Exam</h3>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.exam_id }}
+      <div class="row">
+        <div class="col-12">
+          <label for="{{ form.title.name }}" class="col-form-label">
+            {{ form.title.label }}{% if form.title.field.required %}<span class="required">*</span>{% endif %}
+          </label>
+          {{ form.title }}
+        </div>
+        <div class="col-12">
+          <label for="{{ form.description.name }}" class="col-form-label">
+            {{ form.description.label }}{% if form.description.field.required %}<span class="required">*</span>{% endif %}
+          </label>
+          {{ form.description }}
+        </div>
+        <!-- <div class="col-6">
+          <label for="{{ form.event_type.name }}" class="col-form-label">
+            {{ form.event_type.label }}{% if form.event_type.field.required %}<span class="required">*</span>{% endif %}
+          </label>
+          {{ form.event_type }}
+        </div>
+        <div class="col-6">
+          <label for="{{ form.repeat_type.name }}" class="col-form-label">
+            {{ form.repeat_type.label }}{% if form.repeat_type.field.required %}<span class="required">*</span>{% endif %}
+          </label>
+          {{ form.repeat_type }}
+        </div>
+        <div class="col-12">
+          <label for="{{ form.start_date.name }}" class="col-form-label">
+            {{ form.start_date.label }}{% if form.start_date.field.required %}<span class="required">*</span>{% endif %}
+          </label>
+          {{ form.start_date }}
+        </div>
+        <div class="col-6">
+          <label for="{{ form.start_time.name }}" class="col-form-label">
+            {{ form.start_time.label }}{% if form.start_time.field.required %}<span class="required">*</span>{% endif %}
+          </label>
+          {{ form.start_time }}
+        </div>
+        <div class="col-6">
+          <label for="{{ form.end_time.name }}" class="col-form-label">
+            {{ form.end_time.label }}{% if form.end_time.field.required %}<span class="required">*</span>{% endif %}
+          </label>
+          {{ form.end_time }}
+        </div> -->
+      </div>
+
+      <hr>
+      <button type="submit" class="btn btn-block btn-secondary">Save</button>
+    </form>
+  </div>
+</section>
+
+{% endblock %}
