@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import HttpResponse
 
 from .models import Event, EventType, RepeatType
 from .forms import EventForm
@@ -13,13 +14,13 @@ def index(request):
   events = Event.objects.order_by('-start_date').filter(is_hidden=False)
 
   # Pagination
-  paginator = Paginator(events, 5)
+  paginator = Paginator(events, 10)
   page = request.GET.get('page')
   paged_events = paginator.get_page(page)
 
   # Data that is passed to the template
   context = {
-    'events': paged_events
+    'events': paged_events,
   }
 
   # Renders the template with the data that can be accesed
@@ -199,6 +200,30 @@ def search(request):
 
 
   return render(request, 'events/event_search.html', context)
+
+# Marks an event as hidden
+def remove(request):
+  if request.method == 'POST':
+    title = request.POST['title']
+    
+    # event = Event.objects.update(
+    #       title=title,
+    #       defaults={
+    #         'is_hidden': True,
+    #         },
+    #   )
+
+    print('\n\n')
+    print(type(title))
+    print(type('hello'))
+    print('\n\n')
+
+    event = Event.objects.get(id=22)
+    # event = Event.objects.get(title=title)
+    event.is_hidden = True
+    event.save()
+
+    return HttpResponse('')
 
 # Marks are required fields as not required and adds an 'Any' value to the drop down lists
 def search_form_defaults(form):

@@ -23,7 +23,8 @@ class CALENDAR {
         };
 
         // todo
-        this.eventList = JSON.parse(localStorage.getItem(localStorageName)) || {};
+        // this.eventList = JSON.parse(localStorage.getItem(localStorageName)) || {};
+        this.eventList = JSON.parse(document.getElementById('calendar-events').textContent) || {};
 
         this.date = +new Date();
         this.options.maxDays = 42;
@@ -106,7 +107,9 @@ class CALENDAR {
 
         days = days.map(day => {
             let newDayParams = day;
+
             let formatted = this.getFormattedDate(new Date(`${Number(day.month) + 1}/${day.dayNumber}/${day.year}`));
+
             newDayParams.hasEvent = this.eventList[formatted];
             return newDayParams;
         });
@@ -196,7 +199,7 @@ class CALENDAR {
             let dateFormatted = this.getFormattedDate(new Date(this.date));
             if (!this.eventList[dateFormatted]) this.eventList[dateFormatted] = [];
             this.eventList[dateFormatted].push(fieldValue);
-            localStorage.setItem(localStorageName, JSON.stringify(this.eventList));
+            // localStorage.setItem(localStorageName, JSON.stringify(this.eventList));
             this.elements.eventField.value = '';
             this.drawAll();
         });
@@ -225,7 +228,20 @@ class CALENDAR {
                     delete this.eventList[eventDate];
                 }
 
-                localStorage.setItem(localStorageName, JSON.stringify(this.eventList));
+                // localStorage.setItem(localStorageName, JSON.stringify(this.eventList));
+                // django remove
+                $.ajax({
+                    type: 'POST',
+                    url: '/events/remove',
+                    data:{
+                        title: eventName,
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    success:function(){
+                        alert('Event removed!')
+                    }
+                });
+
 
                 this.drawAll();
             }
@@ -284,7 +300,15 @@ class CALENDAR {
     }
 
     getFormattedDate(date) {
-        return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+        // return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+
+
+        let day_digit = ( date.getDate() >= 10 ) ? date.getDate() : '0' + date.getDate();
+        let month_digit = ( (date.getMonth() + 1) >= 10 ) ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1)
+
+        // let formated2 = `${day_digit}/${month_digit}/${day.year}`;
+
+        return `${day_digit}/${month_digit}/${date.getFullYear()}`;
     }
 
     range(number) {

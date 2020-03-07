@@ -128,6 +128,12 @@
 
 </section>
 
+<form action="{% url 'event_remove' %}" method="POST" id="event-remove">
+  {% csrf_token %}
+  <input type="hidden">
+</form>
+
+{{ events | json_script:"calendar-events" }}
 <script src="{% static 'js/calendar.js' %}"></script>
 
 {% endblock %}
