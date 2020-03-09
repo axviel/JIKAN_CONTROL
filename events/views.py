@@ -7,6 +7,7 @@ from .models import Event, EventType, RepeatType
 from .forms import EventForm
 
 import datetime
+import json
 
 # Returns the list page with all events
 def index(request):
@@ -68,6 +69,15 @@ def event(request, event_id=0):
       # Save in the db
       event.save()
 
+      # If event was created via calendar page, return the id
+      if 'is_calendar_form' in request.POST:
+        context = {
+          'id': event.id,
+          'title': event.title
+        }
+        context = json.dumps(context)
+        return HttpResponse(context)
+
       # UI success message
       messages.success(request, 'Event created successfully')
 
@@ -92,6 +102,26 @@ def event(request, event_id=0):
     return render(request, 'events/event_detail.html', context)
 
   else:
+
+    # If GET request came from calendar
+    if 'is_calendar_form' in request.GET:
+      event_id = request.GET['id']
+      event = Event.objects.get(id=event_id)
+
+      context = {
+        'event_id': event.id,
+        'title': event.title,
+        'description': event.description,
+        'event_type': event.event_type.pk,
+        'repeat_type': event.repeat_type.pk,
+        'start_date': event.start_date,
+        'start_time': event.start_time,
+        'end_time': event.end_time
+      }
+      context = json.dumps(context, indent=4, sort_keys=True, default=str)
+
+      return HttpResponse(context)
+
     if not request.user.is_authenticated:
       messages.error(request, 'Access denied. Must be logged in')
       return redirect('event_list') #redirect(url path name)
@@ -101,6 +131,7 @@ def event(request, event_id=0):
 
     if event_id > 0:
       event = get_object_or_404(Event, pk=event_id)
+
       form = EventForm(initial={
         'event_id': event.id,
         'title': event.title,
@@ -204,22 +235,9 @@ def search(request):
 # Marks an event as hidden
 def remove(request):
   if request.method == 'POST':
-    title = request.POST['title']
-    
-    # event = Event.objects.update(
-    #       title=title,
-    #       defaults={
-    #         'is_hidden': True,
-    #         },
-    #   )
+    event_id = request.POST['id']
 
-    print('\n\n')
-    print(type(title))
-    print(type('hello'))
-    print('\n\n')
-
-    event = Event.objects.get(id=22)
-    # event = Event.objects.get(title=title)
+    event = Event.objects.get(id=event_id)
     event.is_hidden = True
     event.save()
 

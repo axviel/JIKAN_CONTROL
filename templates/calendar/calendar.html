@@ -8,66 +8,6 @@
 
 {% load static %} 
 
-<!-- Event Form Modal -->
-<div class="modal fade" id="event-form-modal" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="event-form-label">Event</h5>
-          <button type="button" class="close" data-dismiss="modal">
-            <span>&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <input type="hidden" name="active-date" id="active-date">
-            <div class="form-group">
-              <label for="title" class="col-form-label">Title</label>
-              <input type="text" name="title" class="form-control">
-            </div>
-            <div class="form-group">
-              <label for="description" class="col-form-label">Description</label>
-              <textarea name="description" class="form-control"></textarea>
-            </div>
-            <div class="form-group">
-              <label for="event-type">Type</label>
-              <select class="form-control" id="event-type">
-                <option>1: Task</option>
-                <option>2: Reminder</option>
-                <option>3: Study Time</option>
-                <option>4: Exam</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="event-date" class="col-form-label">Date</label>
-              <input type="date" name="event-date" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="start-time" class="col-form-label">Start Time</label>
-              <input type="time" name="start-time" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="end-time" class="col-form-label">End Time</label>
-              <input type="time" name="end-time" class="form-control">
-            </div>
-            <div class="form-group">
-              <label for="event-type">Repeat</label>
-              <select class="form-control" id="event-type">
-                <option>1: Does Not Repeat</option>
-                <option>2: Daily</option>
-                <option>3: Weekly</option>
-                <option>4: Monthly</option>
-                <option>5: Yearly</option>
-              </select>
-            </div>
-            <hr>
-            <input type="submit" value="Save" class="btn btn-block btn-secondary">
-          </form>
-        </div>
-      </div>
-    </div>
-</div>
-
 <!-- Current Day Modal -->
 <div class="modal fade" id="current-day-modal" tabindex="-1" role="dialog" aria-labelledby="current-day-modal-label" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -80,6 +20,7 @@
     </div>
     <div class="modal-body current-day-body">
 
+      <div id="current-day-event-list">
         <div class="current-day text-center">
             <h1 class="current-day-number"></h1>
             <div class="current-day-of-week"></div>
@@ -92,6 +33,63 @@
             <input type="text" class="add-event-day-field" placeholder="Create an Event">
             <button type="submit" class="btn btn-primary add-event-day-field-btn">New Event</button> 
         </div>
+      </div>
+
+      <div id="current-day-add-event-form" class="d-none">
+        <h3>Event</h3>
+        <form method="POST" id="event-form">
+          {% csrf_token %}
+          <input type="hidden" name="is_calendar_form" id="is_calendar_form" value="true">
+          {{ form.event_id }}
+          <div class="row">
+            <div class="col-12">
+              <label for="{{ form.title.name }}" class="col-form-label">
+                {{ form.title.label }}{% if form.title.field.required %}<span class="required">*</span>{% endif %}
+              </label>
+              {{ form.title }}
+            </div>
+            <div class="col-12">
+              <label for="{{ form.description.name }}" class="col-form-label">
+                {{ form.description.label }}{% if form.description.field.required %}<span class="required">*</span>{% endif %}
+              </label>
+              {{ form.description }}
+            </div>
+            <div class="col-6">
+              <label for="{{ form.event_type.name }}" class="col-form-label">
+                {{ form.event_type.label }}{% if form.event_type.field.required %}<span class="required">*</span>{% endif %}
+              </label>
+              {{ form.event_type }}
+            </div>
+            <div class="col-6">
+              <label for="{{ form.repeat_type.name }}" class="col-form-label">
+                {{ form.repeat_type.label }}{% if form.repeat_type.field.required %}<span class="required">*</span>{% endif %}
+              </label>
+              {{ form.repeat_type }}
+            </div>
+            <div class="col-12">
+              <label for="{{ form.start_date.name }}" class="col-form-label">
+                {{ form.start_date.label }}{% if form.start_date.field.required %}<span class="required">*</span>{% endif %}
+              </label>
+              {{ form.start_date }}
+            </div>
+            <div class="col-6">
+              <label for="{{ form.start_time.name }}" class="col-form-label">
+                {{ form.start_time.label }}{% if form.start_time.field.required %}<span class="required">*</span>{% endif %}
+              </label>
+              {{ form.start_time }}
+            </div>
+            <div class="col-6">
+              <label for="{{ form.end_time.name }}" class="col-form-label">
+                {{ form.end_time.label }}{% if form.end_time.field.required %}<span class="required">*</span>{% endif %}
+              </label>
+              {{ form.end_time }}
+            </div>
+          </div>
+    
+          <hr>
+          <button type="submit" class="btn btn-block btn-secondary">Save</button>
+        </form>
+      </div>
 
     </div>
     <div class="modal-footer current-day-footer">

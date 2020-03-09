@@ -19,7 +19,10 @@ class CALENDAR {
             currentWeekDay: document.querySelector('.current-day-of-week'),
             prevMonth: document.querySelector('.calendar-change-month-slider-prev'),
             nextMonth: document.querySelector('.calendar-change-month-slider-next'),
-            currentMonth: document.querySelector('.calendar-current-month')
+            currentMonth: document.querySelector('.calendar-current-month'),
+            currentDayModal: document.querySelector('#current-day-modal'),
+            currentDayEventsList: document.querySelector('#current-day-event-list'),
+            currentDayAddEventFormContent: document.querySelector('#current-day-add-event-form')
         };
 
         // todo
@@ -49,10 +52,23 @@ class CALENDAR {
 
     drawEvents() {
         let calendar = this.getCalendar();
-        let eventList = this.eventList[calendar.active.formatted] || ['There is not any events'];
+        let eventList = this.eventList[calendar.active.formatted] || ['No events to display'];
         let eventTemplate = "";
         eventList.forEach(item => {
-            eventTemplate += `<a href="#" class="list-group-item list-group-item-action current-event-item">${item} <i class="fa fa-remove remove-event"></i></a>`;
+            if(item.title !== undefined ){
+                eventTemplate += `
+                <a href="#" class="list-group-item list-group-item-action current-event-item"
+                event-id="${item.id}">
+                ${item.title} 
+                <i class="fa fa-remove remove-event"></i>
+                </a>`;
+            }
+            else{
+                eventTemplate = `
+                <a href="#" class="list-group-item list-group-item-action current-event-item">
+                ${item}
+                </a>`;
+            }
         });
 
         this.elements.eventList.innerHTML = eventTemplate;
@@ -122,9 +138,9 @@ class CALENDAR {
         days.forEach(day => {
 
             if(day.hasEvent){
-                firstEvent = `<div class="event event-large">${'06:00 ' + day.hasEvent[0]}</div>`;
+                firstEvent = `<div class="event event-large">${'06:00 ' + day.hasEvent[0].title}</div>`;
                 if(day.hasEvent.length > 1){
-                    secondEvent = `<div class="event event-large">${day.hasEvent.length === 2 ? '06:00 ' + day.hasEvent[1] : (day.hasEvent.length - 1) + ' more events'}</div>`;
+                    secondEvent = `<div class="event event-large">${day.hasEvent.length === 2 ? '06:00 ' + day.hasEvent[1].title : (day.hasEvent.length - 1) + ' more events'}</div>`;
                 }
                 smallEvent = `<div class="event event-small">${day.hasEvent.length === 1 ? '1 event' : day.hasEvent.length + ' events'}</div>`;
             }
@@ -161,6 +177,26 @@ class CALENDAR {
         this.elements.week.innerHTML = weekTemplate;
     }
 
+    clearAddEventFormState(isNewEvent = false){
+        // Clear fields
+        document.querySelector('#title').value = "";
+        document.querySelector('#description').value = "";
+        document.querySelector('#event_type').value = "1";
+        document.querySelector('#repeat_type').value = "1";
+        document.querySelector('#start_date').value = "";
+        document.querySelector('#start_time').value = "";
+        document.querySelector('#end_time').value = "";
+
+        // Hide form and show event list
+        document.querySelector('#current-day-event-list').classList.remove('d-none');
+        document.querySelector('#current-day-add-event-form').classList.add('d-none');
+
+        // Redraw if new event was added
+        if(isNewEvent){
+            this.drawAll();
+        }
+    }
+
     // Service methods
     eventsTrigger() {
 
@@ -194,15 +230,69 @@ class CALENDAR {
 
         // Add event
         this.elements.eventAddBtn.addEventListener('click', e => {
-            let fieldValue = this.elements.eventField.value;
-            if (!fieldValue) return false;
-            let dateFormatted = this.getFormattedDate(new Date(this.date));
-            if (!this.eventList[dateFormatted]) this.eventList[dateFormatted] = [];
-            this.eventList[dateFormatted].push(fieldValue);
-            // localStorage.setItem(localStorageName, JSON.stringify(this.eventList));
-            this.elements.eventField.value = '';
-            this.drawAll();
+            this.elements.currentDayEventsList.classList.add('d-none');
+            this.elements.currentDayAddEventFormContent.classList.remove('d-none');
         });
+
+        // Actually add/save event
+        $('#event-form').on('submit', function(e){
+            $.ajax({
+                type: 'POST',
+                url: '/events/detail',
+                data: {
+                    id: document.querySelector('#event_id').value,
+                    title: document.querySelector('#title').value,
+                    description: document.querySelector('#description').value,
+                    event_type: document.querySelector('#event_type').value,
+                    repeat_type: document.querySelector('#repeat_type').value,
+                    start_date: document.querySelector('#start_date').value,
+                    start_time: document.querySelector('#start_time').value,
+                    end_time: document.querySelector('#end_time').value,
+                    is_calendar_form: document.querySelector('#is_calendar_form').value,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function(data){
+                    let newEvent = JSON.parse(data);
+
+                    let dateFormatted = calendar.getFormattedDate(new Date(calendar.date));
+                    if (!calendar.eventList[dateFormatted]) calendar.eventList[dateFormatted] = [];
+                    calendar.eventList[dateFormatted].push(newEvent);
+
+                    calendar.clearAddEventFormState(true);
+                }
+            });
+
+            // Prevent form submission w/ redirect
+            e.preventDefault();
+        });
+
+        // Load event fields
+        document.querySelector('#current-day-event-list').addEventListener('click', e => {
+            // Check if an event was clicked
+            if(e.target.classList.contains('current-event-item')){
+                // Get event id from attribute
+                let eventId = e.target.getAttribute('event-id');
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/events/detail',
+                    data: {
+                        id: eventId,
+                        is_calendar_form: true
+                    },
+                    success: function(data){
+                        let eventData = JSON.parse(data);
+
+                        console.log(eventData);
+
+                        // date is gonna be problem
+
+                        // populate form fields
+                        // show form
+                    }
+                });
+            }
+        })
 
         // Remove event
         this.elements.eventList.addEventListener('click', e => {
@@ -211,6 +301,8 @@ class CALENDAR {
                 const eventName = eventElement.textContent;
                 const eventDate = this.getCalendar().active.formatted;
 
+                const eventId = eventElement.getAttribute("event-id");
+
                 // Remove from UI
                 eventElement.remove();
 
@@ -218,7 +310,7 @@ class CALENDAR {
                 const eventDateList = this.eventList[eventDate];
 
                 eventDateList.forEach( (eventItem, index) => {
-                    if(eventItem === eventName || eventName.includes(eventItem)){
+                    if(eventItem.id === Number(eventId) ){
                         eventDateList.splice(index, 1);
                       }
                 });
@@ -228,13 +320,12 @@ class CALENDAR {
                     delete this.eventList[eventDate];
                 }
 
-                // localStorage.setItem(localStorageName, JSON.stringify(this.eventList));
                 // django remove
                 $.ajax({
                     type: 'POST',
                     url: '/events/remove',
                     data:{
-                        title: eventName,
+                        id: eventId,
                         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
                     },
                     success:function(){
@@ -251,6 +342,36 @@ class CALENDAR {
         this.elements.todayBtn.addEventListener('click', e => {
             this.updateTime(new Date());
             this.drawAll()
+        });
+
+        // Current Day Modal Events
+        $('#current-day-modal').on('show.bs.modal', function(e) {
+            let activeDate = calendar.getCalendar().active; 
+        
+            let day = activeDate.day;
+            let month = activeDate.month + 1;
+            let year = activeDate.year;
+        
+            if (day < 10){
+                day = "0" + day;
+            }
+            if (month < 10){
+                month = "0" + month;
+            }
+        
+            let formatedDate = year + '-' + month + '-' + day;
+        
+            let modal = $(this)
+            modal.find('#start_date').val(formatedDate)
+          });
+        
+        $('#current-day-modal').on('hide.bs.modal', function(e) {
+            // Clear form
+            //... todo
+        
+            // Hide form
+            document.querySelector('#current-day-event-list').classList.remove('d-none');
+            document.querySelector('#current-day-add-event-form').classList.add('d-none');
         });
 
     }
@@ -331,9 +452,31 @@ let calendar = (function () {
 
 //-------------
 
+// $('#current-day-modal').on('show.bs.modal', function(e) {
+//     let activeDate = calendar.getCalendar().active; 
 
-$('#event-form-modal').on('show.bs.modal', function (event) {
-    var activeDate = calendar.getCalendar().active.formatted; 
-    var modal = $(this)
-    modal.find('#active-date').val(activeDate)
-  })
+//     let day = activeDate.day;
+//     let month = activeDate.month + 1;
+//     let year = activeDate.year;
+
+//     if (day < 10){
+//         day = "0" + day;
+//     }
+//     if (month < 10){
+//         month = "0" + month;
+//     }
+
+//     let formatedDate = year + '-' + month + '-' + day;
+
+//     let modal = $(this)
+//     modal.find('#start_date').val(formatedDate)
+//   });
+
+// $('#current-day-modal').on('hide.bs.modal', function(e) {
+//     // Clear form
+//     //... todo
+
+//     // Hide form
+//     document.querySelector('#current-day-event-list').classList.remove('d-none');
+//     document.querySelector('#current-day-add-event-form').classList.add('d-none');
+// });
