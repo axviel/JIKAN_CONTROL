@@ -72,7 +72,7 @@ def event(request, event_id=0):
       # If event was created via calendar page, return the id
       if 'is_calendar_form' in request.POST:
         context = {
-          'id': event.id,
+          'event_id': event.id,
           'title': event.title
         }
         context = json.dumps(context)
@@ -105,7 +105,7 @@ def event(request, event_id=0):
 
     # If GET request came from calendar
     if 'is_calendar_form' in request.GET:
-      event_id = request.GET['id']
+      event_id = request.GET['event_id']
       event = Event.objects.get(id=event_id)
 
       context = {

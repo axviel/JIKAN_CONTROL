@@ -16,12 +16,12 @@ def index(request):
 
     if key in events_data:
       events_data[key].append({
-        'id': event.id,
+        'event_id': event.id,
         'title': event.title
       })
     else:
       events_data[key] = [{
-        'id': event.id,
+        'event_id': event.id,
         'title': event.title
       }]
 

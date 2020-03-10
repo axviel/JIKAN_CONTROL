@@ -58,7 +58,7 @@ class CALENDAR {
             if(item.title !== undefined ){
                 eventTemplate += `
                 <a href="#" class="list-group-item list-group-item-action current-event-item"
-                event-id="${item.id}">
+                event-id="${item.event_id}">
                 ${item.title} 
                 <i class="fa fa-remove remove-event"></i>
                 </a>`;
@@ -240,7 +240,7 @@ class CALENDAR {
                 type: 'POST',
                 url: '/events/detail',
                 data: {
-                    id: document.querySelector('#event_id').value,
+                    event_id: document.querySelector('#event_id').value,
                     title: document.querySelector('#title').value,
                     description: document.querySelector('#description').value,
                     event_type: document.querySelector('#event_type').value,
@@ -254,9 +254,24 @@ class CALENDAR {
                 success: function(data){
                     let newEvent = JSON.parse(data);
 
-                    let dateFormatted = calendar.getFormattedDate(new Date(calendar.date));
-                    if (!calendar.eventList[dateFormatted]) calendar.eventList[dateFormatted] = [];
-                    calendar.eventList[dateFormatted].push(newEvent);
+                    //check for existing event to update instea dof add????
+                    let isNotUpdate = true
+                    const eventDate = calendar.getCalendar().active.formatted;
+                    const eventDateList = calendar.eventList[eventDate];
+                    eventDateList.forEach( (eventItem, index) => {
+                        if(eventItem.event_id === newEvent.event_id ){
+                            eventDateList[index].title = newEvent.title;
+                            isNotUpdate = false;
+                        }
+                    });
+
+                    //---------------
+
+                    if(isNotUpdate){
+                        let dateFormatted = calendar.getFormattedDate(new Date(calendar.date));
+                        if (!calendar.eventList[dateFormatted]) calendar.eventList[dateFormatted] = [];
+                        calendar.eventList[dateFormatted].push(newEvent);
+                    }
 
                     calendar.clearAddEventFormState(true);
                 }
@@ -277,18 +292,27 @@ class CALENDAR {
                     type: 'GET',
                     url: '/events/detail',
                     data: {
-                        id: eventId,
+                        event_id: eventId,
                         is_calendar_form: true
                     },
                     success: function(data){
                         let eventData = JSON.parse(data);
 
-                        console.log(eventData);
+                        let eventStartDate = eventData.start_date.substring(0,10);
 
-                        // date is gonna be problem
+                        // Populate form fields
+                        document.querySelector('#event_id').value = eventData.event_id;
+                        document.querySelector('#title').value = eventData.title;
+                        document.querySelector('#description').value = eventData.description;
+                        document.querySelector('#event_type').value = eventData.event_type;
+                        document.querySelector('#repeat_type').value = eventData.repeat_type;
+                        document.querySelector('#start_date').value = eventStartDate;
+                        document.querySelector('#start_time').value = eventData.start_time;
+                        document.querySelector('#end_time').value = eventData.end_time;
 
-                        // populate form fields
-                        // show form
+                        // Show form
+                        document.querySelector('#current-day-event-list').classList.add('d-none');
+                        document.querySelector('#current-day-add-event-form').classList.remove('d-none');
                     }
                 });
             }
@@ -367,7 +391,14 @@ class CALENDAR {
         
         $('#current-day-modal').on('hide.bs.modal', function(e) {
             // Clear form
-            //... todo
+            document.querySelector('#event_id').value = null;
+            document.querySelector('#title').value = null;
+            document.querySelector('#description').value = null;
+            document.querySelector('#event_type').value = 1;
+            document.querySelector('#repeat_type').value = 1;
+            document.querySelector('#start_date').value = null;
+            document.querySelector('#start_time').value = null;
+            document.querySelector('#end_time').value = null;
         
             // Hide form
             document.querySelector('#current-day-event-list').classList.remove('d-none');
