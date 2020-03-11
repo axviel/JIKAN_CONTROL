@@ -134,13 +134,16 @@ class CALENDAR {
         let firstEvent = "";
         let secondEvent = "";
         let smallEvent = "";
+        let titleFormated = "";
 
         days.forEach(day => {
 
             if(day.hasEvent){
-                firstEvent = `<div class="event event-large">${'06:00 ' + day.hasEvent[0].title}</div>`;
+                titleFormated = day.hasEvent[0].title.length <= 10 ? day.hasEvent[0].title : day.hasEvent[0].title.substring(0, 7) + '...'
+                firstEvent = `<div class="event event-large">${'06:00 ' + titleFormated}</div>`;
                 if(day.hasEvent.length > 1){
-                    secondEvent = `<div class="event event-large">${day.hasEvent.length === 2 ? '06:00 ' + day.hasEvent[1].title : (day.hasEvent.length - 1) + ' more events'}</div>`;
+                    titleFormated = day.hasEvent[1].title.length <= 10 ? day.hasEvent[1].title : day.hasEvent[1].title.substring(0, 7) + '...'
+                    secondEvent = `<div class="event event-large">${day.hasEvent.length === 2 ? '06:00 ' + titleFormated : (day.hasEvent.length - 1) + ' more events'}</div>`;
                 }
                 smallEvent = `<div class="event event-small">${day.hasEvent.length === 1 ? '1 event' : day.hasEvent.length + ' events'}</div>`;
             }
@@ -258,14 +261,14 @@ class CALENDAR {
                     let isNotUpdate = true
                     const eventDate = calendar.getCalendar().active.formatted;
                     const eventDateList = calendar.eventList[eventDate];
-                    eventDateList.forEach( (eventItem, index) => {
-                        if(eventItem.event_id === newEvent.event_id ){
-                            eventDateList[index].title = newEvent.title;
-                            isNotUpdate = false;
-                        }
-                    });
-
-                    //---------------
+                    if(eventDateList){
+                        eventDateList.forEach( (eventItem, index) => {
+                            if(eventItem.event_id === newEvent.event_id ){
+                                eventDateList[index].title = newEvent.title;
+                                isNotUpdate = false;
+                            }
+                        });
+                    }
 
                     if(isNotUpdate){
                         let dateFormatted = calendar.getFormattedDate(new Date(calendar.date));
