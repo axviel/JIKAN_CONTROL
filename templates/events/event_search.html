@@ -32,10 +32,6 @@
 <!-- Event Section -->
 <section id="events" class="py-4 main-content">
   <div class="container">
-    <div class="row justify-content-between pb-4">
-      <h2>Search Events</h2>  
-    </div>
-
     <!-- Event Search form Section -->
     <h3>Event Search</h3>
     <form action="{% url 'event_search' %}">
@@ -85,12 +81,12 @@
         </div>
       </div>
 
-      <button type="submit" class="btn btn-block btn-secondary">Search</button>
+      <button type="submit" class="btn btn-block btn-secondary mb-4">Search</button>
 
-      <hr>
     </form>
 
     <!-- Event List -->
+    <h4>Results</h4>
     <table id="event-list" class="table table-bordered table-hover">
       <thead>
         <tr>

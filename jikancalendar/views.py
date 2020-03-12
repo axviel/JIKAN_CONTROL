@@ -14,16 +14,16 @@ def index(request):
   for event in events:
     key = event.start_date.strftime("%d/%m/%Y")
 
+    event_data = {
+        'event_id': event.id,
+        'title': event.title,
+        'start_time': event.start_time.strftime("%H:%M") # Keep only hour and minutes
+      }
+
     if key in events_data:
-      events_data[key].append({
-        'event_id': event.id,
-        'title': event.title
-      })
+      events_data[key].append(event_data)
     else:
-      events_data[key] = [{
-        'event_id': event.id,
-        'title': event.title
-      }]
+      events_data[key] = [event_data]
 
   context = {
     'events': events_data,

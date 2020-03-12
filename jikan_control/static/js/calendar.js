@@ -1,9 +1,6 @@
 const AVAILABLE_WEEK_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const AVALIABLE_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-// todo
-const localStorageName = 'calendar-events';
-
 class CALENDAR {
     constructor(options) {
         this.options = options;
@@ -11,9 +8,8 @@ class CALENDAR {
             days: document.querySelector('.calendar-day-list'),
             week: document.querySelector('.calendar-week-list'),
             year: document.querySelector('.calendar-current-year'),
-            eventField: document.querySelector('.add-event-day-field'),
             eventList: document.querySelector('.current-day-events-list'),
-            eventAddBtn: document.querySelector('.add-event-day-field-btn'),
+            eventAddBtn: document.querySelector('.add-event-day-btn'),
             todayBtn: document.querySelector('.calendar-today-btn'),
             currentDay: document.querySelector('.current-day-number'),
             currentWeekDay: document.querySelector('.current-day-of-week'),
@@ -21,16 +17,33 @@ class CALENDAR {
             nextMonth: document.querySelector('.calendar-change-month-slider-next'),
             currentMonth: document.querySelector('.calendar-current-month'),
             currentDayModal: document.querySelector('#current-day-modal'),
+            currentDayFooter: document.querySelector('.current-day-footer'),
             currentDayEventsList: document.querySelector('#current-day-event-list'),
-            currentDayAddEventFormContent: document.querySelector('#current-day-add-event-form')
+            currentDayAddEventFormContent: document.querySelector('#current-day-add-event-form'),
+            eventForm: document.querySelector('#event-form'),
+            eventFormBackArrow: document.querySelector('#event-form-back'),
+            modalHeaderLabel: document.querySelector('#current-day-modal-label'),
         };
 
-        // todo
-        // this.eventList = JSON.parse(localStorage.getItem(localStorageName)) || {};
+        // Used to toggle modal event list and form states
+        this.currentDayModalFormToggle = false;
+
+        // Store the event list passed by the backend
         this.eventList = JSON.parse(document.getElementById('calendar-events').textContent) || {};
 
+        // Sort event list based on start_time
+        const eventDates = Object.keys(this.eventList)
+        eventDates.forEach(date => {
+            this.eventList[date].sort(this.compareStartTimes);
+        })
+
+
         this.date = +new Date();
+
+        // Number of days show in the calendar
         this.options.maxDays = 42;
+
+        // Initializes the events and draws all the days, weeks, years, and events
         this.init();
     }
 
@@ -40,6 +53,17 @@ class CALENDAR {
         this.eventsTrigger();
         this.drawAll();
     }
+
+    // Compares event list start_time in order to sort the list
+    compareStartTimes( a, b ) {
+        if ( a.start_time < b.start_time ){
+          return -1;
+        }
+        if ( a.start_time > b.start_time ){
+          return 1;
+        }
+        return 0;
+      }
 
     // draw Methods
     drawAll() {
@@ -140,10 +164,10 @@ class CALENDAR {
 
             if(day.hasEvent){
                 titleFormated = day.hasEvent[0].title.length <= 10 ? day.hasEvent[0].title : day.hasEvent[0].title.substring(0, 7) + '...'
-                firstEvent = `<div class="event event-large">${'06:00 ' + titleFormated}</div>`;
+                firstEvent = `<div class="event event-large">${day.hasEvent[0].start_time} ${titleFormated}</div>`;
                 if(day.hasEvent.length > 1){
                     titleFormated = day.hasEvent[1].title.length <= 10 ? day.hasEvent[1].title : day.hasEvent[1].title.substring(0, 7) + '...'
-                    secondEvent = `<div class="event event-large">${day.hasEvent.length === 2 ? '06:00 ' + titleFormated : (day.hasEvent.length - 1) + ' more events'}</div>`;
+                    secondEvent = `<div class="event event-large">${day.hasEvent.length === 2 ? day.hasEvent[1].start_time + ' ' + titleFormated : (day.hasEvent.length - 1) + ' more events'}</div>`;
                 }
                 smallEvent = `<div class="event event-small">${day.hasEvent.length === 1 ? '1 event' : day.hasEvent.length + ' events'}</div>`;
             }
@@ -186,17 +210,35 @@ class CALENDAR {
         document.querySelector('#description').value = "";
         document.querySelector('#event_type').value = "1";
         document.querySelector('#repeat_type').value = "1";
-        document.querySelector('#start_date').value = "";
+        // document.querySelector('#start_date').value = "";
         document.querySelector('#start_time').value = "";
         document.querySelector('#end_time').value = "";
 
         // Hide form and show event list
-        document.querySelector('#current-day-event-list').classList.remove('d-none');
-        document.querySelector('#current-day-add-event-form').classList.add('d-none');
+        this.toggleModalEventForm();
 
         // Redraw if new event was added
         if(isNewEvent){
             this.drawAll();
+        }
+    }
+
+    toggleModalEventForm(){
+        this.currentDayModalFormToggle = !this.currentDayModalFormToggle;
+
+        if(this.currentDayModalFormToggle){
+            this.elements.currentDayEventsList.classList.add('d-none');
+            this.elements.currentDayFooter.classList.add('d-none');
+            this.elements.modalHeaderLabel.classList.add('d-none');
+            this.elements.currentDayAddEventFormContent.classList.remove('d-none');
+            this.elements.eventFormBackArrow.classList.remove('d-none');
+        }
+        else{
+            this.elements.currentDayEventsList.classList.remove('d-none');
+            this.elements.currentDayFooter.classList.remove('d-none');
+            this.elements.modalHeaderLabel.classList.remove('d-none');
+            this.elements.currentDayAddEventFormContent.classList.add('d-none');
+            this.elements.eventFormBackArrow.classList.add('d-none');
         }
     }
 
@@ -233,12 +275,11 @@ class CALENDAR {
 
         // Add event
         this.elements.eventAddBtn.addEventListener('click', e => {
-            this.elements.currentDayEventsList.classList.add('d-none');
-            this.elements.currentDayAddEventFormContent.classList.remove('d-none');
+            this.toggleModalEventForm();
         });
 
         // Actually add/save event
-        $('#event-form').on('submit', function(e){
+        this.elements.eventForm.addEventListener('submit', function(e){
             $.ajax({
                 type: 'POST',
                 url: '/events/detail',
@@ -274,6 +315,9 @@ class CALENDAR {
                         let dateFormatted = calendar.getFormattedDate(new Date(calendar.date));
                         if (!calendar.eventList[dateFormatted]) calendar.eventList[dateFormatted] = [];
                         calendar.eventList[dateFormatted].push(newEvent);
+
+                        // Sort list again
+                        calendar.eventList[dateFormatted].sort(calendar.compareStartTimes);
                     }
 
                     calendar.clearAddEventFormState(true);
@@ -285,11 +329,13 @@ class CALENDAR {
         });
 
         // Load event fields
-        document.querySelector('#current-day-event-list').addEventListener('click', e => {
+        this.elements.currentDayEventsList.addEventListener('click', e => {
             // Check if an event was clicked
             if(e.target.classList.contains('current-event-item')){
                 // Get event id from attribute
                 let eventId = e.target.getAttribute('event-id');
+
+                let calendar = this;
 
                 $.ajax({
                     type: 'GET',
@@ -314,8 +360,7 @@ class CALENDAR {
                         document.querySelector('#end_time').value = eventData.end_time;
 
                         // Show form
-                        document.querySelector('#current-day-event-list').classList.add('d-none');
-                        document.querySelector('#current-day-add-event-form').classList.remove('d-none');
+                        calendar.toggleModalEventForm();
                     }
                 });
             }
@@ -337,7 +382,7 @@ class CALENDAR {
                 const eventDateList = this.eventList[eventDate];
 
                 eventDateList.forEach( (eventItem, index) => {
-                    if(eventItem.id === Number(eventId) ){
+                    if(eventItem.event_id === Number(eventId) ){
                         eventDateList.splice(index, 1);
                       }
                 });
@@ -363,6 +408,10 @@ class CALENDAR {
 
                 this.drawAll();
             }
+        })
+
+        this.elements.eventFormBackArrow.addEventListener('click', e => {
+            this.clearAddEventFormState();
         })
 
         // Go to today
@@ -405,7 +454,10 @@ class CALENDAR {
         
             // Hide form
             document.querySelector('#current-day-event-list').classList.remove('d-none');
+            document.querySelector('.current-day-footer').classList.remove('d-none');
+            document.querySelector('#current-day-modal-label').classList.remove('d-none');
             document.querySelector('#current-day-add-event-form').classList.add('d-none');
+            document.querySelector('#event-form-back').classList.add('d-none');
         });
 
     }
@@ -455,13 +507,8 @@ class CALENDAR {
     }
 
     getFormattedDate(date) {
-        // return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
-
-
         let day_digit = ( date.getDate() >= 10 ) ? date.getDate() : '0' + date.getDate();
         let month_digit = ( (date.getMonth() + 1) >= 10 ) ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1)
-
-        // let formated2 = `${day_digit}/${month_digit}/${day.year}`;
 
         return `${day_digit}/${month_digit}/${date.getFullYear()}`;
     }
@@ -484,33 +531,3 @@ let calendar = (function () {
     })
 })();
 
-//-------------
-
-// $('#current-day-modal').on('show.bs.modal', function(e) {
-//     let activeDate = calendar.getCalendar().active; 
-
-//     let day = activeDate.day;
-//     let month = activeDate.month + 1;
-//     let year = activeDate.year;
-
-//     if (day < 10){
-//         day = "0" + day;
-//     }
-//     if (month < 10){
-//         month = "0" + month;
-//     }
-
-//     let formatedDate = year + '-' + month + '-' + day;
-
-//     let modal = $(this)
-//     modal.find('#start_date').val(formatedDate)
-//   });
-
-// $('#current-day-modal').on('hide.bs.modal', function(e) {
-//     // Clear form
-//     //... todo
-
-//     // Hide form
-//     document.querySelector('#current-day-event-list').classList.remove('d-none');
-//     document.querySelector('#current-day-add-event-form').classList.add('d-none');
-// });

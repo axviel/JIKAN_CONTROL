@@ -14,6 +14,7 @@
     <div class="modal-content">
     <div class="modal-header current-day-header">
         <h5 class="modal-title" id="current-day-modal-label">Day</h5>
+        <i class="fas fa-arrow-left fa-2x cursor-pointer d-none" id="event-form-back"></i>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
         </button>
@@ -29,14 +30,10 @@
             <div>Current Events:</div>
             <div class="list-group current-day-events-list"></div>
         </div>
-        <div class="add-event-day text-center">
-            <input type="text" class="add-event-day-field" placeholder="Create an Event">
-            <button type="submit" class="btn btn-primary add-event-day-field-btn">New Event</button> 
-        </div>
       </div>
 
       <div id="current-day-add-event-form" class="d-none">
-        <h3>Event</h3>
+        <h3 class="text-center">Event</h3>
         <form method="POST" id="event-form">
           {% csrf_token %}
           <input type="hidden" name="is_calendar_form" id="is_calendar_form" value="true">
@@ -86,15 +83,13 @@
             </div>
           </div>
     
-          <hr>
-          <button type="submit" class="btn btn-block btn-secondary">Save</button>
+          <button type="submit" class="btn btn-block btn-secondary mt-4">Save</button>
         </form>
       </div>
 
     </div>
     <div class="modal-footer current-day-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+      <button type="submit" class="btn btn-primary add-event-day-btn">New Event</button>
     </div>
     </div>
 </div>

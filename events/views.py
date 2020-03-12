@@ -73,7 +73,8 @@ def event(request, event_id=0):
       if 'is_calendar_form' in request.POST:
         context = {
           'event_id': event.id,
-          'title': event.title
+          'title': event.title,
+          'start_time': event.start_time.strftime("%H:%M")
         }
         context = json.dumps(context)
         return HttpResponse(context)
