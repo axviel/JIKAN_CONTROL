@@ -36,7 +36,6 @@
         <h3 class="text-center">Event</h3>
         <form method="POST" id="event-form">
           {% csrf_token %}
-          <input type="hidden" name="is_calendar_form" id="is_calendar_form" value="true">
           {{ form.event_id }}
           <div class="row">
             <div class="col-12">

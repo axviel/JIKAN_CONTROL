@@ -37,8 +37,7 @@ class CALENDAR {
             this.eventList[date].sort(this.compareStartTimes);
         })
 
-
-        this.date = +new Date();
+        this.date = new Date();
 
         // Number of days show in the calendar
         this.options.maxDays = 42;
@@ -71,26 +70,27 @@ class CALENDAR {
         this.drawDays();
         this.drawYearAndCurrentDay();
         this.drawEvents();
-
     }
 
+    // Draws the event list for the current day modal
     drawEvents() {
         let calendar = this.getCalendar();
         let eventList = this.eventList[calendar.active.formatted] || ['No events to display'];
         let eventTemplate = "";
-        eventList.forEach(item => {
-            if(item.title !== undefined ){
+        eventList.forEach(event => {
+            if(event.title !== undefined ){
                 eventTemplate += `
                 <a href="#" class="list-group-item list-group-item-action current-event-item"
-                event-id="${item.event_id}">
-                ${item.title} 
+                event-id="${event.event_id}">
+                (${event.start_time}) 
+                ${event.title} 
                 <i class="fa fa-remove remove-event"></i>
                 </a>`;
             }
             else{
                 eventTemplate = `
                 <a href="#" class="list-group-item list-group-item-action current-event-item">
-                ${item}
+                ${event}
                 </a>`;
             }
         });
@@ -98,6 +98,7 @@ class CALENDAR {
         this.elements.eventList.innerHTML = eventTemplate;
     }
 
+    // Draws month, year and the current day modal day number and week day
     drawYearAndCurrentDay() {
         let calendar = this.getCalendar();
         this.elements.currentMonth.innerHTML = AVALIABLE_MONTHS[calendar.active.month];
@@ -106,6 +107,7 @@ class CALENDAR {
         this.elements.currentWeekDay.innerHTML = AVAILABLE_WEEK_DAYS[calendar.active.week];
     }
 
+    // Draws the calendar days with their events
     drawDays() {
         let calendar = this.getCalendar();
 
@@ -117,7 +119,6 @@ class CALENDAR {
                 currentMonth: false
             }
         }).reverse();
-
 
         let daysInActiveMonth = this.range(calendar.active.days).map((day, idx) => {
             let dayNumber = idx + 1;
@@ -173,18 +174,18 @@ class CALENDAR {
             }
 
             daysTemplate += `
-            <div 
-            class="day-item 
-            ${day.currentMonth ? 'current-month' : 'another-month'}${day.today ? ' active-day ' : ''}
-            ${day.selected ? ' selected-day' : ''}${day.hasEvent ? ' event-day' : ''}" 
-            data-day="${day.dayNumber}" 
-            data-month="${day.month}" 
-            data-year="${day.year}"
-            data-toggle="modal" data-target="#current-day-modal"
-            >
-                <div class="day-number">${day.dayNumber}</div>
-                ${day.hasEvent ? firstEvent + secondEvent + smallEvent : ''}
-            </div>
+                <div 
+                class="day-item 
+                ${day.currentMonth ? 'current-month' : 'another-month'}${day.today ? ' active-day ' : ''}
+                ${day.selected ? ' selected-day' : ''}${day.hasEvent ? ' event-day' : ''}" 
+                data-day="${day.dayNumber}" 
+                data-month="${day.month}" 
+                data-year="${day.year}"
+                data-toggle="modal" data-target="#current-day-modal"
+                >
+                    <div class="day-number">${day.dayNumber}</div>
+                    ${day.hasEvent ? firstEvent + secondEvent + smallEvent : ''}
+                </div>
             `
 
             firstEvent = '';
@@ -195,6 +196,7 @@ class CALENDAR {
         this.elements.days.innerHTML = daysTemplate;
     }
 
+    // Draws the calendar week days (Mon, Tue, etc)
     drawWeekDays() {
         let weekTemplate = "";
         AVAILABLE_WEEK_DAYS.forEach(week => {
@@ -204,13 +206,13 @@ class CALENDAR {
         this.elements.week.innerHTML = weekTemplate;
     }
 
+    // Clears the add evnt form, shows the event list state, and re-draws everything
     clearAddEventFormState(isNewEvent = false){
         // Clear fields
         document.querySelector('#title').value = "";
         document.querySelector('#description').value = "";
         document.querySelector('#event_type').value = "1";
         document.querySelector('#repeat_type').value = "1";
-        // document.querySelector('#start_date').value = "";
         document.querySelector('#start_time').value = "";
         document.querySelector('#end_time').value = "";
 
@@ -223,6 +225,7 @@ class CALENDAR {
         }
     }
 
+    // Toggles the current day modal state between event list and add event form
     toggleModalEventForm(){
         this.currentDayModalFormToggle = !this.currentDayModalFormToggle;
 
@@ -242,7 +245,68 @@ class CALENDAR {
         }
     }
 
-    // Service methods
+    // Updates current selected date
+    updateTime(time) {
+        this.date = new Date(time);
+    }
+
+    // Returns a calendar object
+    getCalendar() {
+        let time = new Date(this.date);
+
+        return {
+            active: {
+                days: this.countOfDaysInMonth(time),
+                startWeek: this.getStartedDayOfWeekByTime(time),
+                day: time.getDate(),
+                week: time.getDay(),
+                month: time.getMonth(),
+                year: time.getFullYear(),
+                formatted: this.getFormattedDate(time),
+                tm: +time
+            },
+            pMonth: new Date(time.getFullYear(), time.getMonth() - 1, 1),
+            nMonth: new Date(time.getFullYear(), time.getMonth() + 1, 1),
+            pYear: new Date(new Date(time).getFullYear() - 1, 0, 1),
+            nYear: new Date(new Date(time).getFullYear() + 1, 0, 1)
+        }
+    }
+
+    // Returns the number of days in the month
+    countOfDaysInMonth(time) {
+        let date = this.getMonthAndYear(time);
+        return new Date(date.year, date.month + 1, 0).getDate();
+    }
+
+    // Returns the first day of the week for that month
+    getStartedDayOfWeekByTime(time) {
+        let date = this.getMonthAndYear(time);
+        return new Date(date.year, date.month, 1).getDay();
+    }
+
+    // Returns month and year
+    getMonthAndYear(time) {
+        let date = new Date(time);
+        return {
+            year: date.getFullYear(),
+            month: date.getMonth()
+        }
+    }
+
+    // Returns a formated date that can be used to rwd lists from the event list
+    getFormattedDate(date) {
+        let day_digit = ( date.getDate() >= 10 ) ? date.getDate() : '0' + date.getDate();
+        let month_digit = ( (date.getMonth() + 1) >= 10 ) ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1)
+
+        return `${day_digit}/${month_digit}/${date.getFullYear()}`;
+    }
+
+    // ???
+    range(number) {
+        return new Array(number).fill().map((e, i) => i);
+    }
+
+    // Initializes the events
     eventsTrigger() {
 
         // Show pervious month
@@ -261,25 +325,34 @@ class CALENDAR {
 
         // Go to day
         this.elements.days.addEventListener('click', e => {
+
             let element = e.srcElement;
-            // Event propagation when click day-number
+
+            // If current element does not have the attribute, use the parent element
             element = element.getAttribute('data-day') ? element : element.parentElement;
+
             let day = element.getAttribute('data-day');
             let month = element.getAttribute('data-month');
             let year = element.getAttribute('data-year');
-            if (!day) return false;
+
+            if (!day) {
+                return false;
+            }
+
             let strDate = `${Number(month) + 1}/${day}/${year}`;
             this.updateTime(strDate);
             this.drawAll()
         });
 
-        // Add event
+        // Display event form
         this.elements.eventAddBtn.addEventListener('click', e => {
             this.toggleModalEventForm();
         });
 
-        // Actually add/save event
-        this.elements.eventForm.addEventListener('submit', function(e){
+        // Save event
+        this.elements.eventForm.addEventListener('submit', e => {
+            let thisCalendar = this;
+
             $.ajax({
                 type: 'POST',
                 url: '/events/detail',
@@ -292,16 +365,16 @@ class CALENDAR {
                     start_date: document.querySelector('#start_date').value,
                     start_time: document.querySelector('#start_time').value,
                     end_time: document.querySelector('#end_time').value,
-                    is_calendar_form: document.querySelector('#is_calendar_form').value,
+                    is_calendar_form: true,
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
                 },
                 success: function(data){
                     let newEvent = JSON.parse(data);
 
-                    //check for existing event to update instea dof add????
+                    // Update the event if it exists in the event list
                     let isNotUpdate = true
-                    const eventDate = calendar.getCalendar().active.formatted;
-                    const eventDateList = calendar.eventList[eventDate];
+                    const eventDate = thisCalendar.getCalendar().active.formatted;
+                    const eventDateList = thisCalendar.eventList[eventDate];
                     if(eventDateList){
                         eventDateList.forEach( (eventItem, index) => {
                             if(eventItem.event_id === newEvent.event_id ){
@@ -311,20 +384,22 @@ class CALENDAR {
                         });
                     }
 
+                    // Save the event if it doesn't exist in the event list
                     if(isNotUpdate){
-                        let dateFormatted = calendar.getFormattedDate(new Date(calendar.date));
-                        if (!calendar.eventList[dateFormatted]) calendar.eventList[dateFormatted] = [];
-                        calendar.eventList[dateFormatted].push(newEvent);
+                        let dateFormatted = thisCalendar.getFormattedDate(new Date(thisCalendar.date));
+                        if (!thisCalendar.eventList[dateFormatted]) thisCalendar.eventList[dateFormatted] = [];
+                        thisCalendar.eventList[dateFormatted].push(newEvent);
 
                         // Sort list again
-                        calendar.eventList[dateFormatted].sort(calendar.compareStartTimes);
+                        thisCalendar.eventList[dateFormatted].sort(thisCalendar.compareStartTimes);
                     }
 
-                    calendar.clearAddEventFormState(true);
+                    // Clear form and state
+                    thisCalendar.clearAddEventFormState(true);
                 }
             });
 
-            // Prevent form submission w/ redirect
+            // Prevent form submission with redirect
             e.preventDefault();
         });
 
@@ -335,7 +410,8 @@ class CALENDAR {
                 // Get event id from attribute
                 let eventId = e.target.getAttribute('event-id');
 
-                let calendar = this;
+                // Save this value to calendar variable in order to use it inside the success callback
+                let calendar = this.getCalendar();
 
                 $.ajax({
                     type: 'GET',
@@ -370,29 +446,11 @@ class CALENDAR {
         this.elements.eventList.addEventListener('click', e => {
             if(e.target.classList.contains('remove-event')){
                 const eventElement = e.target.parentElement;
-                const eventName = eventElement.textContent;
                 const eventDate = this.getCalendar().active.formatted;
-
                 const eventId = eventElement.getAttribute("event-id");
 
-                // Remove from UI
-                eventElement.remove();
+                let thisCalendar = this;
 
-                // Remove from local storage
-                const eventDateList = this.eventList[eventDate];
-
-                eventDateList.forEach( (eventItem, index) => {
-                    if(eventItem.event_id === Number(eventId) ){
-                        eventDateList.splice(index, 1);
-                      }
-                });
-
-                //If eventDateList is empty,remove it from the eventList
-                if(eventDateList.length === 0){
-                    delete this.eventList[eventDate];
-                }
-
-                // django remove
                 $.ajax({
                     type: 'POST',
                     url: '/events/remove',
@@ -401,15 +459,29 @@ class CALENDAR {
                         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
                     },
                     success:function(){
-                        alert('Event removed!')
+                        // Remove from UI
+                        eventElement.remove();
+
+                        // Remove from the eventDateList
+                        const eventDateList = thisCalendar.eventList[eventDate];
+                        eventDateList.forEach( (eventItem, index) => {
+                            if(eventItem.event_id === Number(eventId) ){
+                                eventDateList.splice(index, 1);
+                            }
+                        });
+
+                        //If eventDateList is empty, remove it from the eventList
+                        if(eventDateList.length === 0){
+                            delete thisCalendar.eventList[eventDate];
+                        }
+
+                        thisCalendar.drawAll();
                     }
                 });
-
-
-                this.drawAll();
             }
         })
 
+        // Clear event form when the back button is clicked
         this.elements.eventFormBackArrow.addEventListener('click', e => {
             this.clearAddEventFormState();
         })
@@ -420,7 +492,9 @@ class CALENDAR {
             this.drawAll()
         });
 
-        // Current Day Modal Events
+        // -- Current Day Modal Events --
+
+        // Open the current day modal
         $('#current-day-modal').on('show.bs.modal', function(e) {
             let activeDate = calendar.getCalendar().active; 
         
@@ -436,11 +510,13 @@ class CALENDAR {
             }
         
             let formatedDate = year + '-' + month + '-' + day;
-        
+            
+            // Pass the current day date to the start_date field of the event form
             let modal = $(this)
             modal.find('#start_date').val(formatedDate)
           });
         
+        // Close the current day modal
         $('#current-day-modal').on('hide.bs.modal', function(e) {
             // Clear form
             document.querySelector('#event_id').value = null;
@@ -463,59 +539,7 @@ class CALENDAR {
     }
 
 
-    updateTime(time) {
-        this.date = +new Date(time);
-    }
-
-    getCalendar() {
-        let time = new Date(this.date);
-
-        return {
-            active: {
-                days: this.countOfDaysInMonth(time),
-                startWeek: this.getStartedDayOfWeekByTime(time),
-                day: time.getDate(),
-                week: time.getDay(),
-                month: time.getMonth(),
-                year: time.getFullYear(),
-                formatted: this.getFormattedDate(time),
-                tm: +time
-            },
-            pMonth: new Date(time.getFullYear(), time.getMonth() - 1, 1),
-            nMonth: new Date(time.getFullYear(), time.getMonth() + 1, 1),
-            pYear: new Date(new Date(time).getFullYear() - 1, 0, 1),
-            nYear: new Date(new Date(time).getFullYear() + 1, 0, 1)
-        }
-    }
-
-    countOfDaysInMonth(time) {
-        let date = this.getMonthAndYear(time);
-        return new Date(date.year, date.month + 1, 0).getDate();
-    }
-
-    getStartedDayOfWeekByTime(time) {
-        let date = this.getMonthAndYear(time);
-        return new Date(date.year, date.month, 1).getDay();
-    }
-
-    getMonthAndYear(time) {
-        let date = new Date(time);
-        return {
-            year: date.getFullYear(),
-            month: date.getMonth()
-        }
-    }
-
-    getFormattedDate(date) {
-        let day_digit = ( date.getDate() >= 10 ) ? date.getDate() : '0' + date.getDate();
-        let month_digit = ( (date.getMonth() + 1) >= 10 ) ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1)
-
-        return `${day_digit}/${month_digit}/${date.getFullYear()}`;
-    }
-
-    range(number) {
-        return new Array(number).fill().map((e, i) => i);
-    }
+    
 }
 
 
