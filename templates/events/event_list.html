@@ -55,7 +55,7 @@
 
           {% for event in events %}
 
-            <tr>
+            <tr event-id="{{ event.id }}">
               <td>{{ event.title }}</td>
               <td>{{ event.event_type }}</td>
               <td>{{ event.start_time }}</td>
@@ -64,7 +64,15 @@
               <!-- Use humanize app to format date? (41) -->
               <td>{{ event.start_date }}</td>
               <!-- Call detail view method (Uses urls path name) -->
-              <td><a href="{% url 'event_detail' event.id %}"><i class="fas fa-info-circle show-event-detail"></i></a></td>
+              <td>
+                <div class="grid-actions text-center">
+                  <a href="{% url 'event_detail' event.id %}"><i class="fas fa-info-circle cursor-pointer show-event-detail"></i></a>
+                  {% if not event.end_date %}
+                    <i class="fas fa-check cursor-pointer text-success complete-event mx-2"></i>
+                  {% endif %}
+                  <i class="fas fa-trash-alt cursor-pointer text-danger remove-event mr-2"></i>
+                </div>
+              </td>
             </tr>
 
           {% endfor %}

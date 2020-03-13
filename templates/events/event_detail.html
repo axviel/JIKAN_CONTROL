@@ -61,6 +61,16 @@
           </label>
           {{ form.start_date }}
         </div>
+
+        {% if form.end_date.value %}
+          <div class="col-12">
+            <label for="{{ form.end_date.name }}" class="col-form-label">
+              {{ form.end_date.label }}{% if form.end_date.field.required %}<span class="required">*</span>{% endif %}
+            </label>
+            {{ form.end_date }}
+          </div>
+        {% endif %}
+
         <div class="col-6">
           <label for="{{ form.start_time.name }}" class="col-form-label">
             {{ form.start_time.label }}{% if form.start_time.field.required %}<span class="required">*</span>{% endif %}
@@ -76,7 +86,28 @@
       </div>
 
       <button type="submit" class="btn btn-block btn-secondary mt-4">Save</button>
+      
     </form>
+
+    {% if form.event_id.value %}
+      {% if not form.end_date.value %}
+        <a href="javascript:{document.getElementById('complete').submit()}"" class="btn btn-block btn-success text-white mt-4">Complete</a>
+        <form action="{% url 'event_complete' %}" id="complete" method="POST">
+          {% csrf_token %}
+          {{ form.event_id }}
+          <input type="hidden" name="is_detail" value="true">
+          <input type="hidden">
+        </form>
+      {% endif %}
+      <a href="javascript:{document.getElementById('remove').submit()}"" class="btn btn-block btn-danger text-white mt-4">Remove</a>
+      <form action="{% url 'event_remove' %}" id="remove" method="POST">
+        {% csrf_token %}
+        {{ form.event_id }}
+        <input type="hidden" name="is_detail" value="true">
+        <input type="hidden">
+      </form>
+    {% endif %}
+
   </div>
 </section>
 
