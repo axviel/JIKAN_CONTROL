@@ -238,24 +238,31 @@ def search(request):
 # Marks an event as hidden
 def remove(request):
   if request.method == 'POST':
-    event_id = request.POST['id']
+    event_id = request.POST['event_id']
 
     event = Event.objects.get(id=event_id)
     event.is_hidden = True
     event.save()
 
-    return HttpResponse('')
+    if 'is_detail' in request.POST:
+      return redirect('event_list')
+    else:
+      return HttpResponse('')
+
 
 # Assings an end_date to the event, showing that it is completed
 def complete(request):
   if request.method == 'POST':
-    event_id = request.POST['id']
+    event_id = request.POST['event_id']
 
     event = Event.objects.get(id=event_id)
     event.end_date = datetime.date.today()
     event.save()
 
-    return HttpResponse('')
+    if 'is_detail' in request.POST:
+      return redirect('event_detail', event_id=event_id)
+    else:
+      return HttpResponse('')
 
 # Marks are required fields as not required and adds an 'Any' value to the drop down lists
 def search_form_defaults(form):

@@ -475,7 +475,7 @@ class CALENDAR {
                     type: 'POST',
                     url: '/events/remove',
                     data:{
-                        id: eventId,
+                        event_id: eventId,
                         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
                     },
                     success:function(){
@@ -514,7 +514,7 @@ class CALENDAR {
                     type: 'POST',
                     url: '/events/complete',
                     data:{
-                        id: eventId,
+                        event_id: eventId,
                         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
                     },
                     success:function(){
