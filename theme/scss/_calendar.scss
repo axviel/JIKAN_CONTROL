@@ -15,6 +15,7 @@
       .fa:hover {
         color: #404040; 
       }
+
     }
   }
 
@@ -147,6 +148,10 @@
 
   .current-day-events {
     margin-bottom: 1rem; 
+
+    .current-day-events-list .current-event-item .fas {
+      font-size: 1.35rem;
+    }
   }
 
   .current-day-number {

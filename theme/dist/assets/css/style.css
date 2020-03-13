@@ -212,6 +212,8 @@
 
 #current-day-modal .current-day-events {
   margin-bottom: 1rem; }
+  #current-day-modal .current-day-events .current-day-events-list .current-event-item .fas {
+    font-size: 1.35rem; }
 
 #current-day-modal .current-day-number {
   font-size: 92px; }

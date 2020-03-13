@@ -23,6 +23,8 @@ class CALENDAR {
             eventForm: document.querySelector('#event-form'),
             eventFormBackArrow: document.querySelector('#event-form-back'),
             modalHeaderLabel: document.querySelector('#current-day-modal-label'),
+            eventEndDateField: document.querySelector('#end_date_field'),
+            saveEventFormButton: document.querySelector('#save-event-form-btn'),
         };
 
         // Used to toggle modal event list and form states
@@ -76,24 +78,30 @@ class CALENDAR {
     drawEvents() {
         let calendar = this.getCalendar();
         let eventList = this.eventList[calendar.active.formatted] || ['No events to display'];
-        let eventTemplate = "";
+        // let eventTemplate = "";
+        let eventTemplate = "<ul class='list-group'>";
         eventList.forEach(event => {
             if(event.title !== undefined ){
                 eventTemplate += `
-                <a href="#" class="list-group-item list-group-item-action current-event-item"
-                event-id="${event.event_id}">
-                (${event.start_time}) 
-                ${event.title} 
-                <i class="fa fa-remove remove-event"></i>
-                </a>`;
+                    <li class="${event.is_completed ? 'bg-info' : ''} current-event-item list-group-item list-group-item-action d-flex justify-content-between align-items-center" event-id="${event.event_id}">
+                        (${event.start_time}) ${event.title}
+                        <div>
+                            ${!event.is_completed ? '<i class="fas fa-check complete-event cursor-pointer text-success mr-4"></i>' : ''}
+                            <i class="fas fa-trash-alt remove-event cursor-pointer text-danger"></i>
+                        </div>
+                    </li>
+                `;
             }
             else{
                 eventTemplate = `
-                <a href="#" class="list-group-item list-group-item-action current-event-item">
-                ${event}
-                </a>`;
+                    <li class="current-event-item list-group-item d-flex justify-content-between align-items-center">
+                        ${event}
+                    </li>
+                `;
             }
         });
+
+        eventTemplate += "</ul>";
 
         this.elements.eventList.innerHTML = eventTemplate;
     }
@@ -165,7 +173,7 @@ class CALENDAR {
 
             if(day.hasEvent){
                 titleFormated = day.hasEvent[0].title.length <= 10 ? day.hasEvent[0].title : day.hasEvent[0].title.substring(0, 7) + '...'
-                firstEvent = `<div class="event event-large">${day.hasEvent[0].start_time} ${titleFormated}</div>`;
+                firstEvent = `<div class="event event-large ${day.hasEvent[0].is_completed ? 'bg-info text-dark' : ''}">${day.hasEvent[0].start_time} ${titleFormated}</div>`;
                 if(day.hasEvent.length > 1){
                     titleFormated = day.hasEvent[1].title.length <= 10 ? day.hasEvent[1].title : day.hasEvent[1].title.substring(0, 7) + '...'
                     secondEvent = `<div class="event event-large">${day.hasEvent.length === 2 ? day.hasEvent[1].start_time + ' ' + titleFormated : (day.hasEvent.length - 1) + ' more events'}</div>`;
@@ -215,6 +223,10 @@ class CALENDAR {
         document.querySelector('#repeat_type').value = "1";
         document.querySelector('#start_time').value = "";
         document.querySelector('#end_time').value = "";
+
+        // Hide end_date field if it was visible and show save button
+        this.elements.eventEndDateField.classList.add('d-none');
+        this.elements.saveEventFormButton.classList.remove('d-none');
 
         // Hide form and show event list
         this.toggleModalEventForm();
@@ -411,7 +423,7 @@ class CALENDAR {
                 let eventId = e.target.getAttribute('event-id');
 
                 // Save this value to calendar variable in order to use it inside the success callback
-                let calendar = this.getCalendar();
+                let thisCalendar = this;
 
                 $.ajax({
                     type: 'GET',
@@ -435,8 +447,16 @@ class CALENDAR {
                         document.querySelector('#start_time').value = eventData.start_time;
                         document.querySelector('#end_time').value = eventData.end_time;
 
+                        // If event is completed, add end_date and display the field
+                        if(eventData.end_date){
+                            let eventEndDate = eventData.end_date.substring(0,10);
+                            document.querySelector('#end_date').value = eventEndDate;
+                            thisCalendar.elements.eventEndDateField.classList.remove('d-none');
+                            thisCalendar.elements.saveEventFormButton.classList.add('d-none');
+                        }
+
                         // Show form
-                        calendar.toggleModalEventForm();
+                        thisCalendar.toggleModalEventForm();
                     }
                 });
             }
@@ -445,7 +465,7 @@ class CALENDAR {
         // Remove event
         this.elements.eventList.addEventListener('click', e => {
             if(e.target.classList.contains('remove-event')){
-                const eventElement = e.target.parentElement;
+                const eventElement = e.target.parentElement.parentElement;
                 const eventDate = this.getCalendar().active.formatted;
                 const eventId = eventElement.getAttribute("event-id");
 
@@ -474,6 +494,37 @@ class CALENDAR {
                         if(eventDateList.length === 0){
                             delete thisCalendar.eventList[eventDate];
                         }
+
+                        thisCalendar.drawAll();
+                    }
+                });
+            }
+        })
+
+        // Complete event
+        this.elements.eventList.addEventListener('click', e => {
+            if(e.target.classList.contains('complete-event')){
+                const eventElement = e.target.parentElement.parentElement;
+                const eventDate = this.getCalendar().active.formatted;
+                const eventId = eventElement.getAttribute("event-id");
+
+                let thisCalendar = this;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/events/complete',
+                    data:{
+                        id: eventId,
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    success:function(){
+                        // Update event to is_complete = true
+                        const eventDateList = thisCalendar.eventList[eventDate];
+                        eventDateList.forEach( (eventItem, index) => {
+                            if(eventItem.event_id === Number(eventId) ){
+                                eventItem.is_completed = true;
+                            }
+                        });
 
                         thisCalendar.drawAll();
                     }
@@ -534,22 +585,14 @@ class CALENDAR {
             document.querySelector('#current-day-modal-label').classList.remove('d-none');
             document.querySelector('#current-day-add-event-form').classList.add('d-none');
             document.querySelector('#event-form-back').classList.add('d-none');
+            document.querySelector('#end_date_field').classList.add('d-none');
         });
 
     }
 
-
-    
 }
 
-
-// (function () {
-//     new CALENDAR({
-//         id: "calendar"
-//     })
-// })();
-
-let calendar = (function () {
+const calendar = (function () {
     return new CALENDAR({
         id: "calendar"
     })
