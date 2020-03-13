@@ -12,6 +12,8 @@ def create_model(predict, data_to_use):
     # data that we are going to use
     data = data[data_to_use]
 
+    data["sex"].replace({"F": "0", "M": "1"}, inplace=True)
+
     # remove the prediction data
     x = np.array(data.drop([predict], 1))
     y = np.array(data[predict])
@@ -19,8 +21,6 @@ def create_model(predict, data_to_use):
     x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.1)
 
     linear = linear_model.LinearRegression()
-
-    print(y_train)
 
     linear.fit(x_train, y_train)
     accuracy = linear.score(x_test, y_test)
@@ -34,8 +34,8 @@ def save_model(model, name):
 
 
 def get_model(name):
-    pickel_in = open("ml_models/" + name, "rb")
-    return pickle.load(pickel_in)
+    save = open("ml_models/" + name, "rb")
+    return pickle.load(save)
 
 
 def print_coefficient_and_intercept(model):
@@ -64,15 +64,15 @@ def add_new_data(x, y, model_name):
 # data to predict
 predict = "G3"
 
-data = ["G1", "G2", "G3", "studytime", "failures", "absences"]
+data = ["G1", "G2", "G3", "studytime", "failures", "absences", "sex"]
 
-model = get_best_model(predict, data, 95)
-save_model(model, "study.pickle")
+model = get_best_model(predict, data, 97)
+save_model(model, "study.bi")
 
-model = get_model("study.pickle")
+model = get_model("study.bi")
 
 print_coefficient_and_intercept(model)
 
-print("prediction: ", model.predict([[10, 12, 2, 0, 0]])[0])
+print("prediction: ", model.predict([[10, 12, 2, 0, 0, 0]])[0])
 
-# add_new_data([10, 12, 2, 0, 0], 11, "study.pickle")
+# add_new_data([10, 12, 2, 0, 0], 11, "study.bi")
