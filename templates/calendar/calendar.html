@@ -68,6 +68,15 @@
               </label>
               {{ form.start_date }}
             </div>
+
+            <!-- Show only if the event is completed -->
+            <div class="col-12 d-none" id="end_date_field">
+              <label for="{{ form.end_date.name }}" class="col-form-label">
+                {{ form.end_date.label }}{% if form.end_date.field.required %}<span class="required">*</span>{% endif %}
+              </label>
+              {{ form.end_date }}
+            </div>
+
             <div class="col-6">
               <label for="{{ form.start_time.name }}" class="col-form-label">
                 {{ form.start_time.label }}{% if form.start_time.field.required %}<span class="required">*</span>{% endif %}
@@ -82,7 +91,7 @@
             </div>
           </div>
     
-          <button type="submit" class="btn btn-block btn-secondary mt-4">Save</button>
+          <button type="submit" class="btn btn-block btn-secondary mt-4" id="save-event-form-btn">Save</button>
         </form>
       </div>
 
@@ -102,8 +111,8 @@
       <div class="calendar-change-year">
           <div class="calendar-change-year-slider">
               <button class="btn btn-primary calendar-today-btn">Today</button>
-              <i class="fas fa-caret-left cursor-pointer calendar-change-month-slider-prev"></i>
-              <i class="fas fa-caret-right cursor-pointer calendar-change-month-slider-next"></i>
+              <i class="fas fa-caret-left cursor-pointer calendar-change-month-slider-prev mx-2"></i>
+              <i class="fas fa-caret-right cursor-pointer calendar-change-month-slider-next mx-2"></i>
               <span class="calendar-current-month"></span>
               <span class="calendar-current-year"></span>
               

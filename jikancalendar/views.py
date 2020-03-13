@@ -17,7 +17,8 @@ def index(request):
     event_data = {
         'event_id': event.id,
         'title': event.title,
-        'start_time': event.start_time.strftime("%H:%M") # Keep only hour and minutes
+        'start_time': event.start_time.strftime("%H:%M"), # Keep only hour and minutes
+        'is_completed': (event.end_date != None)
       }
 
     if key in events_data:
@@ -32,5 +33,6 @@ def index(request):
 
   # Disable date field
   context['form'].fields['start_date'].widget.attrs['disabled'] = True
+  context['form'].fields['end_date'].widget.attrs['disabled'] = True
 
   return render(request, 'calendar/calendar.html', context)

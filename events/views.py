@@ -116,6 +116,7 @@ def event(request, event_id=0):
         'event_type': event.event_type.pk,
         'repeat_type': event.repeat_type.pk,
         'start_date': event.start_date,
+        'end_date': event.end_date,
         'start_time': event.start_time,
         'end_time': event.end_time
       }
@@ -140,6 +141,7 @@ def event(request, event_id=0):
         'event_type': event.event_type.pk,
         'repeat_type': event.repeat_type.pk,
         'start_date': event.start_date,
+        'end_date': event.end_date,
         'start_time': event.start_time,
         'end_time': event.end_time
       })
@@ -240,6 +242,17 @@ def remove(request):
 
     event = Event.objects.get(id=event_id)
     event.is_hidden = True
+    event.save()
+
+    return HttpResponse('')
+
+# Assings an end_date to the event, showing that it is completed
+def complete(request):
+  if request.method == 'POST':
+    event_id = request.POST['id']
+
+    event = Event.objects.get(id=event_id)
+    event.end_date = datetime.date.today()
     event.save()
 
     return HttpResponse('')

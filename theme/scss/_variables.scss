@@ -46,6 +46,7 @@ $teal:    #20c997 !default;
 $cyan:    #17a2b8 !default;
 
 $better-blue: #00539CFF !default;
+$completed-blue: #b7ddff !default;
 $hot-pink: #ff144e !default;
 $hot-pink-dark: #b31039 !default;
 
@@ -73,7 +74,7 @@ $colors: map-merge(
 $primary:       $better-blue !default;
 $secondary:     $hot-pink !default;
 $success:       $green !default;
-$info:          $cyan !default;
+$info:          $completed-blue !default;
 $warning:       $yellow !default;
 $danger:        $red !default;
 $light:         $gray-100 !default;
