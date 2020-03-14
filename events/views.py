@@ -6,6 +6,9 @@ from django.http import HttpResponse
 from .models import Event, EventType, RepeatType
 from .forms import EventForm
 
+from notes.models import Note
+from exams.models import Exam
+
 import datetime
 import json
 
@@ -145,8 +148,14 @@ def event(request, event_id=0):
         'start_time': event.start_time,
         'end_time': event.end_time
       })
+      # Get event notes and exams
+      notes = Note.objects.all().filter(event_id=event.id,is_hidden=False)
+      exams = Exam.objects.all().filter(event_id=event.id,is_hidden=False)
 
       context['form'] = form
+      context['notes'] = notes
+      context['exams'] = exams
+
     else:
       form = EventForm(initial={
         'start_date': datetime.date.today()
@@ -248,7 +257,6 @@ def remove(request):
       return redirect('event_list')
     else:
       return HttpResponse('')
-
 
 # Assings an end_date to the event, showing that it is completed
 def complete(request):
