@@ -33,12 +33,43 @@ class CALENDAR {
         // Store the event list passed by the backend
         this.eventList = JSON.parse(document.getElementById('calendar-events').textContent) || {};
 
+        // Contains the events that repeat 
+        this.dailyRepeatEventList = []; 
+        this.weeklyRepeatEventList = []; 
+        this.monthlyRepeatEventList = []; 
+        this.yearlyRepeatEventList = []; 
+
         // Sort event list based on start_time
         const eventDates = Object.keys(this.eventList)
         eventDates.forEach(date => {
             this.eventList[date].sort(this.compareStartTimes);
-        })
+            let theEventDate;
+            let key;
 
+            this.eventList[date].forEach(event => {
+                theEventDate = new Date(event.start_date);
+
+                // Daily
+                if(event.repeat_type === 2){
+                    this.dailyRepeatEventList.push(event);
+                }
+                // Weekly
+                else if(event.repeat_type === 3){
+                    this.weeklyRepeatEventList.push(event);
+                }
+                // Monthly
+                else if(event.repeat_type === 4){
+                    this.monthlyRepeatEventList.push(event);
+                }
+                // Yearly
+                else if(event.repeat_type === 5){
+                    this.yearlyRepeatEventList.push(event);
+                }
+            });
+            
+        });
+
+        // Current date
         this.date = new Date();
 
         // Number of days show in the calendar
@@ -64,7 +95,113 @@ class CALENDAR {
           return 1;
         }
         return 0;
-      }
+    }
+
+    // Returns an object/list of repeat event days
+    currentMonthRepeatedEvents(days){
+
+        // Get date bound
+        let day = days[0];
+        let firstCalendarDayDate =  this.getFormattedDate(new Date(`${Number(day.month) + 1}/${day.dayNumber}/${day.year}`));
+        day = days[days.length - 1];
+        let lastCalendarDayDate =  this.getFormattedDate(new Date(`${Number(day.month) + 1}/${day.dayNumber}/${day.year}`));
+
+        let dayDate;
+        let eventDate;
+
+        days.forEach(day => {
+            dayDate = new Date(day.formatedDate);
+
+            // Check for daily repeats
+            this.dailyRepeatEventList.forEach(event => {
+                // update event date?
+                // i think i need it pa que salgan en el modal
+
+                // Add if the day date is after to event start date and before event end date
+                eventDate = new Date(event.start_date);
+                if( ( eventDate.getTime() < dayDate.getTime() && !event.end_date ) || 
+                    (   event.end_date && 
+                        eventDate.getTime() < dayDate.getTime() &&
+                        new Date(event.end_date).getTime() > dayDate.getTime() ) ){
+
+                    if(day.hasEvent){
+                        day.hasEvent.push(event);
+                    }
+                    else{
+                        day.hasEvent = [event];
+                    }
+
+                }
+            })
+
+            // Check for weekly repeats
+            this.weeklyRepeatEventList.forEach(event => {
+                eventDate = new Date(event.start_date);
+
+                // Add if it's the same weekday
+                if( eventDate.getDay() === dayDate.getDay() &&
+                    ( ( eventDate.getTime() < dayDate.getTime() && !event.end_date ) || 
+                        (   event.end_date && 
+                            eventDate.getTime() < dayDate.getTime() &&
+                            new Date(event.end_date).getTime() > dayDate.getTime() ) ) ){
+
+                    if(day.hasEvent){
+                        day.hasEvent.push(event);
+                    }
+                    else{
+                        day.hasEvent = [event];
+                    }
+
+                }
+            })
+
+            // Check for monthly repeats
+            this.monthlyRepeatEventList.forEach(event => {
+                eventDate = new Date(event.start_date);
+
+                // Add if it's the same day number
+                if( eventDate.getDate() === dayDate.getDate() &&
+                    ( ( eventDate.getTime() < dayDate.getTime() && !event.end_date ) || 
+                        (   event.end_date && 
+                            eventDate.getTime() < dayDate.getTime() &&
+                            new Date(event.end_date).getTime() > dayDate.getTime() ) ) ){
+
+                    if(day.hasEvent){
+                        day.hasEvent.push(event);
+                    }
+                    else{
+                        day.hasEvent = [event];
+                    }
+
+                }
+            })
+            
+            // Check for yearly repeats
+            this.yearlyRepeatEventList.forEach(event => {
+                eventDate = new Date(event.start_date);
+
+                // Add if it's the same day number
+                if( eventDate.getMonth() === dayDate.getMonth() &&
+                    eventDate.getDate() === dayDate.getDate() &&
+                    ( ( eventDate.getTime() < dayDate.getTime() && !event.end_date ) || 
+                        (   event.end_date && 
+                            eventDate.getTime() < dayDate.getTime() &&
+                            new Date(event.end_date).getTime() > dayDate.getTime() ) ) ){
+
+                    if(day.hasEvent){
+                        day.hasEvent.push(event);
+                    }
+                    else{
+                        day.hasEvent = [event];
+                    }
+
+                }
+            })
+
+        });
+
+
+    }
 
     // draw Methods
     drawAll() {
@@ -78,7 +215,6 @@ class CALENDAR {
     drawEvents() {
         let calendar = this.getCalendar();
         let eventList = this.eventList[calendar.active.formatted] || ['No events to display'];
-        // let eventTemplate = "";
         let eventTemplate = "<ul class='list-group'>";
         eventList.forEach(event => {
             if(event.title !== undefined ){
@@ -157,11 +293,14 @@ class CALENDAR {
         days = days.map(day => {
             let newDayParams = day;
 
-            let formatted = this.getFormattedDate(new Date(`${Number(day.month) + 1}/${day.dayNumber}/${day.year}`));
-
-            newDayParams.hasEvent = this.eventList[formatted];
+            newDayParams.formatedDate = this.getFormattedDate(new Date(`${Number(day.month) + 1}/${day.dayNumber}/${day.year}`));
+            
+            newDayParams.hasEvent = this.eventList[newDayParams.formatedDate];
             return newDayParams;
         });
+
+        // Concat repeated days to this month's items
+        this.currentMonthRepeatedEvents(days);
 
         let daysTemplate = "";
         let firstEvent = "";
@@ -310,7 +449,8 @@ class CALENDAR {
         let day_digit = ( date.getDate() >= 10 ) ? date.getDate() : '0' + date.getDate();
         let month_digit = ( (date.getMonth() + 1) >= 10 ) ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1)
 
-        return `${day_digit}/${month_digit}/${date.getFullYear()}`;
+        // return `${day_digit}/${month_digit}/${date.getFullYear()}`;
+        return `${month_digit}/${day_digit}/${date.getFullYear()}`;
     }
 
     // ???
