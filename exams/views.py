@@ -194,12 +194,7 @@ def search(request):
   if 'title' in request.GET:
     form = ExamForm(initial={
           'title': request.GET['title'],
-          'event_type': request.GET['event_type'],
-          'repeat_type': request.GET['repeat_type'],
-          'start_date': request.GET['start_date'],
-          'end_date': request.GET['end_date'],
-          'start_time': request.GET['start_time'],
-          'end_time': request.GET['end_time']
+          'created_date': request.GET['created_date'],
         })
 
     search_form_defaults(form)
@@ -208,14 +203,14 @@ def search(request):
 
   # Request does not contain form submission, return empty form
   else:
-    form = EventForm()
+    form = ExamForm()
 
     search_form_defaults(form)
 
     context['form'] = form
 
 
-  return render(request, 'events/event_search.html', context)
+  return render(request, 'exams/exam_search.html', context)
 
 # Marks an exam as hidden
 def remove(request):
@@ -235,12 +230,6 @@ def remove(request):
 # Marks are required fields as not required and adds an 'Any' value to the drop down lists
 def search_form_defaults(form):
   form.fields['title'].required = False
-  form.fields['event_type'].required = False
-  form.fields['repeat_type'].required = False
-  form.fields['start_date'].required = False
-  form.fields['end_date'].required = False
-  form.fields['start_time'].required = False
-  form.fields['end_time'].required = False
+  form.fields['created_date'].required = False
 
-  form.fields['event_type'].empty_label = 'Any Type'
-  form.fields['repeat_type'].empty_label = 'Any Type'
+  # form.fields['event_type'].empty_label = 'Any Type'

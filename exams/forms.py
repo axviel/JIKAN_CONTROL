@@ -30,3 +30,10 @@ class ExamForm(forms.Form):
       'id': 'description', 
       'class': 'form-control'})
     )
+  created_date = forms.DateTimeField(
+    label='Created Date', 
+    widget=DateInput(attrs={
+      'id': 'created_date', 
+      'class': 'form-control'}),
+      required=False
+    )

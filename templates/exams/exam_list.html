@@ -8,6 +8,9 @@
 
 {% block content %}
 
+<!-- Alerts -->
+{% include 'partials/_alerts.html' %}
+
 <!-- Breadcrumb -->
 <section id="bc" class="mt-3">
   <div class="container">
@@ -17,7 +20,7 @@
           <a href="{% url 'calendar' %}">
             <i class="fas fa-home"></i> Home</a>
         </li>
-        <li class="breadcrumb-item active"> Exams</li>
+        <li class="breadcrumb-item active"> Exam List</li>
       </ol>
     </nav>
   </div>
@@ -26,9 +29,10 @@
 <!-- Exam Section -->
 <section id="exams" class="py-4 main-content">
   <div class="container">
-    <div class="row justify-content-between pb-4">
+    <div class="row justify-content-between pb-4 mx-0">
       <h2>Exams</h2>
-      <a class="btn btn-secondary" href="{% url 'exam_detail' 0 %}">New Exam</a>   
+      <a class="btn btn-secondary" href="{% url 'exam_search' %}">Search Exams</a>  
+      <a class="btn btn-secondary" href="{% url 'exam_detail' %}">New Exam</a>   
     </div>
 
     <!-- Exam List -->
@@ -48,11 +52,20 @@
 
           {% for exam in exams %}
 
-            <tr>
+            <tr exam-id="{{ exam.id }}">
               <td>{{ exam.title }}</td>
+              <td>{{ exam.event }}</td>
               <td>{{ exam.created_date }}</td>
               <!-- Call detail view method (Uses urls path name) -->
-              <td><a href="{% url 'exam_detail' exam.id %}"><i class="fas fa-info-circle show-exam-detail"></i></a></td>
+              <td>
+                <div class="grid-actions text-center">
+                  <a href="{% url 'exam_detail' exam.id %}"><i class="fas fa-info-circle cursor-pointer show-exam-detail"></i></a>
+                  {% if not exam.end_date %}
+                    <i class="fas fa-check cursor-pointer text-success complete-exam mx-2"></i>
+                  {% endif %}
+                  <i class="fas fa-trash-alt cursor-pointer text-danger remove-exam mr-2"></i>
+                </div>
+              </td>
             </tr>
 
           {% endfor %}
@@ -66,6 +79,7 @@
       </tbody>
     </table>
 
+    <!-- Pagination (42) -->
     <div class="row">
       <div class="col-md-12">
 
@@ -118,8 +132,6 @@
   </div>
 </section>
 
-
 <script src="{% static 'js/exams.js' %}"></script>
 
 {% endblock %}
-
