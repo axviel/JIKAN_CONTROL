@@ -22,6 +22,7 @@ def index(request):
     event_data = {
         'event_id': event.id,
         'title': event.title,
+        'event_type': event.event_type.pk,
         'repeat_type': event.repeat_type.pk,
         'start_date': key,
         'end_date': end_date,
