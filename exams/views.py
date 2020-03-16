@@ -1,11 +1,17 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import HttpResponse
 
 from .models import Exam
 from .forms import ExamForm
 
+from events.models import Event
+from notes.models import Note
+from exams.models import Exam
+
 import datetime
+import json
 
 def index(request):
   # Fetch exams from db
@@ -23,6 +29,7 @@ def index(request):
 
   return render(request, 'exams/exam_list.html', context)
 
+
 # Returns the detail info of an Exam. Also used to create and update exams
 def exam(request, exam_id=0):
   if request.method == "POST":
@@ -38,7 +45,7 @@ def exam(request, exam_id=0):
       exam_id = form.cleaned_data['exam_id']
       title = form.cleaned_data['title']
       description = form.cleaned_data['description']
-      event_id = 0
+      event_id = 2
       predicted_study_hours = 0
       predicted_weeks = 0
       predicted_score = 0
@@ -46,24 +53,11 @@ def exam(request, exam_id=0):
       final_weeks = 0
       final_score = 0
       created_date = datetime.date.today()
-      # start_time = form.cleaned_data['start_time']
-      # end_time = form.cleaned_data['end_time']
-      # start_date = form.cleaned_data['start_date']
-      # event_type_id = request.POST['event_type']
-      # repeat_type_id = request.POST['repeat_type']
-
-      # event_type = get_object_or_404(EventType, pk=event_type_id)
-      # repeat_type = get_object_or_404(RepeatType, pk=repeat_type_id)
 
       # Searches the db for an exam with the id and updates it. if not found, creates a new exam and returns is_created=True
       exam, is_created = Exam.objects.update_or_create(
           id=exam_id,
           defaults={
-            # 'event_type': event_type,
-            # 'repeat_type': repeat_type,
-            # 'start_time': start_time,
-            # 'end_time': end_time,
-            # 'start_date': start_date,
             'user_id': request.user.id,
             'title': title,
             'description': description,
@@ -74,12 +68,22 @@ def exam(request, exam_id=0):
             'final_weeks': final_weeks,
             'final_score': final_score,
             'created_date': created_date,
-            'event_id': event_id,
+            'event_id': event_id
             },
       )
 
       # Save in the db
       exam.save()
+
+      # If exam was created via calendar page, return the id
+      if 'is_calendar_form' in request.POST:
+        context = {
+          'exam_id': exam.id,
+          'title': exam.title,
+          'start_time': exam.start_time.strftime("%H:%M")
+        }
+        context = json.dumps(context)
+        return HttpResponse(context)
 
       # UI success message
       messages.success(request, 'Exam created successfully')
@@ -105,6 +109,30 @@ def exam(request, exam_id=0):
     return render(request, 'exams/exam_detail.html', context)
 
   else:
+
+    # If GET request came from calendar
+    if 'is_calendar_form' in request.GET:
+      exam_id = request.GET['exam_id']
+      exam = Exam.objects.get(id=exam_id)
+
+      context = {
+        'exam_id': exam.id,
+        'user_id': exam.user_id,
+        'title': exam.title,
+        'description': exam.description,
+        'predicted_study_hours': exam.predicted_study_hours,
+        'predicted_weeks': exam.predicted_weeks,
+        'predicted_score': exam.predicted_score,
+        'final_study_hours': exam.final_study_hours,
+        'final_weeks': exam.final_weeks,
+        'final_score': exam.final_score,
+        'created_date': exam.created_date,
+        'event_id': exam.event_id
+      }
+      context = json.dumps(context, indent=4, sort_keys=True, default=str)
+
+      return HttpResponse(context)
+
     if not request.user.is_authenticated:
       messages.error(request, 'Access denied. Must be logged in')
       return redirect('exam_list') #redirect(url path name)
@@ -114,34 +142,105 @@ def exam(request, exam_id=0):
 
     if exam_id > 0:
       exam = get_object_or_404(Exam, pk=exam_id)
+
       form = ExamForm(initial={
         'exam_id': exam.id,
+        'user_id': exam.user_id,
         'title': exam.title,
         'description': exam.description,
-        # 'event_type': exam.event_type.pk,
-        # 'repeat_type': exam.repeat_type.pk,
-        # 'start_date': exam.start_date,
-        # 'start_time': exam.start_time,
-        # 'end_time': exam.end_time,
-        'predicted_study_hours': predicted_study_hours,
-        'predicted_weeks': predicted_weeks,
-        'predicted_score': predicted_score,
-        'final_study_hours': final_study_hours,
-        'final_weeks': final_weeks,
-        'final_score': final_score,
-        'created_date': created_date,
-        'event_id': event_id,
+        'predicted_study_hours': exam.predicted_study_hours,
+        'predicted_weeks': exam.predicted_weeks,
+        'predicted_score': exam.predicted_score,
+        'final_study_hours': exam.final_study_hours,
+        'final_weeks': exam.final_weeks,
+        'final_score': exam.final_score,
+        'created_date': exam.created_date,
+        'event_id': exam.event_id
       })
+      # Get exam notes and events
+      # notes = Note.objects.all().filter(exam_id=exam.id,is_hidden=False)
+      # events = Event.objects.all().filter(exam_id=exam.id,is_hidden=False)
 
       context['form'] = form
-    # else:
-    #   form = ExamForm(initial={
-    #     'start_date': datetime.date.today()
-    #   })
+      # context['notes'] = notes
+      # context['events'] = events
+
+    else:
+      form = ExamForm(initial={
+        'created_date': datetime.date.today()
+      })
 
       context['form'] = form
 
     return render(request, 'exams/exam_detail.html', context)
 
+# Search for exams 
 def search(request):
-  return render(request, 'exams/exam_search.html')
+  queryset_list = Exam.objects.order_by('-created_date')
+
+  # Title
+  if 'title' in request.GET:
+    title = request.GET['title']
+    # Check if empty string
+    if title:
+      # Search title for anything that matches a keyword
+      queryset_list = queryset_list.filter(title__icontains=title)
+
+  context = {
+    'exams': queryset_list,
+  }
+
+  # Request contains at least one form field, return the form with its field values
+  if 'title' in request.GET:
+    form = ExamForm(initial={
+          'title': request.GET['title'],
+          'event_type': request.GET['event_type'],
+          'repeat_type': request.GET['repeat_type'],
+          'start_date': request.GET['start_date'],
+          'end_date': request.GET['end_date'],
+          'start_time': request.GET['start_time'],
+          'end_time': request.GET['end_time']
+        })
+
+    search_form_defaults(form)
+
+    context['form'] = form
+
+  # Request does not contain form submission, return empty form
+  else:
+    form = EventForm()
+
+    search_form_defaults(form)
+
+    context['form'] = form
+
+
+  return render(request, 'events/event_search.html', context)
+
+# Marks an exam as hidden
+def remove(request):
+  if request.method == 'POST':
+    exam_id = request.POST['exam_id']
+
+    exam = Exam.objects.get(id=exam_id)
+    exam.is_hidden = True
+    exam.save()
+
+    if 'is_detail' in request.POST:
+      return redirect('exam_list')
+    else:
+      return HttpResponse('')
+
+
+# Marks are required fields as not required and adds an 'Any' value to the drop down lists
+def search_form_defaults(form):
+  form.fields['title'].required = False
+  form.fields['event_type'].required = False
+  form.fields['repeat_type'].required = False
+  form.fields['start_date'].required = False
+  form.fields['end_date'].required = False
+  form.fields['start_time'].required = False
+  form.fields['end_time'].required = False
+
+  form.fields['event_type'].empty_label = 'Any Type'
+  form.fields['repeat_type'].empty_label = 'Any Type'
