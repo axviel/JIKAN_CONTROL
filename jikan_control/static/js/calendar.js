@@ -452,6 +452,9 @@ class CALENDAR {
             this.elements.modalHeaderLabel.classList.add('d-none');
             this.elements.currentDayAddEventFormContent.classList.remove('d-none');
             this.elements.eventFormBackArrow.classList.remove('d-none');
+
+            //------
+            thisCalendar.elements.saveEventFormButton.classList.remove('d-none');
         }
         else{
             this.elements.currentDayEventsList.classList.remove('d-none');
@@ -655,7 +658,9 @@ class CALENDAR {
                                 eventIndex = index;
                             }
                         });
-                        repeatList.splice(eventIndex, 1);
+                        if(eventIndex){
+                            repeatList.splice(eventIndex, 1);
+                        }
                     }
 
                     // Add to repeat list
@@ -757,7 +762,6 @@ class CALENDAR {
                         // Remove from UI
                         eventElement.remove();
 
-                        //--?
                         // Remove from repeat list
                         if(Number(repeatType) !== 1){
                             let repeatList = thisCalendar.getReturnEventList(Number(repeatType));
@@ -772,19 +776,9 @@ class CALENDAR {
                                 repeatList.splice(eventIndex, 1);
                             }
                         }
-                        //--?
 
                         // Remove from the eventDateList
                         let eventDateList = thisCalendar.eventList[eventDate];
-                        // let deleteEventDateListEntry = true;
-
-                        // If not found on main list, get in repeat list
-                        //--?
-                        // if(!eventDateList){
-                        //     eventDateList = thisCalendar.tempEventRepeatList[eventDate];
-                        //     deleteEventDateListEntry = false;
-                        // }
-                        //--?
 
                         eventDateList.forEach( (eventItem, index) => {
                             if(eventItem.event_id === Number(eventId) ){
@@ -792,10 +786,7 @@ class CALENDAR {
                             }
                         });
 
-                        
-
                         //If eventDateList is empty, remove it from the eventList
-                        // if(eventDateList.length === 0 && deleteEventDateListEntry){
                         if(eventDateList.length === 0){
                             delete thisCalendar.eventList[eventDate];
                         }
@@ -897,9 +888,11 @@ class CALENDAR {
             document.querySelector('#current-day-event-list').classList.remove('d-none');
             document.querySelector('.current-day-footer').classList.remove('d-none');
             document.querySelector('#current-day-modal-label').classList.remove('d-none');
+            document.querySelector('#save-event-form-btn').classList.remove('d-none');
             document.querySelector('#current-day-add-event-form').classList.add('d-none');
             document.querySelector('#event-form-back').classList.add('d-none');
             document.querySelector('#end_date_field').classList.add('d-none');
+
         });
 
     }
