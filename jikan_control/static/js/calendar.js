@@ -1,7 +1,7 @@
 const AVAILABLE_WEEK_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const AVALIABLE_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-class CALENDAR {
+class Calendar {
     constructor(options) {
         this.options = options;
         this.elements = {
@@ -103,13 +103,6 @@ class CALENDAR {
 
     // Returns an object/list of repeat event days
     currentMonthRepeatedEvents(days){
-
-        // Get date bound
-        let day = days[0];
-        let firstCalendarDayDate =  this.getFormattedDate(new Date(`${Number(day.month) + 1}/${day.dayNumber}/${day.year}`));
-        day = days[days.length - 1];
-        let lastCalendarDayDate =  this.getFormattedDate(new Date(`${Number(day.month) + 1}/${day.dayNumber}/${day.year}`));
-
         let dayDate;
         let eventDate;
 
@@ -256,7 +249,6 @@ class CALENDAR {
     // Draws the event list for the current day modal
     drawEvents() {
         let calendar = this.getCalendar();
-        // let eventList = this.eventList[calendar.active.formatted] || ['No events to display'];
 
         let mainList = this.eventList[calendar.active.formatted] ? [].concat(this.eventList[calendar.active.formatted]) : undefined;
         let repeatList = this.tempEventRepeatList[calendar.active.formatted] ? [].concat(this.tempEventRepeatList[calendar.active.formatted]) : undefined;
@@ -360,7 +352,6 @@ class CALENDAR {
 
             newDayParams.formatedDate = this.getFormattedDate(new Date(`${Number(day.month) + 1}/${day.dayNumber}/${day.year}`));
             
-            // newDayParams.hasEvent = this.eventList[newDayParams.formatedDate];
             newDayParams.hasEvent = this.eventList[newDayParams.formatedDate] ? [].concat(this.eventList[newDayParams.formatedDate]) : null;
             return newDayParams;
         });
@@ -452,9 +443,6 @@ class CALENDAR {
             this.elements.modalHeaderLabel.classList.add('d-none');
             this.elements.currentDayAddEventFormContent.classList.remove('d-none');
             this.elements.eventFormBackArrow.classList.remove('d-none');
-
-            //------
-            thisCalendar.elements.saveEventFormButton.classList.remove('d-none');
         }
         else{
             this.elements.currentDayEventsList.classList.remove('d-none');
@@ -518,11 +506,10 @@ class CALENDAR {
         let day_digit = ( date.getDate() >= 10 ) ? date.getDate() : '0' + date.getDate();
         let month_digit = ( (date.getMonth() + 1) >= 10 ) ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1)
 
-        // return `${day_digit}/${month_digit}/${date.getFullYear()}`;
         return `${month_digit}/${day_digit}/${date.getFullYear()}`;
     }
 
-    // ???
+    // todo
     range(number) {
         return new Array(number).fill().map((e, i) => i);
     }
@@ -824,7 +811,7 @@ class CALENDAR {
                             eventDateList = thisCalendar.tempEventRepeatList[eventDate];
                         }
 
-                        eventDateList.forEach( (eventItem, index) => {
+                        eventDateList.forEach( eventItem => {
                             if(eventItem.event_id === Number(eventId) ){
                                 eventItem.is_completed = true;
                                 eventItem.end_date = eventEndDateData.end_date;
@@ -900,7 +887,7 @@ class CALENDAR {
 }
 
 const calendar = (function () {
-    return new CALENDAR({
+    return new Calendar({
         id: "calendar"
     })
 })();
