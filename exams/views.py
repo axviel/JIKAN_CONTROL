@@ -13,6 +13,8 @@ from exams.models import Exam
 import datetime
 import json
 
+from ml import ml
+
 def index(request):
   # Fetch exams from db
   exams = Exam.objects.order_by('-created_date').filter(is_hidden=False)
@@ -49,7 +51,7 @@ def exam(request, exam_id=0):
       event_id = 2
       predicted_study_hours = 0
       predicted_weeks = 0
-      predicted_score = 0
+      predicted_score = ml.get_exam_prediction(exam_number, None) # None only for testing
       final_study_hours = 0
       final_weeks = 0
       final_score = 0

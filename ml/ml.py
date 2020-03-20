@@ -29,12 +29,12 @@ def create_model(predict, data_to_use):
 
 
 def save_model(model, name):
-    with open("ml_models/" + name, "wb") as f:
+    with open("ml/ml_models/" + name, "wb") as f:
         pickle.dump(model, f)
 
 
 def get_model(name):
-    save = open("ml_models/" + name, "rb")
+    save = open("ml/ml_models/" + name, "rb")
     return pickle.load(save)
 
 
@@ -56,13 +56,32 @@ def get_best_model(predict, data, percentage):
 
 def add_new_data(x, y, model_name):
     model = get_model(model_name)
-    model.fit([x], [y])
+    new_y = (y/100)*20
+    model.fit([x], [new_y])
     save_model(model, model_name)
 
 
-def get_prediction(model_name, data):
-    model = get_model(model_name)
-    return model.predict([data])[0]
+def get_exam_prediction(exam_number, data):
+    model = None
+    if exam_number==1:
+        model = get_model("exam1.bi")
+        # only for testing
+        if data == None:
+            data = [3, 1, 2]
+    elif exam_number==2:
+        model = get_model("exam2.bi")
+        # only for testing
+        if data == None:
+            data = [15, 3, 0, 2]
+    elif exam_number==3:
+        model = get_model("exam3.bi")
+        # only for testing
+        if data == None:
+            data = [15, 11, 1, 0, 4]
+    else:
+        return None
+    ans = (model.predict([data])[0])/20 * 100
+    return ans
 
 
 # data to predict
@@ -81,4 +100,4 @@ def get_prediction(model_name, data):
 
 # add_new_data([10, 12, 2, 0, 0], 11, "study.bi")
 
-print (get_prediction("exam3.bi", [10, 12, 2, 0, 0]))
+# print (get_prediction("exam3.bi", [10, 12, 2, 0, 0]))
