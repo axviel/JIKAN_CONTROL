@@ -30,6 +30,14 @@ class ExamForm(forms.Form):
       'id': 'description', 
       'class': 'form-control'})
     )
+  exam_number = forms.IntegerField(
+    label='Exam Number', 
+    widget=forms.NumberInput(attrs={
+      'id': 'exam_number', 
+      'class': 'form-control'}),
+      max_value=3,
+      min_value=1
+    )
   created_date = forms.DateTimeField(
     label='Created Date', 
     widget=DateInput(attrs={

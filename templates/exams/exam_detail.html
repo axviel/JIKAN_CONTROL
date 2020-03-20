@@ -64,6 +64,12 @@
               </label>
               {{ form.description }}
             </div>
+            <div class="col-6">
+              <label for="{{ form.exam_number.name }}" class="col-form-label">
+                {{ form.exam_number.label }}{% if form.exam_number.field.required %}<span class="required">*</span>{% endif %}
+              </label>
+              {{ form.exam_number }}
+            </div>
           </div>
 
           <button type="submit" class="btn btn-block btn-secondary mt-4">Save</button>

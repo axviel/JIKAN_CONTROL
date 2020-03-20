@@ -45,6 +45,7 @@ def exam(request, exam_id=0):
       exam_id = form.cleaned_data['exam_id']
       title = form.cleaned_data['title']
       description = form.cleaned_data['description']
+      exam_number = form.cleaned_data['exam_number']
       event_id = 2
       predicted_study_hours = 0
       predicted_weeks = 0
@@ -61,6 +62,7 @@ def exam(request, exam_id=0):
             'user_id': request.user.id,
             'title': title,
             'description': description,
+            'exam_number': exam_number,
             'predicted_study_hours': predicted_study_hours,
             'predicted_weeks': predicted_weeks,
             'predicted_score': predicted_score,
@@ -120,6 +122,7 @@ def exam(request, exam_id=0):
         'user_id': exam.user_id,
         'title': exam.title,
         'description': exam.description,
+        'exam_number': exam.exam_number,
         'predicted_study_hours': exam.predicted_study_hours,
         'predicted_weeks': exam.predicted_weeks,
         'predicted_score': exam.predicted_score,
@@ -148,6 +151,7 @@ def exam(request, exam_id=0):
         'user_id': exam.user_id,
         'title': exam.title,
         'description': exam.description,
+        'exam_number': exam.exam_number,
         'predicted_study_hours': exam.predicted_study_hours,
         'predicted_weeks': exam.predicted_weeks,
         'predicted_score': exam.predicted_score,

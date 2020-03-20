@@ -15,6 +15,7 @@ class Exam(models.Model):
   final_score = models.IntegerField()
   created_date = models.DateTimeField(default=datetime.now)
   user_id = models.IntegerField()
+  exam_number = models.IntegerField(default=0)
   is_hidden = models.BooleanField(default=False)
 
   def __str__(self):
