@@ -60,19 +60,25 @@ def add_new_data(x, y, model_name):
     save_model(model, model_name)
 
 
+def get_prediction(model_name, data):
+    model = get_model(model_name)
+    return model.predict([data])[0]
+
 
 # data to predict
-predict = "G3"
+# predict = "G3"
 
-data = ["G1", "G2", "G3", "studytime", "failures", "absences", "sex"]
+# data = ["G1", "G2", "G3", "studytime", "failures", "absences", "sex"]
 
-model = get_best_model(predict, data, 97)
-save_model(model, "study.bi")
+# model = get_best_model(predict, data, 97)
+# save_model(model, "study.bi")
 
-model = get_model("study.bi")
+# model = get_model("study.bi")
 
-print_coefficient_and_intercept(model)
+# print_coefficient_and_intercept(model)
 
-print("prediction: ", model.predict([[10, 12, 2, 0, 0, 0]])[0])
+# print("prediction: ", model.predict([[10, 12, 2, 0, 0, 0]])[0])
 
 # add_new_data([10, 12, 2, 0, 0], 11, "study.bi")
+
+print (get_prediction("exam3.bi", [10, 12, 2, 0, 0]))
