@@ -6,6 +6,9 @@ from django.http import HttpResponse
 from .models import Event, EventType, RepeatType
 from .forms import EventForm
 
+from notes.models import Note
+from exams.models import Exam
+
 import datetime
 import json
 
@@ -71,10 +74,21 @@ def event(request, event_id=0):
 
       # If event was created via calendar page, return the id
       if 'is_calendar_form' in request.POST:
+
+        end_date = event.end_date
+        if end_date != None:
+          end_date = end_date.strftime("%m/%d/%Y")
+
         context = {
           'event_id': event.id,
           'title': event.title,
-          'start_time': event.start_time.strftime("%H:%M")
+          'description': event.description,
+          'repeat_type': event.repeat_type.pk,
+          'start_date': event.start_date.strftime("%m/%d/%Y"),
+          'end_date': end_date,
+          'start_time': event.start_time.strftime("%H:%M"), 
+          'end_time': event.end_time.strftime("%H:%M"), 
+          'is_completed': (event.end_date != None)
         }
         context = json.dumps(context)
         return HttpResponse(context)
@@ -145,8 +159,14 @@ def event(request, event_id=0):
         'start_time': event.start_time,
         'end_time': event.end_time
       })
+      # Get event notes and exams
+      notes = Note.objects.all().filter(event_id=event.id,is_hidden=False)
+      exams = Exam.objects.all().filter(event_id=event.id,is_hidden=False)
 
       context['form'] = form
+      context['notes'] = notes
+      context['exams'] = exams
+
     else:
       form = EventForm(initial={
         'start_date': datetime.date.today()
@@ -249,7 +269,6 @@ def remove(request):
     else:
       return HttpResponse('')
 
-
 # Assings an end_date to the event, showing that it is completed
 def complete(request):
   if request.method == 'POST':
@@ -262,7 +281,11 @@ def complete(request):
     if 'is_detail' in request.POST:
       return redirect('event_detail', event_id=event_id)
     else:
-      return HttpResponse('')
+      context = {
+        'end_date': event.end_date.strftime("%m/%d/%Y")
+      }
+      context = json.dumps(context)
+      return HttpResponse(context)
 
 # Marks are required fields as not required and adds an 'Any' value to the drop down lists
 def search_form_defaults(form):
