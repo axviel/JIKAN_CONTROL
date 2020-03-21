@@ -35,6 +35,7 @@ def index(request):
     else:
       events_data[key] = [event_data]
 
+
   context = {
     'events': events_data,
     'form': EventForm()
