@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-  | Exams
+| Exams
 {% endblock %}
 
 {% block content %}
@@ -29,107 +29,112 @@
 <!-- Exam Section -->
 <section id="exams" class="py-4 main-content">
   <div class="container">
-    <div class="row justify-content-between pb-4 mx-0">
-      <h2>Exams</h2>
-      <a class="btn btn-secondary" href="{% url 'exam_search' %}">Search Exams</a>  
-      <a class="btn btn-secondary" href="{% url 'exam_detail' %}">New Exam</a>   
-    </div>
+    <div class="mx-0 shadow">
+      <div class="align-items-center row justify-content-between mx-0 rounded-top"
+        style="background-color: #133757; height: 80px;">
+        <h2 class="text-light ml-3">Exams</h2>
+        <div class="btn-group mr-3" role="group" aria-label="Basic example">
+          <a class="btn btn-light rounded-left" href="{% url 'exam_search' %}">Search Exams</a>
+          <a class="btn btn-light rounded-right" href="{% url 'exam_detail' %}">New Exam</a>
+        </div>
+      </div>
 
-    <!-- Exam List -->
-    <table id="exam-list" class="table table-bordered table-hover">
-      <thead>
-        <tr>
-          <th scope="col">Title</th>
-          <th scope="col">Exam Number</th>
-          <th scope="col">Event</th>
-          <th scope="col">Predicted Score</th>
-          <th scope="col">Created Date</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
+      <!-- Exam List -->
+      <table id="exam-list" class="table table-hover table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Exam Number</th>
+            <th scope="col">Event</th>
+            <th scope="col">Predicted Score</th>
+            <th scope="col">Created Date</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
 
-        <!-- Display exams -->
-        {% if exams %}
+          <!-- Display exams -->
+          {% if exams %}
 
           {% for exam in exams %}
-
-            <tr exam-id="{{ exam.id }}">
-              <td>{{ exam.title }}</td>
-              <td>{{ exam.exam_number }}</td>
-              <td>{{ exam.event }}</td>
-              <td>{{ exam.predicted_score }}</td>
-              <td>{{ exam.created_date }}</td>
-              <!-- Call detail view method (Uses urls path name) -->
-              <td>
-                <div class="grid-actions text-center">
-                  <a href="{% url 'exam_detail' exam.id %}"><i class="fas fa-info-circle cursor-pointer show-exam-detail"></i></a>
-                  {% if not exam.end_date %}
-                    <i class="fas fa-check cursor-pointer text-success complete-exam mx-2"></i>
-                  {% endif %}
-                  <i class="fas fa-trash-alt cursor-pointer text-danger remove-exam mr-2"></i>
-                </div>
-              </td>
-            </tr>
+          <tr exam-id="{{ exam.id }}">
+            <td>{{ exam.title }}</td>
+            <td>{{ exam.exam_number }}</td>
+            <td>{{ exam.event }}</td>
+            <td>{{ exam.predicted_score }}</td>
+            <td>{{ exam.created_date }}</td>
+            <!-- Call detail view method (Uses urls path name) -->
+            <td>
+              <div class="grid-actions text-center">
+                <a href="{% url 'exam_detail' exam.id %}"><i
+                    class="fas fa-info-circle cursor-pointer show-exam-detail"></i></a>
+                {% if not exam.end_date %}
+                <i class="fas fa-check cursor-pointer text-success complete-exam mx-2"></i>
+                {% endif %}
+                <i class="fas fa-trash-alt cursor-pointer text-danger remove-exam mr-2"></i>
+              </div>
+            </td>
+          </tr>
 
           {% endfor %}
 
-        {% else %}
+          {% else %}
 
           <!-- No exams message? -->
 
-        {% endif %}
+          {% endif %}
 
-      </tbody>
-    </table>
+        </tbody>
+      </table>
 
-    <!-- Pagination (42) -->
-    <div class="row">
-      <div class="col-md-12">
+      <!-- Pagination (42) -->
+      <div class="row">
+        <div class="col-md-12">
 
-        <!-- Check if there are other pages -->
-        {% if exams.has_other_pages %}
+          <!-- Check if there are other pages -->
+          {% if exams.has_other_pages %}
           <ul class="pagination">
             {% if exams.has_previous %}
-              <!-- Previous Button -->
-              <li class="page-item">
-                <a href="?page={{exams.previous_page_number}}" class="page-link">&laquo;</a>
-              </li>
+            <!-- Previous Button -->
+            <li class="page-item">
+              <a href="?page={{exams.previous_page_number}}" class="page-link">&laquo;</a>
+            </li>
             {% else %}
-              <!-- Disabled arrow -->
-              <li class="page-item disabled">
-                <a class="page-link">&laquo;</a>
-              </li>
+            <!-- Disabled arrow -->
+            <li class="page-item disabled">
+              <a class="page-link">&laquo;</a>
+            </li>
             {% endif %}
 
             {% for i in exams.paginator.page_range %}
-              {% if exams.number == i %}
-                <!-- Active link -->
-                <li class="page-item active">
-                  <a class="page-link">{{i}}</a>
-                </li>
-                {% else %}
-                <!-- Not active link -->
-                  <li class="page-item">
-                    <a href="?page={{i}}" class="page-link">{{i}}</a>
-                  </li>
-              {% endif %}
+            {% if exams.number == i %}
+            <!-- Active link -->
+            <li class="page-item active">
+              <a class="page-link">{{i}}</a>
+            </li>
+            {% else %}
+            <!-- Not active link -->
+            <li class="page-item">
+              <a href="?page={{i}}" class="page-link">{{i}}</a>
+            </li>
+            {% endif %}
             {% endfor %}
 
             {% if exams.has_next %}
-              <!-- Next Button -->
-              <li class="page-item">
-                <a href="?page={{exams.next_page_number}}" class="page-link">&raquo;</a>
-              </li>
+            <!-- Next Button -->
+            <li class="page-item">
+              <a href="?page={{exams.next_page_number}}" class="page-link">&raquo;</a>
+            </li>
             {% else %}
-              <!-- Disabled arrow -->
-              <li class="page-item disabled">
-                <a class="page-link">&raquo;</a>
-              </li>
+            <!-- Disabled arrow -->
+            <li class="page-item disabled">
+              <a class="page-link">&raquo;</a>
+            </li>
             {% endif %}
           </ul>
-        {% endif %}
+          {% endif %}
 
+        </div>
       </div>
     </div>
 
