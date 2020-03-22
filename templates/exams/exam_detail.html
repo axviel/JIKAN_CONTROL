@@ -17,7 +17,11 @@
         <li class="breadcrumb-item">
           <a href="{% url 'exam_list' %}">Exams</a>
         </li>
+        {% if  form.exam_id.value %}
         <li class="breadcrumb-item active">{{ form.title.value }}</li>
+        {% else %}
+        <li class="breadcrumb-item active">New</li>
+        {% endif %}
       </ol>
     </nav>
   </div>
@@ -25,175 +29,193 @@
 
 <!-- Exam Section -->
 <section id="exam-detail" class="py-4 main-content">
-  <div class="container">
-
-    {% if  form.exam_id.value %}
-      <!-- Tab Buttons -->
-      <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" id="pills-detail-tab" data-toggle="pill" href="#detail" role="tab" aria-controls="pills-detail" aria-selected="true">Detail</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="pills-notes-tab" data-toggle="pill" href="#notes" role="tab" aria-controls="pills-notes" aria-selected="false">Notes</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="pills-exams-tab" data-toggle="pill" href="#events" role="tab" aria-controls="pills-events" aria-selected="false">Events</a>
-        </li>
-      </ul>
-    {% endif %}
-
-    <!-- Tab Content -->
-    <div class="tab-content" id="pills-tabContent">
-      <!-- Detail -->
-      <div class="tab-pane fade show active" id="detail" role="tabpanel" aria-labelledby="pills-detail">
-
-        <h3>Exam</h3>
-        <form method="POST">
-          {% csrf_token %}
-          {{ form.exam_id }}
-          <div class="row mb-2">
-            <div class="col-12">
-              <label for="{{ form.title.name }}" class="col-form-label">
-                {{ form.title.label }}{% if form.title.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.title }}
-            </div>
-            <div class="col-12">
-              <label for="{{ form.description.name }}" class="col-form-label">
-                {{ form.description.label }}{% if form.description.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.description }}
-            </div>
-          </div>
-
-          <!-- Event and Course -->
-          <div class="row mb-4">
-            <div class="col-4">
-              <label for="{{ form.event.name }}" class="col-form-label">
-                {{ form.event.label }}{% if form.event.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.event }}
-            </div>
-            <div class="col-4">
-              <label for="{{ form.course.name }}" class="col-form-label">
-                {{ form.course.label }}{% if form.course.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.course }}
-            </div>
-            <div class="col-4">
-              <label for="{{ form.exam_number.name }}" class="col-form-label">
-                {{ form.exam_number.label }}{% if form.exam_number.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.exam_number }}
-            </div>
-          </div>
-
-          <!-- Predicted -->
-          <h5>Predicted</h5>
-          <div class="row mb-4">
-            <div class="col-4">
-              <label for="{{ form.predicted_study_hours.name }}" class="col-form-label">
-                {{ form.predicted_study_hours.label }}{% if form.predicted_study_hours.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.predicted_study_hours }}
-            </div>
-            <div class="col-4">
-              <label for="{{ form.predicted_weeks.name }}" class="col-form-label">
-                {{ form.predicted_weeks.label }}{% if form.predicted_weeks.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.predicted_weeks }}
-            </div>
-            <div class="col-4">
-              <label for="{{ form.predicted_score.name }}" class="col-form-label">
-                {{ form.predicted_score.label }}{% if form.predicted_score.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.predicted_score }}
-            </div>
-            <div class="col-6">
-              <button class="btn btn-block btn-primary mt-4">Predict Exam Score</button>
-            </div>
-            <div class="col-6">
-              <button class="btn btn-block btn-primary mt-4">Predict Study Hours</button>
-            </div>
-          </div>
-
-          <!-- Final -->
-          <h5>Final</h5>
-          <div class="row">
-            <div class="col-4">
-              <label for="{{ form.final_study_hours.name }}" class="col-form-label">
-                {{ form.final_study_hours.label }}{% if form.final_study_hours.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.final_study_hours }}
-            </div>
-            <div class="col-4">
-              <label for="{{ form.final_weeks.name }}" class="col-form-label">
-                {{ form.final_weeks.label }}{% if form.final_weeks.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.final_weeks }}
-            </div>
-            <div class="col-4">
-              <label for="{{ form.final_score.name }}" class="col-form-label">
-                {{ form.final_score.label }}{% if form.final_score.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.final_score }}
-            </div>
-          </div>
-
-          <button type="submit" class="btn btn-block btn-secondary mt-4">Save</button>
-          
-        </form>
-
-        {% if form.exam_id.value %}
-          <a href="javascript:{document.getElementById('remove').submit()}"" class="btn btn-block btn-danger text-white mt-4">Remove</a>
-          <form action="{% url 'exam_remove' %}" id="remove" method="POST">
-            {% csrf_token %}
-            {{ form.exam_id }}
-            <input type="hidden" name="is_detail" value="true">
-            <input type="hidden">
-          </form>
+  <div class="container" style="width: 900px;">
+    <div class="card shadow">
+      <div class="card-header text-white text-center" style="background-color: #133757;">
+        <h4>Exam</h4>
+      </div>
+      <div class="card-body">
+        {% if  form.exam_id.value %}
+        <h3 class="card-title">Editing Exam: {{ form.title.value }}</h3>
+        <!-- Tab Buttons -->
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="pills-detail-tab" data-toggle="pill" href="#detail" role="tab"
+              aria-controls="pills-detail" aria-selected="true">Detail</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="pills-notes-tab" data-toggle="pill" href="#notes" role="tab"
+              aria-controls="pills-notes" aria-selected="false">Notes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="pills-exams-tab" data-toggle="pill" href="#events" role="tab"
+              aria-controls="pills-events" aria-selected="false">Events</a>
+          </li>
+        </ul>
+        {% else %}
+        <h3 class="card-title">Create New Exam</h3>
         {% endif %}
 
-      </div>
-      {% if notes %}
-        <!-- Notes -->
-        <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="pills-notes">
-          <table id="note-list" class="table table-bordered table-hover">
-            <thead>
-              <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Exam</th>
-                <th scope="col">Created Date</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-      
-              <!-- Display notes -->
-              {% if notes %}
-      
+        <!-- Tab Content -->
+        <div class="tab-content" id="pills-tabContent">
+          <!-- Detail -->
+          <div class="tab-pane fade show active" id="detail" role="tabpanel" aria-labelledby="pills-detail">
+            <form method="POST">
+              {% csrf_token %}
+              {{ form.exam_id }}
+              <div class="row mb-2">
+                <div class="col-12">
+                  <label for="{{ form.title.name }}" class="col-form-label">
+                    {{ form.title.label }}{% if form.title.field.required %}<span class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.title }}
+                </div>
+                <div class="col-12">
+                  <label for="{{ form.description.name }}" class="col-form-label">
+                    {{ form.description.label }}{% if form.description.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.description }}
+                </div>
+              </div>
+
+              <!-- Event and Course -->
+              <div class="row mb-4">
+                <div class="col-4">
+                  <label for="{{ form.event.name }}" class="col-form-label">
+                    {{ form.event.label }}{% if form.event.field.required %}<span class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.event }}
+                </div>
+                <div class="col-4">
+                  <label for="{{ form.course.name }}" class="col-form-label">
+                    {{ form.course.label }}{% if form.course.field.required %}<span class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.course }}
+                </div>
+                <div class="col-4">
+                  <label for="{{ form.exam_number.name }}" class="col-form-label">
+                    {{ form.exam_number.label }}{% if form.exam_number.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.exam_number }}
+                </div>
+              </div>
+
+              <!-- Predicted -->
+              <h5>Predicted</h5>
+              <div class="row mb-4">
+                <div class="col-4">
+                  <label for="{{ form.predicted_study_hours.name }}" class="col-form-label">
+                    {{ form.predicted_study_hours.label }}{% if form.predicted_study_hours.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.predicted_study_hours }}
+                </div>
+                <div class="col-4">
+                  <label for="{{ form.predicted_weeks.name }}" class="col-form-label">
+                    {{ form.predicted_weeks.label }}{% if form.predicted_weeks.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.predicted_weeks }}
+                </div>
+                <div class="col-4">
+                  <label for="{{ form.predicted_score.name }}" class="col-form-label">
+                    {{ form.predicted_score.label }}{% if form.predicted_score.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.predicted_score }}
+                </div>
+                <div class="col-6">
+                  <button class="btn btn-block btn-primary mt-4">Predict Study Hours</button>
+                </div>
+                <div class="col-6">
+                  <button class="btn btn-block btn-primary mt-4">Predict Exam Score</button>
+                </div>
+              </div>
+
+              <!-- Final -->
+              <h5>Final</h5>
+              <div class="row">
+                <div class="col-4">
+                  <label for="{{ form.final_study_hours.name }}" class="col-form-label">
+                    {{ form.final_study_hours.label }}{% if form.final_study_hours.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.final_study_hours }}
+                </div>
+                <div class="col-4">
+                  <label for="{{ form.final_weeks.name }}" class="col-form-label">
+                    {{ form.final_weeks.label }}{% if form.final_weeks.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.final_weeks }}
+                </div>
+                <div class="col-4">
+                  <label for="{{ form.final_score.name }}" class="col-form-label">
+                    {{ form.final_score.label }}{% if form.final_score.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.final_score }}
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-block btn-success mt-4">Save</button>
+
+            </form>
+
+            {% if form.exam_id.value %}
+            <a href="javascript:{document.getElementById('remove').submit()}"" class=" btn btn-block btn-danger
+              text-white mt-4">Remove</a>
+            <form action="{% url 'exam_remove' %}" id="remove" method="POST">
+              {% csrf_token %}
+              {{ form.exam_id }}
+              <input type="hidden" name="is_detail" value="true">
+              <input type="hidden">
+            </form>
+            {% endif %}
+
+          </div>
+          {% if notes %}
+          <!-- Notes -->
+          <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="pills-notes">
+            <table id="note-list" class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Exam</th>
+                  <th scope="col">Created Date</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <!-- Display notes -->
+                {% if notes %}
+
                 {% for note in notes %}
-      
-                  <tr>
-                    <td>{{ note.title }}</td>
-                    <td>{{ note.exam }}</td>
-                    <td>{{ note.created_date }}</td>
-                    <!-- Call detail view method (Uses urls path name) -->
-                    <td><a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a></td>
-                  </tr>
-      
+
+                <tr>
+                  <td>{{ note.title }}</td>
+                  <td>{{ note.exam }}</td>
+                  <td>{{ note.created_date }}</td>
+                  <!-- Call detail view method (Uses urls path name) -->
+                  <td><a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a>
+                  </td>
+                </tr>
+
                 {% endfor %}
-      
-              {% else %}
-      
+
+                {% else %}
+
                 <!-- No notes message? -->
-      
-              {% endif %}
-              
-            </tbody>
-          </table>
-        </div>
-        {% if events %}
+
+                {% endif %}
+
+              </tbody>
+            </table>
+          </div>
+          {% if events %}
           <!-- Events -->
           <div class="tab-pane fade" id="events" role="tabpanel" aria-labelledby="pills-events">
             <table id="event-list" class="table table-bordered table-hover">
@@ -206,35 +228,37 @@
                 </tr>
               </thead>
               <tbody>
-        
+
                 <!-- Display events -->
                 {% if events %}
-        
-                  {% for event in events %}
-        
-                    <tr>
-                      <td>{{ event.title }}</td>
-                      <td>{{ event.exam }}</td>
-                      <td>{{ event.created_date }}</td>
-                      <!-- Call detail view method (Uses urls path name) -->
-                      <td><a href="{% url 'event_detail' event.id %}"><i class="fas fa-info-circle show-event-detail"></i></a></td>
-                    </tr>
-        
-                  {% endfor %}
-        
+
+                {% for event in events %}
+
+                <tr>
+                  <td>{{ event.title }}</td>
+                  <td>{{ event.exam }}</td>
+                  <td>{{ event.created_date }}</td>
+                  <!-- Call detail view method (Uses urls path name) -->
+                  <td><a href="{% url 'event_detail' event.id %}"><i
+                        class="fas fa-info-circle show-event-detail"></i></a></td>
+                </tr>
+
+                {% endfor %}
+
                 {% else %}
-        
-                  <!-- No events message? -->
-        
+
+                <!-- No events message? -->
+
                 {% endif %}
-        
+
               </tbody>
             </table>
           </div>
-        {% endif %}
-      {% endif %}
+          {% endif %}
+          {% endif %}
+        </div>
+      </div>
     </div>
-
   </div>
 </section>
 
