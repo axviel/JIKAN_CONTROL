@@ -3,6 +3,8 @@ from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse
 
+from django.db.models import Q
+
 from .models import Exam
 from .forms import ExamForm
 
@@ -34,7 +36,7 @@ def index(request):
 
 
 # Returns the detail info of an Exam. Also used to create and update exams
-def exam(request, exam_id=0):
+def exam(request, exam_id=0, event_id=0):
   if request.method == "POST":
     # Kick user if not logged in
     if not request.user.is_authenticated:
@@ -175,9 +177,29 @@ def exam(request, exam_id=0):
       # notes = Note.objects.all().filter(exam_id=exam.id,is_hidden=False)
       # events = Event.objects.all().filter(exam_id=exam.id,is_hidden=False)
 
+      # Set custom field filtering
+      # form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & ( Q(pk=exam.event.pk) | Q(exam=None) ) ).distinct()
+
+      # Set custom event field filtering
+      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & ( Q(pk=exam.event.pk) | Q(exam=None) ) ).distinct()
+
       context['form'] = form
       # context['notes'] = notes
       # context['events'] = events
+
+    elif event_id > 0:
+      form = ExamForm(initial={
+        'created_date': datetime.date.today(),
+        'exam_number': 1,
+        'predicted_weeks': 4,
+        'final_weeks': 4,
+        'event': event_id
+      })
+
+      # Set custom event field filtering
+      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & Q(exam=None) ).distinct()
+
+      context['form'] = form
 
     else:
       form = ExamForm(initial={
@@ -187,8 +209,12 @@ def exam(request, exam_id=0):
         'final_weeks': 4,
       })
 
+      # Set custom event field filtering
+      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & Q(exam=None) ).distinct()
+
       context['form'] = form
 
+  
     return render(request, 'exams/exam_detail.html', context)
 
 # Search for exams 
@@ -243,6 +269,22 @@ def remove(request):
     else:
       return HttpResponse('')
 
+def get_exam_id(request):
+
+  event_id = request.GET['event_id']
+  # exam = get_object_or_404(Exam, event_id=event_id, is_hidden=False)
+  exam = Exam.objects.filter(event_id=event_id, is_hidden=False).first()
+
+  context = {}
+
+  if exam == None:
+    context['exam_id'] = None
+  else:
+    context['exam_id'] = exam.id
+
+  context = json.dumps(context)
+
+  return HttpResponse(context)
 
 # Marks are required fields as not required and adds an 'Any' value to the drop down lists
 def search_form_defaults(form):

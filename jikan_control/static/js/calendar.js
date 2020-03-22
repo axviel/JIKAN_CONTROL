@@ -25,6 +25,7 @@ class Calendar {
             modalHeaderLabel: document.querySelector('#current-day-modal-label'),
             eventEndDateField: document.querySelector('#end_date_field'),
             saveEventFormButton: document.querySelector('#save-event-form-btn'),
+            examButton: document.querySelector('#exam-btn'),
         };
 
         // Used to toggle modal event list and form states
@@ -422,6 +423,7 @@ class Calendar {
 
         // Hide end_date field if it was visible and show save button
         this.elements.eventEndDateField.classList.add('d-none');
+        this.elements.examButton.classList.add('d-none');
         this.elements.saveEventFormButton.classList.remove('d-none');
 
         // Hide form and show event list
@@ -723,10 +725,45 @@ class Calendar {
 
                         // Show form
                         thisCalendar.toggleModalEventForm();
+
+                        // Add Exam button attributes and make it visible if event is Exam
+                        if(eventData.event_type === 4){
+                            thisCalendar.elements.examButton.classList.remove('d-none');
+                        }
+
                     }
                 });
             }
-        })
+        });
+
+        // Go to exam
+        this.elements.examButton.addEventListener('click', e => {
+
+            let thisCalendar = this;
+            let eventId = document.querySelector('#event_id').value;
+
+            $.ajax({
+                type: 'GET',
+                url: '/exams/id',
+                data: {
+                    event_id: eventId,
+                    is_calendar_form: true
+                },
+                success: function(data){
+                    let examData = JSON.parse(data);
+
+                    if(examData.exam_id !== null){
+                        window.location = '/exams/detail/' + examData.exam_id;
+                    }
+                    else{
+                        window.location = '/exams/detail/event/' + eventId;
+                    }
+
+                }
+            });
+
+            e.preventDefault();
+        });
 
         // Remove event
         this.elements.eventList.addEventListener('click', e => {
@@ -782,7 +819,7 @@ class Calendar {
                     }
                 });
             }
-        })
+        });
 
         // Complete event
         this.elements.eventList.addEventListener('click', e => {
@@ -822,12 +859,12 @@ class Calendar {
                     }
                 });
             }
-        })
+        });
 
         // Clear event form when the back button is clicked
         this.elements.eventFormBackArrow.addEventListener('click', e => {
             this.clearAddEventFormState();
-        })
+        });
 
         // Go to today
         this.elements.todayBtn.addEventListener('click', e => {
@@ -879,6 +916,7 @@ class Calendar {
             document.querySelector('#current-day-add-event-form').classList.add('d-none');
             document.querySelector('#event-form-back').classList.add('d-none');
             document.querySelector('#end_date_field').classList.add('d-none');
+            document.querySelector('#exam-btn').classList.add('d-none');
 
         });
 
