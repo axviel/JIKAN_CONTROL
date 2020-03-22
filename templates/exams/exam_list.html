@@ -34,7 +34,11 @@
         style="background-color: #133757; height: 80px;">
         <h2 class="text-light ml-3">Exams</h2>
         <div class="btn-group mr-3" role="group" aria-label="Basic example">
+          {% if exams %}
           <a class="btn btn-light rounded-left" href="{% url 'exam_search' %}">Search Exams</a>
+          {% else %}
+          <a href="#" class="btn btn-light rounded-left disabled" role="button" aria-disabled="true">Search Exams</a>
+          {% endif %}
           <a class="btn btn-light rounded-right" href="{% url 'exam_detail' %}">New Exam</a>
         </div>
       </div>
@@ -81,6 +85,11 @@
           {% else %}
 
           <!-- No exams message? -->
+          <tr>
+            <td colspan="10">
+              <h4 class="text-center">No Exams</h4>
+            </td>
+          </tr>
 
           {% endif %}
 

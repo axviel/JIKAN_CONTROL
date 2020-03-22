@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-  | Exam Search
+| Exam Search
 {% endblock %}
 
 {% block content %}
@@ -32,63 +32,76 @@
 <!-- Exam Section -->
 <section id="exams" class="py-4 main-content">
   <div class="container">
-    <!-- Exam Search form Section -->
-    <h3>Exam Search</h3>
-    <form action="{% url 'exam_search' %}">
-      {% csrf_token %}
-      <div class="row pb-4">
-        <div class="col-6">
-          <label for="{{ form.title.name }}" class="col-form-label">
-            {{ form.title.label }}
-          </label>
-          {{ form.title }}
-        </div>
-        <div class="col-6">
-          <label for="{{ form.created_date.name }}" class="col-form-label">
-            {{ form.created_date.label }}
-          </label>
-          {{ form.created_date }}
+    <div class="card">
+      <div class="card-header text-white text-center" style="background-color: #133757;">
+        <h3>Exam Search</h3>
+      </div>
+      <!-- Exam Search form Section -->
+      <div class="card-body">
+        <div class="d-flex justify-content-center">
+          <form action="{% url 'exam_search' %}">
+            {% csrf_token %}
+            <div class="row pb-4">
+              <div class="col-6">
+                <label for="{{ form.title.name }}" class="col-form-label">
+                  {{ form.title.label }}
+                </label>
+                {{ form.title }}
+              </div>
+              <div class="col-6">
+                <label for="{{ form.created_date.name }}" class="col-form-label">
+                  {{ form.created_date.label }}
+                </label>
+                {{ form.created_date }}
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-block btn-secondary mb-4">Search</button>
+
+          </form>
         </div>
       </div>
+    </div>
 
-      <button type="submit" class="btn btn-block btn-secondary mb-4">Search</button>
-
-    </form>
 
     <!-- Exam List -->
-    <h4>Results</h4>
-    <table id="exam-list" class="table table-bordered table-hover">
-      <thead>
-        <tr>
-          <th scope="col">Title</th>
-          <th scope="col">Created Date</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
 
-        <!-- Display exams -->
-        {% if exams %}
+    <div class="mx-0 shadow">
+      <div class="align-items-center row mx-0 bg-dark" style="height: 50px;">
+        <h4 class="text-light ml-3">Results:</h4>
+      </div>
+      <table id="exam-list" class="table table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Exam Number</th>
+            <th scope="col">Event</th>
+            <th scope="col">Predicted Score</th>
+            <th scope="col">Created Date</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Display exams -->
 
           {% for exam in exams %}
 
-            <tr>
-              <td>{{ exam.title }}</td>
-              <td>{{ exam.created_date }}</td>
-              <td><a href="{% url 'exam_detail' exam.id %}"><i class="fas fa-info-circle show-exam-detail"></i></a></td>
-            </tr>
+          <tr>
+            <td>{{ exam.title }}</td>
+            <td>{{ exam.exam_number }}</td>
+            <td>{{ exam.event }}</td>
+            <td>{{ exam.predicted_score }}</td>
+            <td>{{ exam.created_date }}</td>
+            <td><a href="{% url 'exam_detail' exam.id %}"><i class="fas fa-info-circle show-exam-detail"></i></a>
+            </td>
+          </tr>
 
           {% endfor %}
 
-        {% else %}
-
-          <!-- No exams message? -->
-
-        {% endif %}
-
-      </tbody>
-    </table>
-
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
