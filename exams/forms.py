@@ -3,6 +3,8 @@ from .models import Exam
 from .models import Event
 from .models import Course
 
+from django.db.models import Q
+
 # todo Move later to a separate file (or app) that can be used in other apps' view.py
 class DateInput(forms.DateInput):
   input_type = 'date'
@@ -15,6 +17,7 @@ class EntityIdInput(forms.NumberInput):
 
 # Used to create the input fields rendered in the template
 class ExamForm(forms.Form):
+
   exam_id = forms.IntegerField(
     widget=EntityIdInput(attrs={
       'id': 'exam_id'}),
@@ -47,10 +50,26 @@ class ExamForm(forms.Form):
       'class': 'form-control'}),
       required=False
     )
+  # event = forms.ModelChoiceField(
+  #   label='Event', 
+  #   empty_label=None, 
+  #   queryset= Event.objects.filter(Q(is_hidden=False, event_type_id=4) & Q(exam=None) ),
+  #   widget=forms.Select(attrs={
+  #     'id': 'event', 
+  #     'class':'form-control'}),
+  #     )
+  # event = forms.ModelChoiceField(
+  #   label='Event', 
+  #   empty_label=None, 
+  #   queryset=Event.objects.all().filter(is_hidden=False, event_type_id=4), 
+  #   widget=forms.Select(attrs={
+  #     'id': 'event', 
+  #     'class':'form-control'}),
+  #     )
   event = forms.ModelChoiceField(
     label='Event', 
     empty_label=None, 
-    queryset=Event.objects.all().filter(is_hidden=False, event_type_id=4), 
+    queryset=None, 
     widget=forms.Select(attrs={
       'id': 'event', 
       'class':'form-control'}),
