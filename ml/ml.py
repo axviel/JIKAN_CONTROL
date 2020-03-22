@@ -6,14 +6,7 @@ from sklearn.utils import shuffle
 import pickle
 
 
-def create_model(predict, data_to_use):
-    data = pd.read_csv("data/student-mat.csv", sep=";")
-
-    # data that we are going to use
-    data = data[data_to_use]
-
-    data["sex"].replace({"F": "0", "M": "1"}, inplace=True)
-
+def create_model(predict):
     # remove the prediction data
     x = np.array(data.drop([predict], 1))
     y = np.array(data[predict])
@@ -43,11 +36,11 @@ def print_coefficient_and_intercept(model):
     print("Int: \n", model.intercept_)
 
 
-def get_best_model(predict, data, percentage):
+def get_best_model(predict, percentage):
     model = 0
     best = 0
     while (best * 100 < percentage):
-        model, acc = create_model(predict, data)
+        model, acc = create_model(predict)
         if acc > best:
             best =  acc
     
@@ -83,20 +76,48 @@ def get_exam_prediction(exam_number, data):
     ans = (model.predict([data])[0])/20 * 100
     return ans
 
+# Import data
+math = pd.read_csv("ml/data/student-mat.csv", sep=";")
+por = pd.read_csv("ml/data/student-por.csv", sep=";")
+
+# Merge data
+data = math.append(por)
 
 # data to predict
-# predict = "G3"
+predict = "G3"
 
-# data = ["G1", "G2", "G3", "studytime", "failures", "absences", "sex"]
+data = data[["G1", "G2", "G3", "studytime", "failures", "absences", "sex"]]
 
-# model = get_best_model(predict, data, 97)
-# save_model(model, "study.bi")
+data["sex"].replace({"F": "0", "M": "1"}, inplace=True)
 
-# model = get_model("study.bi")
+"""
+model = get_best_model(predict, 90)
+save_model(model, "exam3.bi")
+"""
+
+model = get_model("exam3.bi")
+
+x = np.array(data.drop([predict], 1))
+y = np.array(data[predict])
+
+x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.1)
+
+"""
+# Predict the test data
+predictions = model.predict(x_test)
+
+# Print results
+print('\nPredictions:')
+for x in range(len(predictions)):
+  # Print prediction, input data, actual value
+  print(predictions[x], x_test[x], y_test[x])
+"""
+
+
 
 # print_coefficient_and_intercept(model)
 
-# print("prediction: ", model.predict([[10, 12, 2, 0, 0, 0]])[0])
+print("prediction: ", model.predict(np.array( [ [11, 13, 2, 0, 4, 1] ] ) ) )
 
 # add_new_data([10, 12, 2, 0, 0], 11, "study.bi")
 

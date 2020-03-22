@@ -9,6 +9,7 @@ from .forms import ExamForm
 from events.models import Event
 from notes.models import Note
 from exams.models import Exam
+from courses.models import Course
 
 import datetime
 import json
@@ -48,14 +49,19 @@ def exam(request, exam_id=0):
       title = form.cleaned_data['title']
       description = form.cleaned_data['description']
       exam_number = form.cleaned_data['exam_number']
-      event_id = 2
-      predicted_study_hours = 0
-      predicted_weeks = 0
-      predicted_score = ml.get_exam_prediction(exam_number, None) # None only for testing
-      final_study_hours = 0
-      final_weeks = 0
-      final_score = 0
+      event_id = request.POST['event']
+      course_id = request.POST['course']
+      predicted_study_hours = form.cleaned_data['predicted_study_hours']
+      predicted_weeks = form.cleaned_data['predicted_weeks']
+      predicted_score = form.cleaned_data['predicted_score']
+      # predicted_score = ml.get_exam_prediction(exam_number, None) # None only for testing
+      final_study_hours = form.cleaned_data['final_study_hours']
+      final_weeks = form.cleaned_data['final_weeks']
+      final_score = form.cleaned_data['final_score']
       created_date = datetime.date.today()
+
+      event = get_object_or_404(Event, pk=event_id)
+      course = get_object_or_404(Course, pk=course_id)
 
       # Searches the db for an exam with the id and updates it. if not found, creates a new exam and returns is_created=True
       exam, is_created = Exam.objects.update_or_create(
@@ -65,14 +71,15 @@ def exam(request, exam_id=0):
             'title': title,
             'description': description,
             'exam_number': exam_number,
+            'event': event,
+            'course': course,
             'predicted_study_hours': predicted_study_hours,
             'predicted_weeks': predicted_weeks,
             'predicted_score': predicted_score,
             'final_study_hours': final_study_hours,
             'final_weeks': final_weeks,
             'final_score': final_score,
-            'created_date': created_date,
-            'event_id': event_id
+            'created_date': created_date
             },
       )
 
@@ -161,7 +168,8 @@ def exam(request, exam_id=0):
         'final_weeks': exam.final_weeks,
         'final_score': exam.final_score,
         'created_date': exam.created_date,
-        'event_id': exam.event_id
+        'event': exam.event.pk,
+        'course': exam.course.pk,
       })
       # Get exam notes and events
       # notes = Note.objects.all().filter(exam_id=exam.id,is_hidden=False)
@@ -173,7 +181,10 @@ def exam(request, exam_id=0):
 
     else:
       form = ExamForm(initial={
-        'created_date': datetime.date.today()
+        'created_date': datetime.date.today(),
+        'exam_number': 1,
+        'predicted_weeks': 4,
+        'final_weeks': 4,
       })
 
       context['form'] = form

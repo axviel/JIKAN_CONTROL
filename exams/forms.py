@@ -1,5 +1,7 @@
 from django import forms
 from .models import Exam
+from .models import Event
+from .models import Course
 
 # todo Move later to a separate file (or app) that can be used in other apps' view.py
 class DateInput(forms.DateInput):
@@ -44,4 +46,62 @@ class ExamForm(forms.Form):
       'id': 'created_date', 
       'class': 'form-control'}),
       required=False
+    )
+  event = forms.ModelChoiceField(
+    label='Event', 
+    empty_label=None, 
+    queryset=Event.objects.all().filter(is_hidden=False, event_type_id=4), 
+    widget=forms.Select(attrs={
+      'id': 'event', 
+      'class':'form-control'}),
+      )
+  course = forms.ModelChoiceField(
+    label='Course', 
+    empty_label=None, 
+    queryset=Course.objects.all().filter(is_hidden=False), 
+    widget=forms.Select(attrs={
+      'id': 'course', 
+      'class':'form-control'}),
+      )
+  predicted_study_hours = forms.IntegerField(
+    label='Study Hours', 
+    widget=forms.NumberInput(attrs={
+      'id': 'predicted_study_hours', 
+      'class': 'form-control'}),
+      min_value=1
+    )
+  predicted_weeks = forms.IntegerField(
+    label='Study Weeks', 
+    widget=forms.NumberInput(attrs={
+      'id': 'predicted_weeks', 
+      'class': 'form-control'}),
+      min_value=1
+    )
+  predicted_score = forms.IntegerField(
+    label='Exam Score', 
+    widget=forms.NumberInput(attrs={
+      'id': 'predicted_score', 
+      'class': 'form-control'}),
+      min_value=1
+    )
+  final_study_hours = forms.IntegerField(
+    label='Study Hours', 
+    widget=forms.NumberInput(attrs={
+      'id': 'final_study_hours', 
+      'class': 'form-control'}),
+      min_value=1
+    )
+  final_weeks = forms.IntegerField(
+    label='Study Weeks', 
+    widget=forms.NumberInput(attrs={
+      'id': 'final_weeks', 
+      'class': 'form-control'}),
+      min_value=1
+    )
+  final_score = forms.IntegerField(
+    label='Exam Score', 
+    widget=forms.NumberInput(attrs={
+      'id': 'final_score', 
+      'class': 'form-control'}),
+      min_value=1
     )
