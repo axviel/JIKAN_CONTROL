@@ -17,7 +17,11 @@
         <li class="breadcrumb-item">
           <a href="{% url 'event_list' %}">Events</a>
         </li>
+        {% if  form.event_id.value %}
         <li class="breadcrumb-item active">{{ form.title.value }}</li>
+        {% else %}
+        <li class="breadcrumb-item active">New</li>
+        {% endif %}
       </ol>
     </nav>
   </div>
@@ -25,150 +29,168 @@
 
 <!-- Event Section -->
 <section id="event-detail" class="py-4 main-content">
-  <div class="container">
+  <div class="container" style="width: 900px;">
+    <div class="card shadow">
+      <div class="card-header text-white text-center" style="background-color: #133757;">
+        <h4>Event</h4>
+      </div>
+      <div class="card-body">
+        {% if  form.event_id.value %}
+        <!-- Tab Buttons -->
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="pills-detail-tab" data-toggle="pill" href="#detail" role="tab"
+              aria-controls="pills-detail" aria-selected="true">Detail</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="pills-notes-tab" data-toggle="pill" href="#notes" role="tab"
+              aria-controls="pills-notes" aria-selected="false">Notes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="pills-exams-tab" data-toggle="pill" href="#exams" role="tab"
+              aria-controls="pills-exams" aria-selected="false">Exams</a>
+          </li>
+        </ul>
+        {% else %}
+        <h3 class="card-title">Create New Event</h3>
+        {% endif %}
 
-    {% if  form.event_id.value %}
-      <!-- Tab Buttons -->
-      <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" id="pills-detail-tab" data-toggle="pill" href="#detail" role="tab" aria-controls="pills-detail" aria-selected="true">Detail</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="pills-notes-tab" data-toggle="pill" href="#notes" role="tab" aria-controls="pills-notes" aria-selected="false">Notes</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="pills-exams-tab" data-toggle="pill" href="#exams" role="tab" aria-controls="pills-exams" aria-selected="false">Exams</a>
-        </li>
-      </ul>
-    {% endif %}
+        <!-- Tab Content -->
+        <div class="tab-content" id="pills-tabContent">
+          <!-- Detail -->
+          <div class="tab-pane fade show active" id="detail" role="tabpanel" aria-labelledby="pills-detail">
+            <form method="POST">
+              {% csrf_token %}
+              {{ form.event_id }}
+              <div class="row">
+                <div class="col-12">
+                  <label for="{{ form.title.name }}" class="col-form-label">
+                    {{ form.title.label }}{% if form.title.field.required %}<span class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.title }}
+                </div>
+                <div class="col-12">
+                  <label for="{{ form.description.name }}" class="col-form-label">
+                    {{ form.description.label }}{% if form.description.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.description }}
+                </div>
+                <div class="col-6">
+                  <label for="{{ form.event_type.name }}" class="col-form-label">
+                    {{ form.event_type.label }}{% if form.event_type.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.event_type }}
+                </div>
+                <div class="col-6">
+                  <label for="{{ form.repeat_type.name }}" class="col-form-label">
+                    {{ form.repeat_type.label }}{% if form.repeat_type.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.repeat_type }}
+                </div>
+                <div class="col-12">
+                  <label for="{{ form.start_date.name }}" class="col-form-label">
+                    {{ form.start_date.label }}{% if form.start_date.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.start_date }}
+                </div>
 
-    <!-- Tab Content -->
-    <div class="tab-content" id="pills-tabContent">
-      <!-- Detail -->
-      <div class="tab-pane fade show active" id="detail" role="tabpanel" aria-labelledby="pills-detail">
+                {% if form.end_date.value %}
+                <div class="col-12">
+                  <label for="{{ form.end_date.name }}" class="col-form-label">
+                    {{ form.end_date.label }}{% if form.end_date.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.end_date }}
+                </div>
+                {% endif %}
 
-        <h3>Event</h3>
-        <form method="POST">
-          {% csrf_token %}
-          {{ form.event_id }}
-          <div class="row">
-            <div class="col-12">
-              <label for="{{ form.title.name }}" class="col-form-label">
-                {{ form.title.label }}{% if form.title.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.title }}
-            </div>
-            <div class="col-12">
-              <label for="{{ form.description.name }}" class="col-form-label">
-                {{ form.description.label }}{% if form.description.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.description }}
-            </div>
-            <div class="col-6">
-              <label for="{{ form.event_type.name }}" class="col-form-label">
-                {{ form.event_type.label }}{% if form.event_type.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.event_type }}
-            </div>
-            <div class="col-6">
-              <label for="{{ form.repeat_type.name }}" class="col-form-label">
-                {{ form.repeat_type.label }}{% if form.repeat_type.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.repeat_type }}
-            </div>
-            <div class="col-12">
-              <label for="{{ form.start_date.name }}" class="col-form-label">
-                {{ form.start_date.label }}{% if form.start_date.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.start_date }}
-            </div>
-
-            {% if form.end_date.value %}
-              <div class="col-12">
-                <label for="{{ form.end_date.name }}" class="col-form-label">
-                  {{ form.end_date.label }}{% if form.end_date.field.required %}<span class="required">*</span>{% endif %}
-                </label>
-                {{ form.end_date }}
+                <div class="col-6">
+                  <label for="{{ form.start_time.name }}" class="col-form-label">
+                    {{ form.start_time.label }}{% if form.start_time.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.start_time }}
+                </div>
+                <div class="col-6">
+                  <label for="{{ form.end_time.name }}" class="col-form-label">
+                    {{ form.end_time.label }}{% if form.end_time.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.end_time }}
+                </div>
               </div>
-            {% endif %}
 
-            <div class="col-6">
-              <label for="{{ form.start_time.name }}" class="col-form-label">
-                {{ form.start_time.label }}{% if form.start_time.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.start_time }}
-            </div>
-            <div class="col-6">
-              <label for="{{ form.end_time.name }}" class="col-form-label">
-                {{ form.end_time.label }}{% if form.end_time.field.required %}<span class="required">*</span>{% endif %}
-              </label>
-              {{ form.end_time }}
-            </div>
-          </div>
+              <button type="submit" class="btn btn-block btn-success mt-4">Save</button>
 
-          <button type="submit" class="btn btn-block btn-secondary mt-4">Save</button>
-          
-        </form>
+            </form>
 
-        {% if form.event_id.value %}
-          {% if not form.end_date.value %}
-            <a href="javascript:{document.getElementById('complete').submit()}"" class="btn btn-block btn-success text-white mt-4">Complete</a>
+            {% if form.event_id.value %}
+            {% if not form.end_date.value %}
+            <a href="javascript:{document.getElementById('complete').submit()}"" class=" btn btn-block btn-info text-white mt-4"
+              role="button" style="background-color: #17a2b8;
+              border-color: #17a2b8;">Complete</a>
             <form action="{% url 'event_complete' %}" id="complete" method="POST">
               {% csrf_token %}
               {{ form.event_id }}
               <input type="hidden" name="is_detail" value="true">
               <input type="hidden">
             </form>
-          {% endif %}
-          <a href="javascript:{document.getElementById('remove').submit()}"" class="btn btn-block btn-danger text-white mt-4">Remove</a>
-          <form action="{% url 'event_remove' %}" id="remove" method="POST">
-            {% csrf_token %}
-            {{ form.event_id }}
-            <input type="hidden" name="is_detail" value="true">
-            <input type="hidden">
-          </form>
-        {% endif %}
+            {% endif %}
+            <a href="javascript:{document.getElementById('remove').submit()}"" class=" btn btn-block btn-danger
+              text-white mt-4">Remove</a>
+            <form action="{% url 'event_remove' %}" id="remove" method="POST">
+              {% csrf_token %}
+              {{ form.event_id }}
+              <input type="hidden" name="is_detail" value="true">
+              <input type="hidden">
+            </form>
+            {% endif %}
 
-      </div>
-      {% if notes %}
-        <!-- Notes -->
-        <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="pills-notes">
-          <table id="note-list" class="table table-bordered table-hover">
-            <thead>
-              <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Event</th>
-                <th scope="col">Created Date</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-      
-              <!-- Display notes -->
-              {% if notes %}
-      
+          </div>
+          {% if notes %}
+          <!-- Notes -->
+          <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="pills-notes">
+            <table id="note-list" class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Event</th>
+                  <th scope="col">Created Date</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <!-- Display notes -->
+                {% if notes %}
+
                 {% for note in notes %}
-      
-                  <tr>
-                    <td>{{ note.title }}</td>
-                    <td>{{ note.event }}</td>
-                    <td>{{ note.created_date }}</td>
-                    <!-- Call detail view method (Uses urls path name) -->
-                    <td><a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a></td>
-                  </tr>
-      
+
+                <tr>
+                  <td>{{ note.title }}</td>
+                  <td>{{ note.event }}</td>
+                  <td>{{ note.created_date }}</td>
+                  <!-- Call detail view method (Uses urls path name) -->
+                  <td><a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a>
+                  </td>
+                </tr>
+
                 {% endfor %}
-      
-              {% else %}
-      
+
+                {% else %}
+
                 <!-- No notes message? -->
-      
-              {% endif %}
-              
-            </tbody>
-          </table>
-        </div>
-        {% if exams %}
+
+                {% endif %}
+
+              </tbody>
+            </table>
+          </div>
+          {% if exams %}
           <!-- Exams -->
           <div class="tab-pane fade" id="exams" role="tabpanel" aria-labelledby="pills-exams">
             <table id="exam-list" class="table table-bordered table-hover">
@@ -181,35 +203,37 @@
                 </tr>
               </thead>
               <tbody>
-        
+
                 <!-- Display exams -->
                 {% if exams %}
-        
-                  {% for exam in exams %}
-        
-                    <tr>
-                      <td>{{ exam.title }}</td>
-                      <td>{{ exam.exam }}</td>
-                      <td>{{ exam.created_date }}</td>
-                      <!-- Call detail view method (Uses urls path name) -->
-                      <td><a href="{% url 'exam_detail' exam.id %}"><i class="fas fa-info-circle show-exam-detail"></i></a></td>
-                    </tr>
-        
-                  {% endfor %}
-        
+
+                {% for exam in exams %}
+
+                <tr>
+                  <td>{{ exam.title }}</td>
+                  <td>{{ exam.exam }}</td>
+                  <td>{{ exam.created_date }}</td>
+                  <!-- Call detail view method (Uses urls path name) -->
+                  <td><a href="{% url 'exam_detail' exam.id %}"><i class="fas fa-info-circle show-exam-detail"></i></a>
+                  </td>
+                </tr>
+
+                {% endfor %}
+
                 {% else %}
-        
-                  <!-- No exams message? -->
-        
+
+                <!-- No exams message? -->
+
                 {% endif %}
-        
+
               </tbody>
             </table>
           </div>
-        {% endif %}
-      {% endif %}
+          {% endif %}
+          {% endif %}
+        </div>
+      </div>
     </div>
-
   </div>
 </section>
 
