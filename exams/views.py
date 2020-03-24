@@ -56,7 +56,6 @@ def exam(request, exam_id=0, event_id=0):
       predicted_study_hours = form.cleaned_data['predicted_study_hours']
       predicted_weeks = form.cleaned_data['predicted_weeks']
       predicted_score = form.cleaned_data['predicted_score']
-      # predicted_score = ml.get_exam_prediction(exam_number, None) # None only for testing
       final_study_hours = form.cleaned_data['final_study_hours']
       final_weeks = form.cleaned_data['final_weeks']
       final_score = form.cleaned_data['final_score']
@@ -100,6 +99,8 @@ def exam(request, exam_id=0, event_id=0):
 
       # UI success message
       messages.success(request, 'Exam created successfully')
+
+      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & ( Q(pk=exam.event.pk) | Q(exam=None) ) ).distinct()
 
       # If it was updated return the page and form
       if not is_created:
@@ -269,6 +270,7 @@ def remove(request):
     else:
       return HttpResponse('')
 
+# Gets the exam id that's linked to a event
 def get_exam_id(request):
 
   event_id = request.GET['event_id']
@@ -292,3 +294,33 @@ def search_form_defaults(form):
   form.fields['created_date'].required = False
 
   # form.fields['event_type'].empty_label = 'Any Type'
+
+# Returns the predicted exam score
+def predict_score(request):
+
+  study_hours = int(request.GET['predicted_study_hours'])
+  exam_number = int(request.GET['exam_number'])
+  course_id = int(request.GET['course_id'])
+
+  context = {
+    'score': int(ml.get_exam_prediction(exam_number, course_id, study_hours))
+  }
+
+  context = json.dumps(context)
+
+  return HttpResponse(context)
+
+# Returns the predicted study hours
+def predict_study_hours(request):
+
+  predicted_score = int(request.GET['predicted_score'])
+  exam_number = int(request.GET['exam_number'])
+  course_id = int(request.GET['course_id'])
+
+  context = {
+    'hours': int(ml.get_hours_prediction(exam_number, course_id, predicted_score))
+  }
+  
+  context = json.dumps(context)
+
+  return HttpResponse(context)

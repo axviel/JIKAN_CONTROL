@@ -58,22 +58,22 @@ class ExamForm(forms.Form):
   #     'id': 'event', 
   #     'class':'form-control'}),
   #     )
-  # event = forms.ModelChoiceField(
-  #   label='Event', 
-  #   empty_label=None, 
-  #   queryset=Event.objects.all().filter(is_hidden=False, event_type_id=4), 
-  #   widget=forms.Select(attrs={
-  #     'id': 'event', 
-  #     'class':'form-control'}),
-  #     )
   event = forms.ModelChoiceField(
     label='Event', 
     empty_label=None, 
-    queryset=None, 
+    queryset=Event.objects.all().filter(is_hidden=False, event_type_id=4), 
     widget=forms.Select(attrs={
       'id': 'event', 
       'class':'form-control'}),
       )
+  # event = forms.ModelChoiceField(
+  #   label='Event', 
+  #   empty_label=None, 
+  #   queryset=None, 
+  #   widget=forms.Select(attrs={
+  #     'id': 'event', 
+  #     'class':'form-control'}),
+  #     )
   course = forms.ModelChoiceField(
     label='Course', 
     empty_label=None, 

@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block title %}
+| Exam
+{% endblock %}
+
 {% block content %}
 
 <!-- Alerts -->
@@ -127,10 +133,10 @@
                   {{ form.predicted_score }}
                 </div>
                 <div class="col-6">
-                  <button class="btn btn-block btn-primary mt-4">Predict Study Hours</button>
+                  <button class="btn btn-block btn-primary mt-4" id="predict-hours">Predict Study Hours</button>
                 </div>
                 <div class="col-6">
-                  <button class="btn btn-block btn-primary mt-4">Predict Exam Score</button>
+                  <button class="btn btn-block btn-primary mt-4" id="predict-score">Predict Exam Score</button>
                 </div>
               </div>
 
@@ -261,5 +267,7 @@
     </div>
   </div>
 </section>
+
+<script src="{% static 'js/exams.js' %}"></script>
 
 {% endblock %}
