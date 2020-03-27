@@ -299,3 +299,7 @@ def search_form_defaults(form):
 
   form.fields['event_type'].empty_label = 'Any Type'
   form.fields['repeat_type'].empty_label = 'Any Type'
+
+# Returns event start and end hour
+def get_event_hours(event):
+  return event

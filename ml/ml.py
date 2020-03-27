@@ -82,7 +82,6 @@ def get_hours_prediction(exam_number, course_id, predicted_score):
     best_hours = 1
     best_difference = 0
     for x in range(0, 100):
-        # exam_score = (model.predict(np.array( [ [17, 18, -(x)] ] ))[0])/20 * 100
         exam_score = get_exam_prediction(exam_number, course_id, x)
         diff = predicted_score - exam_score 
         if x == 0:

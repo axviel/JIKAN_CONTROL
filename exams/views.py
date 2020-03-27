@@ -14,7 +14,9 @@ from exams.models import Exam
 from courses.models import Course
 
 import datetime
+from dateutil import relativedelta
 import json
+from collections import OrderedDict 
 
 from ml import ml
 
@@ -33,7 +35,6 @@ def index(request):
   }
 
   return render(request, 'exams/exam_list.html', context)
-
 
 # Returns the detail info of an Exam. Also used to create and update exams
 def exam(request, exam_id=0, event_id=0):
@@ -88,14 +89,17 @@ def exam(request, exam_id=0, event_id=0):
       exam.save()
 
       # If exam was created via calendar page, return the id
-      if 'is_calendar_form' in request.POST:
-        context = {
-          'exam_id': exam.id,
-          'title': exam.title,
-          'start_time': exam.start_time.strftime("%H:%M")
-        }
-        context = json.dumps(context)
-        return HttpResponse(context)
+      # if 'is_calendar_form' in request.POST:
+      #   context = {
+      #     'exam_id': exam.id,
+      #     'title': exam.title,
+      #     'start_time': exam.start_time.strftime("%H:%M")
+      #   }
+      #   context = json.dumps(context)
+      #   return HttpResponse(context)
+
+      # Create study time events
+      generate_study_time_events(exam)
 
       # UI success message
       messages.success(request, 'Exam created successfully')
@@ -217,6 +221,180 @@ def exam(request, exam_id=0, event_id=0):
 
   
     return render(request, 'exams/exam_detail.html', context)
+
+def generate_study_time_events(exam):
+  # Find the day of the exam
+  event = Event.objects.get(pk=exam.event_id)
+  event_date = event.start_date
+
+  # Find today
+  current_date = datetime.date.today()
+
+  '''
+  # Calc number of days between today and exam day
+  days_event_month = event_date.day - 1
+  days_current_month = event_date.max.day - current_date.day - 1
+
+  # Find other days if there are months in between
+  days_other = 0
+  other_date = current_date
+  while other_date.month < (event_date.month - 1):
+    other_date = other_date.today() + relativedelta.relativedelta(months=1)
+    days_other += other_date.max.day
+
+  # If current date and exam date are in the same month, subtract them
+  days_total = 0
+  if current_date.month == event_date.month:
+    days_total = days_event_month - days_current_month + days_other
+  else:
+    days_total = days_event_month + days_current_month + days_other
+  '''
+
+  # Get events in between
+  # events_in_between = Event.objects.filter(start_date__gt=current_date, start_date__lt=event_date)
+  events_in_between = Event.objects.filter(
+      Q(is_hidden=False)
+      & 
+      (
+        ( Q(start_date__gte=current_date) & Q(start_date__lt=event_date) ) 
+        |
+        (~Q(repeat_type=1) 
+          & 
+          ( Q(end_date__gte=current_date) | Q(end_date=None) ) 
+        )
+      )
+    )
+
+  # Find days between
+  # dates_in_between = []
+  dates_in_between = {}
+  available_hours = {}
+  # dates_in_between = OrderedDict()
+
+  other_date = current_date + relativedelta.relativedelta(days=1)
+  while (other_date.day != event_date.day) or (other_date.month != event_date.month) or (other_date.year != event_date.year):
+    # dates_in_between.append(other_date)
+    dates_in_between[f'{other_date.month}/{other_date.day}/{other_date.year}'] = []
+    available_hours[f'{other_date.month}/{other_date.day}/{other_date.year}'] = []
+    other_date = other_date + relativedelta.relativedelta(days=1)
+
+  # Hell
+  for event in events_in_between:
+    repeat_type = event.repeat_type.pk
+    start_hour = event.start_time.hour
+    end_hour = event.end_time.hour
+    start_month = event.start_date.month
+    start_day = event.start_date.day
+    start_year = event.start_date.year
+    start_week_day = event.start_date.weekday()
+    end_month = None
+    end_day = None
+    end_year = None
+    if event.end_date != None:
+      end_month = event.end_date.month
+      end_day = event.end_date.day
+      end_year = event.end_date.year
+
+    add_event_hours = False
+
+    for key in dates_in_between:
+      # If date is event end_date then break
+      if key == f'{end_month}/{end_day}/{end_year}':
+        break
+
+      # Start adding the event
+      if key == f'{start_month}/{start_day}/{start_year}':
+        add_event_hours = True
+        # dates_in_between[key].append(event) # testing
+        dates_in_between[key].append( (start_hour, end_hour) )
+
+        # If event does not repeat then break
+        if repeat_type == 1:
+          break
+        else:
+          continue
+
+      # If event started before our current date
+      if event.start_date.date() < current_date:
+        add_event_hours = True
+
+      # If event is stil not being added
+      if not add_event_hours:
+        continue
+
+      key_date_values = key.split('/')
+      key_date = datetime.datetime(int(key_date_values[2]), int(key_date_values[0]), int(key_date_values[1]))
+
+      # If repeats daily, add it
+      if add_event_hours and repeat_type == 2:
+        # dates_in_between[key].append(event) # testing
+        dates_in_between[key].append( (start_hour, end_hour) )
+      # If repeats weekly, add it if week day is the same
+      elif add_event_hours and repeat_type == 3 and start_week_day == key_date.weekday():
+        # dates_in_between[key].append(event) # testing
+        dates_in_between[key].append( (start_hour, end_hour) )
+      # If repeats monthly, add if day is the same
+      elif add_event_hours and repeat_type == 4 and start_day == key_date.day:
+        # dates_in_between[key].append(event) # testing
+        dates_in_between[key].append( (start_hour, end_hour) )
+      # If repeats yearly, add if day, month are the same
+      elif add_event_hours and repeat_type == 5 and start_month == key_date.month and start_day == key_date.day:
+        # dates_in_between[key].append(event) # testing
+        dates_in_between[key].append( (start_hour, end_hour) )
+
+  # Contains the free time hours of the days in between
+  total_study_hours = exam.predicted_study_hours * 4 # 4 weeks worth of hours
+  total_study_hours_old = 0
+  study_hour_added = False
+  
+  while total_study_hours > 0 and total_study_hours_old != total_study_hours:
+    total_study_hours_old = total_study_hours
+    for key in dates_in_between:
+
+      study_hour = 7
+
+      if available_hours[key] != []:
+        study_hour = available_hours[key][-1] + 1
+
+      if study_hour >= 24:
+        continue
+
+      if dates_in_between[key] == []:
+        study_hour_added = True
+      else:
+        for event_hours in dates_in_between[key]:
+          # If there's an event hour that conflicts with study_hour, change study hour to hour after event
+          if study_hour >= event_hours[0] and study_hour <= event_hours[1] :
+            study_hour = event_hours[1] + 1
+            study_hour_added = True
+          else:
+            study_hour_added = True
+
+      if study_hour > 24:
+        study_hour = 24
+        continue
+
+      if study_hour_added:
+        available_hours[key].append(study_hour)
+        total_study_hours -= 1
+
+      if total_study_hours == 0:
+        break
+
+      study_hour_added = False
+
+  # x = 0
+
+  # Assign study events to those hours and an ExamStudy relation 
+  # for key in available_hours:
+
+
+
+
+  return 0
+
+
+
 
 # Search for exams 
 def search(request):
