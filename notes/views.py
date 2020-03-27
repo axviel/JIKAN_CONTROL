@@ -169,7 +169,7 @@ def search(request):
   # Request contains at least one form field, return the form with its field values
   if 'title' in request.GET:
     form = NotesForm(initial={
-	  'event_id': request.GET['event_id'],
+	  'events_id': request.GET.get('events_id'),
           'title': request.GET['title'],
           'created_date': request.GET['created_date'],
         })
