@@ -160,11 +160,11 @@ def event(request, event_id=0):
         'end_time': event.end_time
       })
       # Get event notes and exams
-      notes = Note.objects.all().filter(event_id=event.id,is_hidden=False)
+     # notes = Note.objects.all().filter(event_id=event.id,is_hidden=False)
       exams = Exam.objects.all().filter(event_id=event.id,is_hidden=False)
 
       context['form'] = form
-      context['notes'] = notes
+     # context['notes'] = notes
       context['exams'] = exams
 
     else:

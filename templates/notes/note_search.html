@@ -1,1 +1,98 @@
-<h1>note search</h1>
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+  | Note Search
+{% endblock %}
+
+{% block content %}
+
+<!-- Alerts -->
+{% include 'partials/_alerts.html' %}
+
+<!-- Breadcrumb -->
+<section id="bc" class="mt-3">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{% url 'calendar' %}">
+            <i class="fas fa-home"></i> Home</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="{% url 'note_list' %}">Notes</a>
+        </li>
+        <li class="breadcrumb-item active">Search</li>
+      </ol>
+    </nav>
+  </div>
+</section>
+
+<!-- Note Section -->
+<section id="notes" class="py-4 main-content">
+  <div class="container">
+    <!-- Note Search form Section -->
+    <h3>Note Search</h3>
+    <form action="{% url 'note_search' %}">
+      {% csrf_token %}
+      <div class="row pb-4">
+        <div class="col-6">
+          <label for="{{ form.title.name }}" class="col-form-label">
+            {{ form.title.label }}
+          </label>
+          {{ form.title }}
+        </div>
+        <div class="col-6">
+          <label for="{{ form.created_date.name }}" class="col-form-label">
+            {{ form.created_date.label }}
+          </label>
+          {{ form.created_date }}
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-block btn-secondary mb-4">Search</button>
+
+    </form>
+
+    <!-- Note List -->
+    <h4>Results</h4>
+    <table id="note-list" class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Created Date</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Display notes -->
+        {% if notes %}
+
+          {% for note in notes %}
+
+            <tr>
+              <td>{{ note.title }}</td>
+              <td>{{ note.created_date }}</td>
+              <!-- Call detail view method (Uses urls path name) -->
+              <td><a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a></td>
+            </tr>
+
+          {% endfor %}
+
+        {% else %}
+
+          <!-- No note message? -->
+
+        {% endif %}
+
+      </tbody>
+    </table>
+
+  </div>
+</section>
+
+<script src="{% static 'js/events.js' %}"></script>
+
+{% endblock %}
