@@ -47,23 +47,20 @@
       </thead>
       <tbody>
 
-        <!-- Display exams -->
-        {% if exams %}
+        <!-- Display notes -->
+        {% if notes %}
 
-          {% for exam in exams %}
+          {% for note in notes %}
 
-            <tr exam-id="{{ exam.id }}">
-              <td>{{ exam.title }}</td>
-              <td>{{ exam.event }}</td>
-              <td>{{ exam.created_date }}</td>
+            <tr note-id="{{ note.id }}">
+              <td>{{ note.title }}</td>
+              <td>{{ note.event }}</td>
+              <td>{{ note.created_date }}</td>
               <!-- Call detail view method (Uses urls path name) -->
               <td>
                 <div class="grid-actions text-center">
-                  <a href="{% url 'exam_detail' exam.id %}"><i class="fas fa-info-circle cursor-pointer show-exam-detail"></i></a>
-                  {% if not exam.end_date %}
-                    <i class="fas fa-check cursor-pointer text-success complete-exam mx-2"></i>
-                  {% endif %}
-                  <i class="fas fa-trash-alt cursor-pointer text-danger remove-exam mr-2"></i>
+                  <a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle cursor-pointer show-note-detail"></i></a>
+                  <i class="fas fa-trash-alt cursor-pointer text-danger remove-note mr-2"></i>
                 </div>
               </td>
             </tr>
@@ -72,7 +69,7 @@
 
         {% else %}
 
-          <!-- No exams message? -->
+          <!-- No notes message? -->
 
         {% endif %}
 
@@ -84,12 +81,12 @@
       <div class="col-md-12">
 
         <!-- Check if there are other pages -->
-        {% if exams.has_other_pages %}
+        {% if notes.has_other_pages %}
           <ul class="pagination">
-            {% if exams.has_previous %}
+            {% if notes.has_previous %}
               <!-- Previous Button -->
               <li class="page-item">
-                <a href="?page={{exams.previous_page_number}}" class="page-link">&laquo;</a>
+                <a href="?page={{notes.previous_page_number}}" class="page-link">&laquo;</a>
               </li>
             {% else %}
               <!-- Disabled arrow -->
@@ -98,8 +95,8 @@
               </li>
             {% endif %}
 
-            {% for i in exams.paginator.page_range %}
-              {% if exams.number == i %}
+            {% for i in notes.paginator.page_range %}
+              {% if notes.number == i %}
                 <!-- Active link -->
                 <li class="page-item active">
                   <a class="page-link">{{i}}</a>
@@ -112,10 +109,10 @@
               {% endif %}
             {% endfor %}
 
-            {% if exams.has_next %}
+            {% if notes.has_next %}
               <!-- Next Button -->
               <li class="page-item">
-                <a href="?page={{exams.next_page_number}}" class="page-link">&raquo;</a>
+                <a href="?page={{notes.next_page_number}}" class="page-link">&raquo;</a>
               </li>
             {% else %}
               <!-- Disabled arrow -->
@@ -132,6 +129,6 @@
   </div>
 </section>
 
-<script src="{% static 'js/exams.js' %}"></script>
+<script src="{% static 'js/notes.js' %}"></script>
 
 {% endblock %}
