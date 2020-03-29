@@ -12,6 +12,7 @@ from events.models import Event
 from notes.models import Note
 from exams.models import Exam
 from courses.models import Course
+from examstudy.models import ExamStudy
 
 import datetime
 from dateutil import relativedelta
@@ -98,7 +99,7 @@ def exam(request, exam_id=0, event_id=0):
       #   context = json.dumps(context)
       #   return HttpResponse(context)
 
-      # Create study time events
+      # Create study time events if new or predicted study hours was updated
       generate_study_time_events(exam)
 
       # UI success message
@@ -222,6 +223,7 @@ def exam(request, exam_id=0, event_id=0):
   
     return render(request, 'exams/exam_detail.html', context)
 
+# When there is a change in predicted study hours, generate the study time events
 def generate_study_time_events(exam):
   # Find the day of the exam
   event = Event.objects.get(pk=exam.event_id)
@@ -229,26 +231,6 @@ def generate_study_time_events(exam):
 
   # Find today
   current_date = datetime.date.today()
-
-  '''
-  # Calc number of days between today and exam day
-  days_event_month = event_date.day - 1
-  days_current_month = event_date.max.day - current_date.day - 1
-
-  # Find other days if there are months in between
-  days_other = 0
-  other_date = current_date
-  while other_date.month < (event_date.month - 1):
-    other_date = other_date.today() + relativedelta.relativedelta(months=1)
-    days_other += other_date.max.day
-
-  # If current date and exam date are in the same month, subtract them
-  days_total = 0
-  if current_date.month == event_date.month:
-    days_total = days_event_month - days_current_month + days_other
-  else:
-    days_total = days_event_month + days_current_month + days_other
-  '''
 
   # Get events in between
   # events_in_between = Event.objects.filter(start_date__gt=current_date, start_date__lt=event_date)
@@ -278,7 +260,7 @@ def generate_study_time_events(exam):
     available_hours[f'{other_date.month}/{other_date.day}/{other_date.year}'] = []
     other_date = other_date + relativedelta.relativedelta(days=1)
 
-  # Hell
+  # 
   for event in events_in_between:
     repeat_type = event.repeat_type.pk
     start_hour = event.start_time.hour
@@ -315,7 +297,7 @@ def generate_study_time_events(exam):
           continue
 
       # If event started before our current date
-      if event.start_date.date() < current_date:
+      if event.start_date.date() <= current_date:
         add_event_hours = True
 
       # If event is stil not being added
@@ -346,21 +328,50 @@ def generate_study_time_events(exam):
   total_study_hours = exam.predicted_study_hours * 4 # 4 weeks worth of hours
   total_study_hours_old = 0
   study_hour_added = False
+
+  study_events = {}
+  study_event_exists = False
+
+  # Hide existing exam_study 
+  # ExamStudy.objects.filter(exam=exam.id).update(is_hidden=True)
+  ExamStudy.objects.filter(exam=exam.id).delete()
+  # Event.objects.filter(pk=exam.event.pk).update(is_hidden=True)
   
   while total_study_hours > 0 and total_study_hours_old != total_study_hours:
     total_study_hours_old = total_study_hours
     for key in dates_in_between:
+      key_date_values = key.split('/')
 
       study_hour = 7
 
+      study_event = Event()
+
       if available_hours[key] != []:
         study_hour = available_hours[key][-1] + 1
+        study_event = study_events[key]
+        study_event_exists = True
 
       if study_hour >= 24:
         continue
 
       if dates_in_between[key] == []:
         study_hour_added = True
+        if study_event_exists:
+          study_event.end_time = datetime.time(study_hour, 59)
+        else:
+          # Add event data
+          study_event.event_type_id = 3
+          study_event.repeat_type_id = 1
+          study_event.title = f'{exam.title} study time'
+          study_event.description = f'{exam.title} study time based on predicted score'
+          study_event.start_time = datetime.time(study_hour, 0)
+          study_event.end_time = datetime.time(study_hour, 59)
+          study_event.start_date = datetime.datetime(int(key_date_values[2]), int(key_date_values[0]), int(key_date_values[1]))
+          study_event.user_id = exam.user_id
+
+          exam_study = ExamStudy()
+          exam_study.exam_id = exam.pk
+          exam_study.is_hidden = False
       else:
         for event_hours in dates_in_between[key]:
           # If there's an event hour that conflicts with study_hour, change study hour to hour after event
@@ -370,6 +381,23 @@ def generate_study_time_events(exam):
           else:
             study_hour_added = True
 
+          if study_hour_added:
+            if study_event_exists:
+              study_event.end_time = datetime.time(study_hour, 59)
+            else:
+              study_event.event_type_id = 3
+              study_event.repeat_type_id = 1
+              study_event.title = f'{exam.title} study time'
+              study_event.description = f'{exam.title} study time based on predicted score'
+              study_event.start_time = datetime.time(study_hour, 0)
+              study_event.end_time = datetime.time(study_hour, 59)
+              study_event.start_date = datetime.datetime(int(key_date_values[2]), int(key_date_values[0]), int(key_date_values[1]))
+              study_event.user_id = exam.user_id
+
+              exam_study = ExamStudy()
+              exam_study.exam_id = exam.pk
+              exam_study.is_hidden = False
+
       if study_hour > 24:
         study_hour = 24
         continue
@@ -377,13 +405,20 @@ def generate_study_time_events(exam):
       if study_hour_added:
         available_hours[key].append(study_hour)
         total_study_hours -= 1
+        study_event.save()
+
+        if not study_event_exists:
+          study_events[key] = study_event
+          exam_study.event_id = study_event.pk
+          exam_study.save()
 
       if total_study_hours == 0:
         break
 
       study_hour_added = False
+      study_event_exists = False
 
-  # x = 0
+  x = 0
 
   # Assign study events to those hours and an ExamStudy relation 
   # for key in available_hours:
