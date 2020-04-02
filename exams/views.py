@@ -23,7 +23,7 @@ from ml import ml
 
 def index(request):
   # Fetch exams from db
-  exams = Exam.objects.order_by('-created_date').filter(is_hidden=False)
+  exams = Exam.objects.order_by('-created_date').filter(is_hidden=False, user_id=request.user.id)
 
   # Pagination
   paginator = Paginator(exams, 5)
@@ -427,9 +427,6 @@ def generate_study_time_events(exam):
 
 
   return 0
-
-
-
 
 # Search for exams 
 def search(request):

@@ -11,10 +11,10 @@ class Event(models.Model):
   description = models.TextField(blank=True, null=True)
   start_time = models.TimeField()
   end_time = models.TimeField()
-  start_date = models.DateTimeField(default=datetime.now, blank=True)
-  end_date = models.DateTimeField(null=True)
+  start_date = models.DateField(default=datetime.now, blank=True)
+  end_date = models.DateField(null=True)
   user_id = models.IntegerField()
-  # user_id = models.ForeignKey()
+  is_completed = models.BooleanField(default=False)
   is_hidden = models.BooleanField(default=False)
 
   def __str__(self):

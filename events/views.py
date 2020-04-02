@@ -15,7 +15,7 @@ import json
 # Returns the list page with all events
 def index(request):
   # Fetch events from db
-  events = Event.objects.order_by('-start_date').filter(is_hidden=False)
+  events = Event.objects.order_by('-start_date').filter(is_hidden=False, user_id=request.user.id)
 
   # Pagination
   paginator = Paginator(events, 10)

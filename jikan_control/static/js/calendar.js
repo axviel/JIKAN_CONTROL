@@ -278,7 +278,7 @@ class Calendar {
             if(event.title !== undefined ){
                 eventTemplate += `
                     <li class="${event.is_completed ? 'bg-info' : ''} current-event-item list-group-item list-group-item-action d-flex justify-content-between align-items-center" event-id="${event.event_id}" repeat-type="${event.repeat_type}">
-                        (${event.start_time}) ${event.title}
+                        (${event.start_time} - ${event.end_time}) ${event.title}
                         <div>
                             ${!event.is_completed ? '<i class="fas fa-check complete-event cursor-pointer text-success mr-4"></i>' : ''}
                             <i class="fas fa-trash-alt remove-event cursor-pointer text-danger"></i>
