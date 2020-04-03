@@ -34,42 +34,8 @@ class Calendar {
         // Store the event list passed by the backend
         this.eventList = JSON.parse(document.getElementById('calendar-events').textContent) || {};
 
-        // Contains the events that repeat 
-        this.dailyRepeatEventList = []; 
-        this.weeklyRepeatEventList = []; 
-        this.monthlyRepeatEventList = []; 
-        this.yearlyRepeatEventList = []; 
-        this.tempEventRepeatList = {};
-
-        // Sort event list based on start_time
-        const eventDates = Object.keys(this.eventList)
-        eventDates.forEach(date => {
-            this.eventList[date].sort(this.compareStartTimes);
-            let theEventDate;
-            let key;
-
-            this.eventList[date].forEach(event => {
-                theEventDate = new Date(event.start_date);
-
-                // Daily
-                if(event.repeat_type === 2){
-                    this.dailyRepeatEventList.push(event);
-                }
-                // Weekly
-                else if(event.repeat_type === 3){
-                    this.weeklyRepeatEventList.push(event);
-                }
-                // Monthly
-                else if(event.repeat_type === 4){
-                    this.monthlyRepeatEventList.push(event);
-                }
-                // Yearly
-                else if(event.repeat_type === 5){
-                    this.yearlyRepeatEventList.push(event);
-                }
-            });
-            
-        });
+        // Visible events
+        this.visibleEvents = {};
 
         // Current event on the modal
         this.currentEvent = {};
@@ -91,193 +57,30 @@ class Calendar {
         this.drawAll();
     }
 
-    // Compares event list start_time in order to sort the list
-    compareStartTimes( a, b ) {
-        if ( a.start_time < b.start_time ){
-          return -1;
-        }
-        if ( a.start_time > b.start_time ){
-          return 1;
-        }
-        return 0;
-    }
-
-    // Returns an object/list of repeat event days
-    currentMonthRepeatedEvents(days){
-        let dayDate;
-        let eventDate;
-
-        // Clear temp list
-        this.tempEventRepeatList = {}
-
-        days.forEach(day => {
-            dayDate = new Date(day.formatedDate);
-
-            // Check for daily repeats
-            this.dailyRepeatEventList.forEach(event => {
-                // update event date?
-                // i think i need it pa que salgan en el modal
-
-                // Add if the day date is after to event start date and before event end date
-                eventDate = new Date(event.start_date);
-                if( ( eventDate.getTime() < dayDate.getTime() && !event.end_date ) || 
-                    (   event.end_date && 
-                        eventDate.getTime() < dayDate.getTime() &&
-                        new Date(event.end_date).getTime() > dayDate.getTime() ) ){
-
-                    if(day.hasEvent){
-                        day.hasEvent.push(event);
-                    }
-                    else{
-                        day.hasEvent = [event];
-                    }
-
-                    // Add to temp list
-                    if(day.formatedDate in this.tempEventRepeatList){
-                        this.tempEventRepeatList[day.formatedDate].push(event);
-                    }
-                    else{
-                        this.tempEventRepeatList[day.formatedDate] = [event];
-                    }
-                }
-            })
-
-            // Check for weekly repeats
-            this.weeklyRepeatEventList.forEach(event => {
-                eventDate = new Date(event.start_date);
-
-                // Add if it's the same weekday
-                if( eventDate.getDay() === dayDate.getDay() &&
-                    ( ( eventDate.getTime() < dayDate.getTime() && !event.end_date ) || 
-                        (   event.end_date && 
-                            eventDate.getTime() < dayDate.getTime() &&
-                            new Date(event.end_date).getTime() > dayDate.getTime() ) ) ){
-
-                    if(day.hasEvent){
-                        day.hasEvent.push(event);
-                    }
-                    else{
-                        day.hasEvent = [event];
-                    }
-
-                    // Add to temp list
-                    if(day.formatedDate in this.tempEventRepeatList){
-                        this.tempEventRepeatList[day.formatedDate].push(event);
-                    }
-                    else{
-                        this.tempEventRepeatList[day.formatedDate] = [event];
-                    }
-                }
-            })
-
-            // Check for monthly repeats
-            this.monthlyRepeatEventList.forEach(event => {
-                eventDate = new Date(event.start_date);
-
-                // Add if it's the same day number
-                if( eventDate.getDate() === dayDate.getDate() &&
-                    ( ( eventDate.getTime() < dayDate.getTime() && !event.end_date ) || 
-                        (   event.end_date && 
-                            eventDate.getTime() < dayDate.getTime() &&
-                            new Date(event.end_date).getTime() > dayDate.getTime() ) ) ){
-
-                    if(day.hasEvent){
-                        day.hasEvent.push(event);
-                    }
-                    else{
-                        day.hasEvent = [event];
-                    }
-
-                    // Add to temp list
-                    if(day.formatedDate in this.tempEventRepeatList){
-                        this.tempEventRepeatList[day.formatedDate].push(event);
-                    }
-                    else{
-                        this.tempEventRepeatList[day.formatedDate] = [event];
-                    }
-
-                }
-            })
-            
-            // Check for yearly repeats
-            this.yearlyRepeatEventList.forEach(event => {
-                eventDate = new Date(event.start_date);
-
-                // Add if it's the same day number
-                if( eventDate.getMonth() === dayDate.getMonth() &&
-                    eventDate.getDate() === dayDate.getDate() &&
-                    ( ( eventDate.getTime() < dayDate.getTime() && !event.end_date ) || 
-                        (   event.end_date && 
-                            eventDate.getTime() < dayDate.getTime() &&
-                            new Date(event.end_date).getTime() > dayDate.getTime() ) ) ){
-
-                    if(day.hasEvent){
-                        day.hasEvent.push(event);
-                    }
-                    else{
-                        day.hasEvent = [event];
-                    }
-
-                    // Add to temp list
-                    if(day.formatedDate in this.tempEventRepeatList){
-                        this.tempEventRepeatList[day.formatedDate].push(event);
-                    }
-                    else{
-                        this.tempEventRepeatList[day.formatedDate] = [event];
-                    }
-
-                }
-            })
-
-
-            // Sort the list
-            if(day.hasEvent){
-                day.hasEvent.sort(this.compareStartTimes);
-            }
-        });
-
-
-    }
-
     // draw Methods
     drawAll() {
+        this.getAllEventInstancesInRange();
         this.drawWeekDays();
-        this.drawDays();
-        this.drawYearAndCurrentDay();
-        this.drawEvents();
+        this.drawCalendarDays();
+        this.drawTopMonthYearAndCurrentDayNumberWeekday();
+        this.drawCurrentDayEventList();
     }
 
     // Draws the event list for the current day modal
-    drawEvents() {
+    drawCurrentDayEventList() {
         let calendar = this.getCalendar();
 
-        let mainList = this.eventList[calendar.active.formatted] ? [].concat(this.eventList[calendar.active.formatted]) : undefined;
-        let repeatList = this.tempEventRepeatList[calendar.active.formatted] ? [].concat(this.tempEventRepeatList[calendar.active.formatted]) : undefined;
-        let eventList;
-        if(mainList && repeatList){
-            eventList = mainList.concat(repeatList);
-        }
-        else if(mainList && !repeatList){
-            eventList = mainList;
-        }
-        else{
-            eventList = repeatList;
-        }
+        let currentDayEventList = this.visibleEvents[calendar.active.formatted] ? this.visibleEvents[calendar.active.formatted] : undefined;
 
-        if(eventList){
-            // Sort
-            eventList.sort(this.compareStartTimes);
+        if(!currentDayEventList){
+            currentDayEventList = ['No events to display'];
         }
-        else{
-            eventList = ['No events to display'];
-        }
-
 
         let eventTemplate = "<ul class='list-group'>";
-        eventList.forEach(event => {
+        currentDayEventList.forEach(event => {
             if(event.title !== undefined ){
                 eventTemplate += `
-                    <li class="${event.is_completed ? 'bg-info' : ''} current-event-item list-group-item list-group-item-action d-flex justify-content-between align-items-center" event-id="${event.event_id}" repeat-type="${event.repeat_type}">
+                    <li class="${event.is_completed ? 'bg-info' : ''} current-event-item list-group-item list-group-item-action d-flex justify-content-between align-items-center" event-id="${event.id}" repeat-type="${event.repeat_type}">
                         (${event.start_time} - ${event.end_time}) ${event.title}
                         <div>
                             ${!event.is_completed ? '<i class="fas fa-check complete-event cursor-pointer text-success mr-4"></i>' : ''}
@@ -300,8 +103,8 @@ class Calendar {
         this.elements.eventList.innerHTML = eventTemplate;
     }
 
-    // Draws month, year and the current day modal day number and week day
-    drawYearAndCurrentDay() {
+    // Draws the month and year at the tops of the calendar. Also draws the day number and weekday in the current day section
+    drawTopMonthYearAndCurrentDayNumberWeekday() {
         let calendar = this.getCalendar();
         this.elements.currentMonth.innerHTML = AVALIABLE_MONTHS[calendar.active.month];
         this.elements.year.innerHTML = calendar.active.year;
@@ -310,7 +113,7 @@ class Calendar {
     }
 
     // Draws the calendar days with their events
-    drawDays() {
+    drawCalendarDays() {
         let calendar = this.getCalendar();
 
         let latestDaysInPrevMonth = this.range(calendar.active.startWeek).map((day, idx) => {
@@ -353,12 +156,9 @@ class Calendar {
 
             newDayParams.formatedDate = this.getFormattedDate(new Date(`${Number(day.month) + 1}/${day.dayNumber}/${day.year}`));
             
-            newDayParams.hasEvent = this.eventList[newDayParams.formatedDate] ? [].concat(this.eventList[newDayParams.formatedDate]) : null;
+            newDayParams.hasEvent = this.visibleEvents[newDayParams.formatedDate] ? [].concat(this.visibleEvents[newDayParams.formatedDate]) : null;
             return newDayParams;
         });
-
-        // Concat repeated days to this month's items
-        this.currentMonthRepeatedEvents(days);
 
         let daysTemplate = "";
         let firstEvent = "";
@@ -401,7 +201,7 @@ class Calendar {
         this.elements.days.innerHTML = daysTemplate;
     }
 
-    // Draws the calendar week days (Mon, Tue, etc)
+    // Draws the calendar week days
     drawWeekDays() {
         let weekTemplate = "";
         AVAILABLE_WEEK_DAYS.forEach(week => {
@@ -409,6 +209,165 @@ class Calendar {
         });
 
         this.elements.week.innerHTML = weekTemplate;
+    }
+
+    // Returns range for current month (includes prev and next month days that are visible in calendar)
+    currentMonthRange(){
+        let calendar = this.getCalendar();
+
+        // Find date range
+        let pMonthNumOfDays = this.range(calendar.active.startWeek).length;
+        let day = this.countOfDaysInMonth(calendar.pMonth) - pMonthNumOfDays + 1;
+        let month = new Date(calendar.pMonth).getMonth();
+        let year = new Date(calendar.pMonth).getFullYear();
+
+        let startDate = new Date(year, month, day);
+
+        let cMonthNumOfDays = this.range(calendar.active.days).length;
+        let countOfRemainingDays = this.options.maxDays - (pMonthNumOfDays + cMonthNumOfDays);
+
+        day = this.range(countOfRemainingDays).length;
+        month = new Date(calendar.nMonth).getMonth();
+        year = new Date(calendar.nMonth).getFullYear();
+
+        let endDate = new Date(year, month, day);
+
+        return {
+            startDate,
+            endDate
+        };
+    }
+
+    // Compares event  start_time in order to sort the list
+    compareStartTimes(a, b) {
+        if ( a.start_time < b.start_time ){
+          return -1;
+        }
+        if ( a.start_time > b.start_time ){
+          return 1;
+        }
+        return 0;
+    }
+
+    // Adds the event to the visibleEvents object
+    addVisibleEvent(key, event){
+        // New date
+        event['start_date'] = key;
+
+        if(key in this.visibleEvents){
+            this.visibleEvents[key].push(event);
+        }
+        else{
+            this.visibleEvents[key] = [event];
+        }
+    }
+
+    // Constructs the visibleEvents list that conatins the events shown in the calendar
+    getAllEventInstancesInRange(range = null){
+        let calendar = this;
+
+        // If range is null, use the current month range
+        if(!range){
+            range = this.currentMonthRange();
+        }
+
+        let startDate = range.startDate;
+        let endDate = range.endDate;
+
+        // 'Clone' eventList so that the event start_dates don't get overwritten when repeated events are added
+        let cloneEventList = JSON.parse(JSON.stringify(this.eventList));
+
+        // Get events in that would appear in this range
+        let eventCollection = cloneEventList.filter(event => {
+            return !event.is_hidden &&
+            (
+                (
+                    event.repeat_type !== 1 &&
+                    Date.parse(event.start_date) <= endDate.getTime() &&
+                    (
+                        event.end_date === null ||
+                        Date.parse(event.end_date) >= startDate.getTime()
+                    )
+                ) ||
+                (
+                    event.repeat_type === 1 &&
+                    Date.parse(event.start_date) >= startDate.getTime() &&
+                    Date.parse(event.start_date) <= endDate.getTime()
+                )
+            )
+        });
+
+        this.visibleEvents = {}; // Clear events
+        let currentDate = new Date(startDate.getTime());
+
+        let event;
+        let eventRepeatTypeId;
+        let eventStartDate;
+        let eventEndDate;
+        let eventWeekday;
+        let eventDay;
+        let eventMonth;
+        let eventYear;
+        let key;
+
+        // Insert into visibleEvents all the instances of the events that will be visible during the period
+        // Interate until currentDate = endDate
+        while(currentDate.getTime() !== endDate.getTime()){
+
+            for(let i = 0; i < eventCollection.length; i++){
+                event = eventCollection[i];
+                eventRepeatTypeId = event.repeat_type;
+                eventStartDate = new Date(event.start_date);
+                eventEndDate = event.end_date !== null ? new Date(event.end_date) : null;
+                eventWeekday = eventStartDate.getDay();
+                eventDay = eventStartDate.getDate();
+                eventMonth = eventStartDate.getMonth();
+                eventYear = eventStartDate.getYear();
+                key = calendar.getFormattedDate(currentDate);
+
+                // If the event is not active, continue with the next iteration
+                if(!(eventStartDate.getTime() <= currentDate.getTime() && 
+                (eventEndDate === null || eventEndDate.getTime() >= currentDate.getTime()))){
+                    continue;
+                }
+
+                // If event repeats daily, add it if start_date is gte date_record and end_date is lte daterecord or is null
+                if(eventRepeatTypeId === 2){
+                    calendar.addVisibleEvent(key, event);
+                }
+                // If event repats weekly, add it if week day matches daterecord weekday
+                else if(eventRepeatTypeId === 3 && eventWeekday === currentDate.getDay()){
+                    calendar.addVisibleEvent(key, event);
+                }
+                // If event repeats monthly, yearly or does not repeat at all, add when conditions match
+                else{
+                    // If repeats monthly, add if day number is the same
+                    if(eventRepeatTypeId === 4 && eventDay === currentDate.getDate()){
+                        calendar.addVisibleEvent(key, event);
+                    }
+                    // If repeats yearly, add if day number and month is the same 
+                    else if(eventRepeatTypeId === 5 && eventDay === currentDate.getDate() && eventMonth === currentDate.getMonth()){
+                        calendar.addVisibleEvent(key, event);
+                    }
+                    // If does not repeat, add if day number, month, and year is the same 
+                    else if(eventRepeatTypeId === 1 && eventDay === currentDate.getDate() 
+                    && eventMonth === currentDate.getMonth() && eventYear === currentDate.getYear()){
+                        calendar.addVisibleEvent(key, event);
+                    }
+                }
+
+            }
+
+            // Increase current date by 1 day
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        // Sort events by startTime
+        for(key in this.visibleEvents){
+            if(this.visibleEvents[key].length !== 1){
+                this.visibleEvents[key].sort(this.compareStartTimes);
+            }
+        }
     }
 
     // Clears the add evnt form, shows the event list state, and re-draws everything
@@ -511,28 +470,9 @@ class Calendar {
         return `${month_digit}/${day_digit}/${date.getFullYear()}`;
     }
 
-    // todo
+    // TODO
     range(number) {
         return new Array(number).fill().map((e, i) => i);
-    }
-
-    // Returns the repeat event list
-    getReturnEventList(eventType){
-        if(eventType === 2){
-            return this.dailyRepeatEventList;
-        }
-        // Weekly
-        else if(eventType === 3){
-            return this.weeklyRepeatEventList;
-        }
-        // Monthly
-        else if(eventType === 4){
-            return this.monthlyRepeatEventList;
-        }
-        // Yearly
-        else if(eventType === 5){
-            return this.yearlyRepeatEventList;
-        }
     }
 
     // Initializes the events
@@ -598,83 +538,32 @@ class Calendar {
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
                 },
                 success: function(data){
-                    let newEvent = JSON.parse(data);
+                    let eventData = JSON.parse(data);
+                    let foundEvent = thisCalendar.eventList.find(event => event.id === eventData.id);
 
-                    // Update the event if it exists in the event list
-                    let isNotUpdate = true
-                    const eventDate = thisCalendar.getCalendar().active.formatted;
-                    const eventDateList = thisCalendar.eventList[eventDate];
-                    const repeatEventDateList = thisCalendar.tempEventRepeatList[eventDate];
-
-                    if(eventDateList){
-                        eventDateList.forEach( (eventItem, index) => {
-                            if(eventItem.event_id === newEvent.event_id ){
-                                eventDateList[index].title = newEvent.title;
-                                eventDateList[index].description = newEvent.description;
-                                eventDateList[index].event_type = newEvent.event_type;
-                                eventDateList[index].repeat_type = newEvent.repeat_type;
-                                eventDateList[index].start_time = newEvent.start_time;
-                                eventDateList[index].end_time = newEvent.end_time;
-                                eventDateList[index].is_completed = newEvent.is_completed;
-
-                                isNotUpdate = false;
-                            }
-                        });
+                    if(foundEvent){
+                        // Update existing event data
+                        foundEvent.title = eventData.title;
+                        foundEvent.description = eventData.description;
+                        foundEvent.event_type = eventData.event_type;
+                        foundEvent.repeat_type = eventData.repeat_type;
+                        foundEvent.start_time = eventData.start_time;
+                        foundEvent.end_time = eventData.end_time;
                     }
-
-                    if(repeatEventDateList){
-                        repeatEventDateList.forEach( (eventItem, index) => {
-                            if(eventItem.event_id === newEvent.event_id ){
-                                repeatEventDateList[index].title = newEvent.title;
-                                repeatEventDateList[index].description = newEvent.description;
-                                repeatEventDateList[index].event_type = newEvent.event_type;
-                                repeatEventDateList[index].repeat_type = newEvent.repeat_type;
-                                repeatEventDateList[index].start_time = newEvent.start_time;
-                                repeatEventDateList[index].end_time = newEvent.end_time;
-                                repeatEventDateList[index].is_completed = newEvent.is_completed;
-
-                                isNotUpdate = false;
-                            }
-                        });
-                    }
-
-                    // Remove from repeat list
-                    let repeatList = thisCalendar.getReturnEventList(thisCalendar.currentEvent.repeat_type);
-                    if(repeatList){
-                        let eventIndex; 
-                        repeatList.forEach( (event, index) => {
-                            if(event.event_id === newEvent.event_id){
-                                eventIndex = index;
-                            }
-                        });
-                        if(eventIndex){
-                            repeatList.splice(eventIndex, 1);
-                        }
-                    }
-
-                    // Add to repeat list
-                    if(Number(newEvent.repeat_type) !== 1){
-                        repeatList = thisCalendar.getReturnEventList(newEvent.repeat_type);
-                        repeatList.push(newEvent);
+                    else{
+                        // Add new event to calendar
+                        thisCalendar.eventList.push(eventData);
                     }
 
                     // Update current event
-                    thisCalendar.currentEvent = newEvent;
-
-                    // Save the event if it doesn't exist in the event list
-                    if(isNotUpdate){
-                        let dateFormatted = thisCalendar.getFormattedDate(new Date(thisCalendar.date));
-                        if (!thisCalendar.eventList[dateFormatted]) thisCalendar.eventList[dateFormatted] = [];
-                        thisCalendar.eventList[dateFormatted].push(newEvent);
-
-                        // Sort list again
-                        thisCalendar.eventList[dateFormatted].sort(thisCalendar.compareStartTimes);
-                    }
+                    thisCalendar.currentEvent = foundEvent ? foundEvent : eventData;
 
                     // Clear form and state
                     thisCalendar.clearAddEventFormState(true);
                 }
             });
+
+            // TODO onError show something like a notif
 
             // Prevent form submission with redirect
             e.preventDefault();
@@ -786,34 +675,9 @@ class Calendar {
                         // Remove from UI
                         eventElement.remove();
 
-                        // Remove from repeat list
-                        if(Number(repeatType) !== 1){
-                            let repeatList = thisCalendar.getReturnEventList(Number(repeatType));
-                            if(repeatList){
-                                let eventIndex; 
-                                repeatList.forEach( (event, index) => {
-                                    if(event.event_id === Number(eventId)){
-                                        eventDate = event.start_date;
-                                        eventIndex = index;
-                                    }
-                                });
-                                repeatList.splice(eventIndex, 1);
-                            }
-                        }
-
-                        // Remove from the eventDateList
-                        let eventDateList = thisCalendar.eventList[eventDate];
-
-                        eventDateList.forEach( (eventItem, index) => {
-                            if(eventItem.event_id === Number(eventId) ){
-                                eventDateList.splice(index, 1);
-                            }
-                        });
-
-                        //If eventDateList is empty, remove it from the eventList
-                        if(eventDateList.length === 0){
-                            delete thisCalendar.eventList[eventDate];
-                        }
+                        // Mark the event as hidden
+                        let deletedEvent = thisCalendar.eventList.find(event => event.id === Number(eventId));
+                        deletedEvent.is_hidden = true;
 
                         thisCalendar.drawAll();
                     }
@@ -838,22 +702,14 @@ class Calendar {
                         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
                     },
                     success: function(data){
+                        // TODO Handle complete 
+
                         let eventEndDateData = JSON.parse(data);
                         
-                        // Update event to is_complete = true
-                        let eventDateList = thisCalendar.eventList[eventDate];
-
-                        // If not found on main list, get in repeat list
-                        if(!eventDateList){
-                            eventDateList = thisCalendar.tempEventRepeatList[eventDate];
-                        }
-
-                        eventDateList.forEach( eventItem => {
-                            if(eventItem.event_id === Number(eventId) ){
-                                eventItem.is_completed = true;
-                                eventItem.end_date = eventEndDateData.end_date;
-                            }
-                        });
+                        // Update event to is_completed = true
+                        let completedEvent = thisCalendar.eventList.find(event => event.id === Number(eventId));
+                        completedEvent.is_completed = true;
+                        completedEvent.end_date = eventEndDateData.end_date;
 
                         thisCalendar.drawAll();
                     }

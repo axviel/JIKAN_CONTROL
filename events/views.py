@@ -80,15 +80,18 @@ def event(request, event_id=0):
           end_date = end_date.strftime("%m/%d/%Y")
 
         context = {
-          'event_id': event.id,
+          'id': event.id,
           'title': event.title,
           'description': event.description,
+          'event_type': event.event_type.pk,
           'repeat_type': event.repeat_type.pk,
           'start_date': event.start_date.strftime("%m/%d/%Y"),
           'end_date': end_date,
           'start_time': event.start_time.strftime("%H:%M"), 
           'end_time': event.end_time.strftime("%H:%M"), 
-          'is_completed': (event.end_date != None)
+          'user_id': event.user_id,
+          'is_completed': event.is_completed,
+          'is_hidden': event.is_hidden
         }
         context = json.dumps(context)
         return HttpResponse(context)
@@ -276,6 +279,7 @@ def complete(request):
 
     event = Event.objects.get(id=event_id)
     event.end_date = datetime.date.today()
+    event.is_completed = True
     event.save()
 
     if 'is_detail' in request.POST:

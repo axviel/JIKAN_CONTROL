@@ -33,3 +33,9 @@ for event in db_result:
     db_events[key].append(event_data)
   else:
     db_events[key] = [event_data]
+
+
+
+
+# //////////////////////
+# events = Event.objects.raw('SELECT * FROM get_events_in_range(%s, %s, %s)', [start_date, end_date,request.user.id])
