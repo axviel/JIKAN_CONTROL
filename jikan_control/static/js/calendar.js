@@ -26,6 +26,8 @@ class Calendar {
             eventEndDateField: document.querySelector('#end_date_field'),
             saveEventFormButton: document.querySelector('#save-event-form-btn'),
             examButton: document.querySelector('#exam-btn'),
+            eventTypeSelect: document.querySelector('#event_type'),
+            repeatTypeSelect: document.querySelector('#repeat_type'),
         };
 
         // Used to toggle modal event list and form states
@@ -79,9 +81,12 @@ class Calendar {
         let eventTemplate = "<ul class='list-group'>";
         currentDayEventList.forEach(event => {
             if(event.title !== undefined ){
+                let startTime = this.convertAMPM(event.start_time);
+                let endTime = this.convertAMPM(event.end_time);
+
                 eventTemplate += `
                     <li class="${event.is_completed ? 'bg-info' : ''} current-event-item list-group-item list-group-item-action d-flex justify-content-between align-items-center" event-id="${event.id}" repeat-type="${event.repeat_type}">
-                        (${event.start_time} - ${event.end_time}) ${event.title}
+                        (${startTime} - ${endTime}) ${event.title}
                         <div>
                             ${!event.is_completed ? '<i class="fas fa-check complete-event cursor-pointer text-success mr-4"></i>' : ''}
                             <i class="fas fa-trash-alt remove-event cursor-pointer text-danger"></i>
@@ -209,6 +214,27 @@ class Calendar {
         });
 
         this.elements.week.innerHTML = weekTemplate;
+    }
+
+    // Convert 24 hour time to AM/PM
+    convertAMPM(timeStr){
+        // Get hour
+        let hourStr = timeStr.substring(0,2);
+        let hourNum = Number(hourStr);
+
+        let newHour = hourNum - 12;
+        let isAM = newHour < 0;
+
+        if(isAM){
+            return hourNum + timeStr.substring(2) + ' AM'
+        }
+        else{
+            if(newHour === 0){
+                newHour = 12;
+            }
+            
+            return newHour + timeStr.substring(2) + ' PM'
+        }
     }
 
     // Returns range for current month (includes prev and next month days that are visible in calendar)
@@ -379,6 +405,8 @@ class Calendar {
         document.querySelector('#repeat_type').value = "1";
         document.querySelector('#start_time').value = "";
         document.querySelector('#end_time').value = "";
+
+        this.elements.repeatTypeSelect.removeAttribute('disabled');
 
         // Hide end_date field if it was visible and show save button
         this.elements.eventEndDateField.classList.add('d-none');
@@ -604,6 +632,11 @@ class Calendar {
                         document.querySelector('#start_time').value = eventData.start_time;
                         document.querySelector('#end_time').value = eventData.end_time;
 
+                        // If exam, disable repeat type select
+                        if(eventData.event_type === 4){
+                            thisCalendar.elements.repeatTypeSelect.setAttribute('disabled', true);
+                        }
+
                         // If event is completed, add end_date and display the field
                         if(eventData.end_date){
                             let eventEndDate = eventData.end_date.substring(0,10);
@@ -728,6 +761,17 @@ class Calendar {
             this.drawAll()
         });
 
+        // Disable Repeat Type if Event Type is exam
+        this.elements.eventTypeSelect.addEventListener('click', e => {
+            if(e.target.value === '4'){
+                this.elements.repeatTypeSelect.value = '1';
+                this.elements.repeatTypeSelect.setAttribute('disabled', true);
+            }
+            else{
+                this.elements.repeatTypeSelect.removeAttribute('disabled');
+            }
+        });
+
         // -- Current Day Modal Events --
 
         // Open the current day modal
@@ -773,6 +817,8 @@ class Calendar {
             document.querySelector('#event-form-back').classList.add('d-none');
             document.querySelector('#end_date_field').classList.add('d-none');
             document.querySelector('#exam-btn').classList.add('d-none');
+
+            document.querySelector('#repeat_type').removeAttribute('disabled');
 
         });
 

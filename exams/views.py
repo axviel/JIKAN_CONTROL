@@ -59,14 +59,10 @@ def exam(request, exam_id=0, event_id=0):
       event_id = request.POST['event']
       course_id = request.POST['course']
       predicted_study_hours = form.cleaned_data['predicted_study_hours']
-      predicted_weeks = form.cleaned_data['predicted_weeks']
       predicted_score = form.cleaned_data['predicted_score']
       final_study_hours = form.cleaned_data['final_study_hours']
-      final_weeks = form.cleaned_data['final_weeks']
       final_score = form.cleaned_data['final_score']
       created_date = datetime.date.today()
-
-      
 
       # Used to determine if study events will be generated
       prev_predicted_study_hours = 0
@@ -95,10 +91,10 @@ def exam(request, exam_id=0, event_id=0):
       exam.event = event
       exam.course = course
       exam.predicted_study_hours = predicted_study_hours
-      exam.predicted_weeks = predicted_weeks
+      exam.predicted_weeks = 4
       exam.predicted_score = predicted_score
       exam.final_study_hours = final_study_hours
-      exam.final_weeks = final_weeks
+      exam.final_weeks = 4
       exam.final_score = final_score
       exam.created_date = created_date
       exam.user_id = request.user.id
@@ -234,6 +230,11 @@ def generate_study_time_events(exam, event):
   event_date = event.start_date
   # Find today
   current_date = datetime.date.today()
+
+  # If current date is gte than event date, don't generate study events since the exam has already passed
+  if current_date >= event_date:
+    return -1
+
   remaining_hours = exam.predicted_study_hours * 4
 
   # Create parameters for generate_study_events SQL function
@@ -349,8 +350,10 @@ def predict_score(request):
   exam_number = int(request.GET['exam_number'])
   course_id = int(request.GET['course_id'])
 
+  score = int(ml.get_exam_prediction(exam_number, course_id, study_hours))
+
   context = {
-    'score': int(ml.get_exam_prediction(exam_number, course_id, study_hours))
+    'score': score
   }
 
   context = json.dumps(context)

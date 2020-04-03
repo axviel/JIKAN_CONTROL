@@ -55,6 +55,10 @@ def event(request, event_id=0):
       event_type_id = request.POST['event_type']
       repeat_type_id = request.POST['repeat_type']
 
+      # If event type is exam, make repeat type does not repeat
+      if event_type_id == 4:
+        repeat_type_id = 1
+
       event_type = get_object_or_404(EventType, pk=event_type_id)
       repeat_type = get_object_or_404(RepeatType, pk=repeat_type_id)
 

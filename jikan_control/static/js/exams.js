@@ -1,6 +1,9 @@
 document.querySelector('#predict-score').addEventListener('click', e => {
   // Validate pred study hours has value
-  // todo
+  if(document.querySelector('#predicted_study_hours').value === '0'){
+    showMessage('Please enter values for predicted study hours');
+    return;
+  }
 
   $.ajax({
     type: 'GET',
@@ -13,7 +16,14 @@ document.querySelector('#predict-score').addEventListener('click', e => {
     success: function(data){
       let scoreData = JSON.parse(data);
 
-      document.querySelector('#predicted_score').value = scoreData.score;
+      // If score = -1, show alert.
+      if(scoreData.score === -1){
+        showMessage('Previous exam not graded');
+      }
+      else{
+        document.querySelector('#predicted_score').value = scoreData.score;
+      }
+
     }
   });
 
@@ -22,7 +32,10 @@ document.querySelector('#predict-score').addEventListener('click', e => {
 
 document.querySelector('#predict-hours').addEventListener('click', e => {
   // Validate pred score has value
-  // todo
+  if(document.querySelector('#predicted_score').value === '0'){
+    showMessage('Please enter values for predicted score');
+    return;
+  }
 
   $.ajax({
     type: 'GET',
@@ -35,9 +48,39 @@ document.querySelector('#predict-hours').addEventListener('click', e => {
     success: function(data){
       let hoursData = JSON.parse(data);
 
-      document.querySelector('#predicted_study_hours').value = hoursData.hours;
+      // If hours = -1, show alert.
+      if(hoursData.hours === -1){
+        showMessage('Previous exam not graded');
+      }
+      else{
+        document.querySelector('#predicted_study_hours').value = hoursData.hours;
+      }
     }
   });
 
   e.preventDefault();
 });
+
+function showMessage(message){
+  let mainPage = document.querySelector('#main-page');
+  let breadcrumb = document.querySelector('#bc');
+
+  // Create message alert
+
+  let messageDiv = document.createElement('div');
+  messageDiv.classList = 'container';
+
+  messageDiv.innerHTML = `
+    <div class="alert alert-danger alert-dismissible text-center mt-2" role="alert">
+      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span></button>
+      <strong>
+          Error
+      </strong>
+
+      ${message}
+    </div>
+  `;
+  
+  // Insert message alert
+  mainPage.insertBefore(messageDiv, breadcrumb);
+}

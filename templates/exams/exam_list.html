@@ -48,6 +48,7 @@
         <thead class="thead-dark">
           <tr>
             <th scope="col">Title</th>
+            <th scope="col">Course</th>
             <th scope="col">Exam Number</th>
             <th scope="col">Event</th>
             <th scope="col">Predicted Score</th>
@@ -63,6 +64,7 @@
           {% for exam in exams %}
           <tr exam-id="{{ exam.id }}">
             <td>{{ exam.title }}</td>
+            <td>{{ exam.course }}</td>
             <td>{{ exam.exam_number }}</td>
             <td>{{ exam.event }}</td>
             <td>{{ exam.predicted_score }}</td>
