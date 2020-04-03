@@ -19,7 +19,9 @@ BEGIN
 		events.*,
 		false as is_study_event
 	FROM
-		get_events_in_range(p_start_date, p_end_date, p_user_id) as events;
+		get_events_in_range(p_start_date, p_end_date, p_user_id) as events
+	WHERE
+		events.event_type_id <> 2;
 		
 	-- START	
 		
