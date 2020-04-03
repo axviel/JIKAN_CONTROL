@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.http import HttpResponse
 from django.db import connection
+from django.http import HttpResponse
 
 from django.db.models import Q
 
@@ -10,7 +10,6 @@ from .models import Exam
 from .forms import ExamForm
 
 from events.models import Event
-from notes.models import Note
 from exams.models import Exam
 from courses.models import Course
 from examstudy.models import ExamStudy
@@ -18,11 +17,14 @@ from examstudy.models import ExamStudy
 import datetime
 from dateutil import relativedelta
 import json
-from collections import OrderedDict 
 
 from ml import ml
 
 def index(request):
+  if not request.user.is_authenticated:
+    messages.error(request, 'Unauthorized. Must be logged in')
+    return redirect('login')
+
   # Fetch exams from db
   exams = Exam.objects.order_by('-created_date').filter(is_hidden=False, user_id=request.user.id)
 
@@ -44,7 +46,7 @@ def exam(request, exam_id=0, event_id=0):
     # Kick user if not logged in
     if not request.user.is_authenticated:
       messages.error(request, 'Unauthorized. Must be logged in')
-      return redirect('exam_list')
+      return redirect('login')
 
     # Get the POST form
     form = ExamForm(request.POST)
@@ -64,8 +66,7 @@ def exam(request, exam_id=0, event_id=0):
       final_score = form.cleaned_data['final_score']
       created_date = datetime.date.today()
 
-      event = get_object_or_404(Event, pk=event_id)
-      course = get_object_or_404(Course, pk=course_id)
+      
 
       # Used to determine if study events will be generated
       prev_predicted_study_hours = 0
@@ -73,7 +74,10 @@ def exam(request, exam_id=0, event_id=0):
       is_new = False
       
       # Get exam
-      exam = Exam.objects.filter(id=exam_id)
+      exam = Exam.objects.filter(id=exam_id, user_id=request.user.id)
+
+      event = get_object_or_404(Event, pk=event_id)
+      course = get_object_or_404(Course, pk=course_id)
 
       # If exam doesn't exist, create a new one
       if len(exam) == 0:
@@ -134,11 +138,14 @@ def exam(request, exam_id=0, event_id=0):
     return render(request, 'exams/exam_detail.html', context)
 
   else:
+    if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
 
     # If GET request came from calendar
     if 'is_calendar_form' in request.GET:
       exam_id = request.GET['exam_id']
-      exam = Exam.objects.get(id=exam_id)
+      exam = Exam.objects.get(id=exam_id, user_id=request.user.id)
 
       context = {
         'exam_id': exam.id,
@@ -167,7 +174,7 @@ def exam(request, exam_id=0, event_id=0):
     context = {}
 
     if exam_id > 0:
-      exam = get_object_or_404(Exam, pk=exam_id)
+      exam = get_object_or_404(Exam, pk=exam_id, user_id=request.user.id)
 
       form = ExamForm(initial={
         'exam_id': exam.id,
@@ -253,6 +260,10 @@ def generate_study_time_events(exam, event):
 
 # Search for exams 
 def search(request):
+  if not request.user.is_authenticated:
+    messages.error(request, 'Unauthorized. Must be logged in')
+    return redirect('login')
+
   queryset_list = Exam.objects.order_by('-created_date')
 
   # Title
@@ -305,6 +316,9 @@ def remove(request):
 
 # Gets the exam id that's linked to a event
 def get_exam_id(request):
+  if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
 
   event_id = request.GET['event_id']
   # exam = get_object_or_404(Exam, event_id=event_id, is_hidden=False)

@@ -14,6 +14,10 @@ import json
 
 # Returns the list page with all events
 def index(request):
+  if not request.user.is_authenticated:
+    messages.error(request, 'Unauthorized. Must be logged in')
+    return redirect('login')
+
   # Fetch events from db
   events = Event.objects.order_by('-start_date').filter(is_hidden=False, user_id=request.user.id)
 
@@ -36,7 +40,7 @@ def event(request, event_id=0):
     # Kick user if not logged in
     if not request.user.is_authenticated:
       messages.error(request, 'Unauthorized. Must be logged in')
-      return redirect('event_list')
+      return redirect('login')
 
     # Get the POST form
     form = EventForm(request.POST)
@@ -120,11 +124,14 @@ def event(request, event_id=0):
     return render(request, 'events/event_detail.html', context)
 
   else:
+    if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
 
     # If GET request came from calendar
     if 'is_calendar_form' in request.GET:
       event_id = request.GET['event_id']
-      event = Event.objects.get(id=event_id)
+      event = Event.objects.get(id=event_id, user_id=request.user.id)
 
       context = {
         'event_id': event.id,
@@ -141,15 +148,11 @@ def event(request, event_id=0):
 
       return HttpResponse(context)
 
-    if not request.user.is_authenticated:
-      messages.error(request, 'Access denied. Must be logged in')
-      return redirect('event_list') #redirect(url path name)
-
     # If viewing detail of an existing event, fill the form with its values. if not, show form with blank and default values
     context = {}
 
     if event_id > 0:
-      event = get_object_or_404(Event, pk=event_id)
+      event = get_object_or_404(Event, pk=event_id, user_id=request.user.id)
 
       form = EventForm(initial={
         'event_id': event.id,
@@ -181,6 +184,10 @@ def event(request, event_id=0):
 
 # Search for events 
 def search(request):
+  if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
+
   queryset_list = Event.objects.order_by('-start_date')
 
   # Title
@@ -261,6 +268,10 @@ def search(request):
 # Marks an event as hidden
 def remove(request):
   if request.method == 'POST':
+    if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
+
     event_id = request.POST['event_id']
 
     event = Event.objects.get(id=event_id)
@@ -275,6 +286,10 @@ def remove(request):
 # Assings an end_date to the event, showing that it is completed
 def complete(request):
   if request.method == 'POST':
+    if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
+
     event_id = request.POST['event_id']
 
     event = Event.objects.get(id=event_id)
@@ -303,7 +318,3 @@ def search_form_defaults(form):
 
   form.fields['event_type'].empty_label = 'Any Type'
   form.fields['repeat_type'].empty_label = 'Any Type'
-
-# Returns event start and end hour
-def get_event_hours(event):
-  return event
