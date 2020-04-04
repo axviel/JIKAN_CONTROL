@@ -13,8 +13,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True # Set to false in production
-# DEBUG = os.environ.get('DJANGO_DEBUG')
+DEBUG = (os.environ.get('DJANGO_DEBUG') == 'True')
 
 SQLALCHEMY_TRACK_MODIFICATIONS=False
 
