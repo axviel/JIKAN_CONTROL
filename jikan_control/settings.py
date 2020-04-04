@@ -16,6 +16,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True # Set to false in production
 # DEBUG = os.environ.get('DJANGO_DEBUG')
 
+SQLALCHEMY_TRACK_MODIFICATIONS=False
+
 ALLOWED_HOSTS = ['jikancontrol.herokuapp.com']
 
 
