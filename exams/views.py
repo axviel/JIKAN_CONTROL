@@ -29,7 +29,7 @@ def index(request):
   exams = Exam.objects.order_by('-created_date').filter(is_hidden=False, user_id=request.user.id)
 
   # Pagination
-  paginator = Paginator(exams, 5)
+  paginator = Paginator(exams, 10)
   page = request.GET.get('page')
   paged_exams = paginator.get_page(page)
 
@@ -111,7 +111,11 @@ def exam(request, exam_id=0, event_id=0):
       # UI success message
       messages.success(request, 'Exam saved successfully')
 
-      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & ( Q(pk=exam.event.pk) | Q(exam=None) ) ).distinct()
+      exams_for_exclude = Exam.objects.filter( ~Q(pk=exam.id) & Q(is_hidden=False, user_id=request.user.id) ).values_list('event_id', flat=True)
+      event_choices = Event.objects.filter(Q(is_hidden=False, event_type_id=4, user_id=request.user.id) ).distinct()
+      event_choices = event_choices.exclude(id__in=exams_for_exclude)
+      
+      form.fields['event'].queryset = event_choices
 
       # If it was updated return the page and form
       if not is_new:
@@ -190,7 +194,11 @@ def exam(request, exam_id=0, event_id=0):
       })
 
       # Set custom event field filtering
-      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & ( Q(pk=exam.event.pk) | Q(exam=None) ) ).distinct()
+      exams_for_exclude = Exam.objects.filter( ~Q(pk=exam.id) & Q(is_hidden=False, user_id=request.user.id) ).values_list('event_id', flat=True)
+      event_choices = Event.objects.filter(Q(is_hidden=False, event_type_id=4, user_id=request.user.id) ).distinct()
+      event_choices = event_choices.exclude(id__in=exams_for_exclude)
+      
+      form.fields['event'].queryset = event_choices
 
       context['form'] = form
 
@@ -204,7 +212,11 @@ def exam(request, exam_id=0, event_id=0):
       })
 
       # Set custom event field filtering
-      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & Q(exam=None) ).distinct()
+      exams_for_exclude = Exam.objects.filter(is_hidden=False, user_id=request.user.id).values_list('event_id', flat=True)
+      event_choices = Event.objects.filter(Q(is_hidden=False, event_type_id=4, user_id=request.user.id) ).distinct()
+      event_choices = event_choices.exclude(id__in=exams_for_exclude)
+      
+      form.fields['event'].queryset = event_choices
 
       context['form'] = form
 
@@ -217,7 +229,13 @@ def exam(request, exam_id=0, event_id=0):
       })
 
       # Set custom event field filtering
-      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & Q(exam=None) ).distinct()
+      exams_for_exclude = Exam.objects.filter(is_hidden=False, user_id=request.user.id).values_list('event_id', flat=True)
+
+      # Exclude events that have exams pointing to them
+      event_choices = Event.objects.filter(Q(is_hidden=False, event_type_id=4, user_id=request.user.id) ).distinct()
+      event_choices = event_choices.exclude(id__in=exams_for_exclude)
+      
+      form.fields['event'].queryset = event_choices
 
       context['form'] = form
 
@@ -310,6 +328,11 @@ def remove(request):
     exam.is_hidden = True
     exam.save()
 
+    with connection.cursor() as cursor:
+      # FIXME
+      # Remove Study events and ExamStudy records
+      cursor.execute("CALL update_study_events(%s)", [exam.pk])
+
     if 'is_detail' in request.POST:
       return redirect('exam_list')
     else:
@@ -362,7 +385,6 @@ def predict_score(request):
 
 # Returns the predicted study hours
 def predict_study_hours(request):
-
   predicted_score = int(request.GET['predicted_score'])
   exam_number = int(request.GET['exam_number'])
   course_id = int(request.GET['course_id'])
@@ -374,3 +396,52 @@ def predict_study_hours(request):
   context = json.dumps(context)
 
   return HttpResponse(context)
+
+# Returns next available exam number
+def get_next_exam_number(request):
+  course_id = request.GET['course_id']
+
+  # No event exam without an exam exists
+  if course_id == '':
+    messages.error(request, 'No available event exam')
+    return redirect('exam_list')
+
+  course_id = int(course_id)
+
+  exam_id = request.GET['exam_id']
+
+  if exam_id == '':
+    exam_id = None
+  else:
+    exam_id = int(request.GET['exam_id'])
+
+  if exam_id != None:
+    exam = Exam.objects.filter(pk=exam_id, course_id=course_id, is_hidden=False, user_id=request.user.id).order_by('-exam_number').first()
+
+    # Exam for this course exists
+    if exam != None:
+      context = {
+        'number': exam.exam_number
+      }
+      context = json.dumps(context)
+      return HttpResponse(context)
+
+  exam = Exam.objects.filter(course_id=course_id, is_hidden=False, user_id=request.user.id).order_by('-exam_number').first()
+
+  number = 1
+
+  if exam != None:
+    number = exam.exam_number + 1
+
+  context = {
+    'number': number
+  }
+  context = json.dumps(context)
+  return HttpResponse(context)
+
+  
+
+  
+
+  
+

@@ -39,8 +39,9 @@ class ExamForm(forms.Form):
     label='Exam Number', 
     widget=forms.NumberInput(attrs={
       'id': 'exam_number', 
-      'class': 'form-control'}),
-      min_value=1
+      'class': 'form-control',
+      'readonly': True}),
+    # disabled=True,
     )
   created_date = forms.DateTimeField(
     label='Created Date', 

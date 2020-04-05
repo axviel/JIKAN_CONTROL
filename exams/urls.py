@@ -7,6 +7,7 @@ urlpatterns = [
   path('detail/event/<int:event_id>', views.exam, name='exam_event_detail'),
   path('score', views.predict_score, name='exam_score'),
   path('hours', views.predict_study_hours, name='exam_hours'),
+  path('number', views.get_next_exam_number, name='exam_number'),
   path('detail', views.exam, name='exam_detail'),
   path('search', views.search, name='exam_search'),
   path('remove', views.remove, name='exam_remove'),
