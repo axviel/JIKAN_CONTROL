@@ -48,9 +48,10 @@
         <thead class="thead-dark">
           <tr>
             <th scope="col">Title</th>
+            <th scope="col">Course</th>
             <th scope="col">Exam Number</th>
-            <th scope="col">Event</th>
             <th scope="col">Predicted Score</th>
+            <th scope="col">Final Score</th>
             <th scope="col">Created Date</th>
             <th scope="col">Actions</th>
           </tr>
@@ -63,18 +64,17 @@
           {% for exam in exams %}
           <tr exam-id="{{ exam.id }}">
             <td>{{ exam.title }}</td>
+            <td>{{ exam.course }}</td>
             <td>{{ exam.exam_number }}</td>
-            <td>{{ exam.event }}</td>
             <td>{{ exam.predicted_score }}</td>
-            <td>{{ exam.created_date }}</td>
+            <td>{{ exam.final_score }}</td>
+            <td>{{ exam.created_date | date:"M d, Y" }}</td>
             <!-- Call detail view method (Uses urls path name) -->
             <td>
               <div class="grid-actions text-center">
                 <a href="{% url 'exam_detail' exam.id %}"><i
-                    class="fas fa-info-circle cursor-pointer show-exam-detail"></i></a>
-                {% if not exam.end_date %}
-                <i class="fas fa-check cursor-pointer text-success complete-exam mx-2"></i>
-                {% endif %}
+                    class="fas fa-info-circle cursor-pointer show-exam-detail"></i>
+                </a>
                 <i class="fas fa-trash-alt cursor-pointer text-danger remove-exam mr-2"></i>
               </div>
             </td>
@@ -150,6 +150,6 @@
   </div>
 </section>
 
-
+<script src="{% static 'js/exam_list.js' %}"></script>
 
 {% endblock %}

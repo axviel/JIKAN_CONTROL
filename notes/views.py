@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
@@ -7,6 +7,10 @@ from .models import Note
 import datetime
 
 def index(request):
+  if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
+
   # Fetch notes from db
   notes = Note.objects.order_by('-created_date').filter(is_hidden=False)
 

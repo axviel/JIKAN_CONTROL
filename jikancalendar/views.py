@@ -1,44 +1,33 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.core import serializers
+from django.contrib import messages
 
 from events.models import Event
-from events.views import remove as event_remove
 from events.forms import EventForm
 
-from datetime import datetime
-
+# Gets all of the user's events and the Event Form
 def index(request):
+  if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
 
-  events = Event.objects.all().filter(is_hidden=False)
-  events_data = {}
+  events = Event.objects.all().filter(is_hidden=False, user_id=request.user.id)
+  events_data = []
+  json_events = serializers.serialize('python', events)
+  for eventModel in json_events:
+    eventModel['fields']['id'] = eventModel['pk']
+    eventModel['fields']['start_time'] = eventModel['fields']['start_time'].strftime("%H:%M")
+    eventModel['fields']['end_time'] = eventModel['fields']['end_time'].strftime("%H:%M")
 
-  for event in events:
-    # key = event.start_date.strftime("%d/%m/%Y")
-    key = event.start_date.strftime("%m/%d/%Y")
+    eventModel['fields']['start_date'] = eventModel['fields']['start_date'].strftime("%m/%d/%Y")
+    if eventModel['fields']['end_date'] != None:
+      eventModel['fields']['end_date'] = eventModel['fields']['end_date'].strftime("%m/%d/%Y")
 
-    end_date = event.end_date
-    if end_date != None:
-      end_date = end_date.strftime("%m/%d/%Y")
-
-    event_data = {
-        'event_id': event.id,
-        'title': event.title,
-        'event_type': event.event_type.pk,
-        'repeat_type': event.repeat_type.pk,
-        'start_date': key,
-        'end_date': end_date,
-        'start_time': event.start_time.strftime("%H:%M"), # Keep only hour and minutes
-        'is_completed': (event.end_date != None)
-      }
-
-    if key in events_data:
-      events_data[key].append(event_data)
-    else:
-      events_data[key] = [event_data]
-
+    events_data.append(eventModel['fields'])
 
   context = {
     'events': events_data,
-    'form': EventForm()
+    'form': EventForm(),
   }
 
   # Disable date field

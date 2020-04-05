@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import connection
 from django.http import HttpResponse
 
 from django.db.models import Q
@@ -9,7 +10,6 @@ from .models import Exam
 from .forms import ExamForm
 
 from events.models import Event
-from notes.models import Note
 from exams.models import Exam
 from courses.models import Course
 from examstudy.models import ExamStudy
@@ -17,16 +17,19 @@ from examstudy.models import ExamStudy
 import datetime
 from dateutil import relativedelta
 import json
-from collections import OrderedDict 
 
 from ml import ml
 
 def index(request):
+  if not request.user.is_authenticated:
+    messages.error(request, 'Unauthorized. Must be logged in')
+    return redirect('login')
+
   # Fetch exams from db
-  exams = Exam.objects.order_by('-created_date').filter(is_hidden=False)
+  exams = Exam.objects.order_by('-created_date').filter(is_hidden=False, user_id=request.user.id)
 
   # Pagination
-  paginator = Paginator(exams, 5)
+  paginator = Paginator(exams, 10)
   page = request.GET.get('page')
   paged_exams = paginator.get_page(page)
 
@@ -43,7 +46,7 @@ def exam(request, exam_id=0, event_id=0):
     # Kick user if not logged in
     if not request.user.is_authenticated:
       messages.error(request, 'Unauthorized. Must be logged in')
-      return redirect('exam_list')
+      return redirect('login')
 
     # Get the POST form
     form = ExamForm(request.POST)
@@ -56,59 +59,66 @@ def exam(request, exam_id=0, event_id=0):
       event_id = request.POST['event']
       course_id = request.POST['course']
       predicted_study_hours = form.cleaned_data['predicted_study_hours']
-      predicted_weeks = form.cleaned_data['predicted_weeks']
       predicted_score = form.cleaned_data['predicted_score']
       final_study_hours = form.cleaned_data['final_study_hours']
-      final_weeks = form.cleaned_data['final_weeks']
       final_score = form.cleaned_data['final_score']
       created_date = datetime.date.today()
+
+      # Used to determine if study events will be generated
+      prev_predicted_study_hours = 0
+      # Used to determine the return response
+      is_new = False
+      
+      # Get exam
+      exam = Exam.objects.filter(id=exam_id, user_id=request.user.id)
 
       event = get_object_or_404(Event, pk=event_id)
       course = get_object_or_404(Course, pk=course_id)
 
-      # Searches the db for an exam with the id and updates it. if not found, creates a new exam and returns is_created=True
-      exam, is_created = Exam.objects.update_or_create(
-          id=exam_id,
-          defaults={
-            'user_id': request.user.id,
-            'title': title,
-            'description': description,
-            'exam_number': exam_number,
-            'event': event,
-            'course': course,
-            'predicted_study_hours': predicted_study_hours,
-            'predicted_weeks': predicted_weeks,
-            'predicted_score': predicted_score,
-            'final_study_hours': final_study_hours,
-            'final_weeks': final_weeks,
-            'final_score': final_score,
-            'created_date': created_date
-            },
-      )
+      # If exam doesn't exist, create a new one
+      if len(exam) == 0:
+        exam = Exam()
+        is_new = True
+      # If exists, save previous study hours
+      else:
+        exam = exam[0]
+        prev_predicted_study_hours = exam.predicted_study_hours
+
+      # Add exam info
+      exam.title = title
+      exam.description = description
+      exam.exam_number = exam_number
+      exam.event = event
+      exam.course = course
+      exam.predicted_study_hours = predicted_study_hours
+      exam.predicted_weeks = 4
+      exam.predicted_score = predicted_score
+      exam.final_study_hours = final_study_hours
+      exam.final_weeks = 4
+      exam.final_score = final_score
+      exam.created_date = created_date
+      exam.user_id = request.user.id
 
       # Save in the db
       exam.save()
 
-      # If exam was created via calendar page, return the id
-      # if 'is_calendar_form' in request.POST:
-      #   context = {
-      #     'exam_id': exam.id,
-      #     'title': exam.title,
-      #     'start_time': exam.start_time.strftime("%H:%M")
-      #   }
-      #   context = json.dumps(context)
-      #   return HttpResponse(context)
-
       # Create study time events if new or predicted study hours was updated
-      generate_study_time_events(exam)
+      # TODO Handle remaining_hours > 0
+      remaining_hours = 0
+      if prev_predicted_study_hours == 0 or predicted_study_hours != prev_predicted_study_hours:
+        remaining_hours = generate_study_time_events(exam, event)
 
       # UI success message
-      messages.success(request, 'Exam created successfully')
+      messages.success(request, 'Exam saved successfully')
 
-      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & ( Q(pk=exam.event.pk) | Q(exam=None) ) ).distinct()
+      exams_for_exclude = Exam.objects.filter( ~Q(pk=exam.id) & Q(is_hidden=False, user_id=request.user.id) ).values_list('event_id', flat=True)
+      event_choices = Event.objects.filter(Q(is_hidden=False, event_type_id=4, user_id=request.user.id) ).distinct()
+      event_choices = event_choices.exclude(id__in=exams_for_exclude)
+      
+      form.fields['event'].queryset = event_choices
 
       # If it was updated return the page and form
-      if not is_created:
+      if not is_new:
         context = {
           'form': form
         }
@@ -128,11 +138,14 @@ def exam(request, exam_id=0, event_id=0):
     return render(request, 'exams/exam_detail.html', context)
 
   else:
+    if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
 
     # If GET request came from calendar
     if 'is_calendar_form' in request.GET:
       exam_id = request.GET['exam_id']
-      exam = Exam.objects.get(id=exam_id)
+      exam = Exam.objects.get(id=exam_id, user_id=request.user.id)
 
       context = {
         'exam_id': exam.id,
@@ -161,7 +174,7 @@ def exam(request, exam_id=0, event_id=0):
     context = {}
 
     if exam_id > 0:
-      exam = get_object_or_404(Exam, pk=exam_id)
+      exam = get_object_or_404(Exam, pk=exam_id, user_id=request.user.id)
 
       form = ExamForm(initial={
         'exam_id': exam.id,
@@ -179,19 +192,15 @@ def exam(request, exam_id=0, event_id=0):
         'event': exam.event.pk,
         'course': exam.course.pk,
       })
-      # Get exam notes and events
-      # notes = Note.objects.all().filter(exam_id=exam.id,is_hidden=False)
-      # events = Event.objects.all().filter(exam_id=exam.id,is_hidden=False)
-
-      # Set custom field filtering
-      # form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & ( Q(pk=exam.event.pk) | Q(exam=None) ) ).distinct()
 
       # Set custom event field filtering
-      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & ( Q(pk=exam.event.pk) | Q(exam=None) ) ).distinct()
+      exams_for_exclude = Exam.objects.filter( ~Q(pk=exam.id) & Q(is_hidden=False, user_id=request.user.id) ).values_list('event_id', flat=True)
+      event_choices = Event.objects.filter(Q(is_hidden=False, event_type_id=4, user_id=request.user.id) ).distinct()
+      event_choices = event_choices.exclude(id__in=exams_for_exclude)
+      
+      form.fields['event'].queryset = event_choices
 
       context['form'] = form
-      # context['notes'] = notes
-      # context['events'] = events
 
     elif event_id > 0:
       form = ExamForm(initial={
@@ -203,7 +212,11 @@ def exam(request, exam_id=0, event_id=0):
       })
 
       # Set custom event field filtering
-      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & Q(exam=None) ).distinct()
+      exams_for_exclude = Exam.objects.filter(is_hidden=False, user_id=request.user.id).values_list('event_id', flat=True)
+      event_choices = Event.objects.filter(Q(is_hidden=False, event_type_id=4, user_id=request.user.id) ).distinct()
+      event_choices = event_choices.exclude(id__in=exams_for_exclude)
+      
+      form.fields['event'].queryset = event_choices
 
       context['form'] = form
 
@@ -216,7 +229,13 @@ def exam(request, exam_id=0, event_id=0):
       })
 
       # Set custom event field filtering
-      form.fields['event'].queryset = Event.objects.filter(Q(is_hidden=False, event_type_id=4) & Q(exam=None) ).distinct()
+      exams_for_exclude = Exam.objects.filter(is_hidden=False, user_id=request.user.id).values_list('event_id', flat=True)
+
+      # Exclude events that have exams pointing to them
+      event_choices = Event.objects.filter(Q(is_hidden=False, event_type_id=4, user_id=request.user.id) ).distinct()
+      event_choices = event_choices.exclude(id__in=exams_for_exclude)
+      
+      form.fields['event'].queryset = event_choices
 
       context['form'] = form
 
@@ -224,215 +243,46 @@ def exam(request, exam_id=0, event_id=0):
     return render(request, 'exams/exam_detail.html', context)
 
 # When there is a change in predicted study hours, generate the study time events
-def generate_study_time_events(exam):
+def generate_study_time_events(exam, event):
   # Find the day of the exam
-  event = Event.objects.get(pk=exam.event_id)
   event_date = event.start_date
-
   # Find today
   current_date = datetime.date.today()
 
-  # Get events in between
-  # events_in_between = Event.objects.filter(start_date__gt=current_date, start_date__lt=event_date)
-  events_in_between = Event.objects.filter(
-      Q(is_hidden=False)
-      & 
-      (
-        ( Q(start_date__gte=current_date) & Q(start_date__lt=event_date) ) 
-        |
-        (~Q(repeat_type=1) 
-          & 
-          ( Q(end_date__gte=current_date) | Q(end_date=None) ) 
-        )
-      )
-    )
+  # If current date is gte than event date, don't generate study events since the exam has already passed
+  if current_date >= event_date:
+    return -1
 
-  # Find days between
-  # dates_in_between = []
-  dates_in_between = {}
-  available_hours = {}
-  # dates_in_between = OrderedDict()
+  remaining_hours = exam.predicted_study_hours * 4
 
-  other_date = current_date + relativedelta.relativedelta(days=1)
-  while (other_date.day != event_date.day) or (other_date.month != event_date.month) or (other_date.year != event_date.year):
-    # dates_in_between.append(other_date)
-    dates_in_between[f'{other_date.month}/{other_date.day}/{other_date.year}'] = []
-    available_hours[f'{other_date.month}/{other_date.day}/{other_date.year}'] = []
-    other_date = other_date + relativedelta.relativedelta(days=1)
+  # Create parameters for generate_study_events SQL function
+  params = []
+  params.append(current_date + relativedelta.relativedelta(days=1)) # start_date
+  params.append(event_date - relativedelta.relativedelta(days=1)) # end_date
+  params.append(datetime.time(7,0,0)) # first_hour
+  params.append(datetime.time(0,0,0)) # last_hour
+  params.append(remaining_hours) # remaining_hours
+  params.append(exam.pk) # exam_id
+  params.append(exam.title) # exam_title
+  params.append(exam.user_id) # user_id
 
-  # 
-  for event in events_in_between:
-    repeat_type = event.repeat_type.pk
-    start_hour = event.start_time.hour
-    end_hour = event.end_time.hour
-    start_month = event.start_date.month
-    start_day = event.start_date.day
-    start_year = event.start_date.year
-    start_week_day = event.start_date.weekday()
-    end_month = None
-    end_day = None
-    end_year = None
-    if event.end_date != None:
-      end_month = event.end_date.month
-      end_day = event.end_date.day
-      end_year = event.end_date.year
+  with connection.cursor() as cursor:
+    # FIXME
+    # Update Study events and ExamStudy records
+    cursor.execute("CALL update_study_events(%s)", [exam.pk])
 
-    add_event_hours = False
+    # Generate study events
+    cursor.execute("SELECT * FROM generate_study_events(%s, %s, %s, %s, %s, %s, %s, %s)", params)
+    remaining_hours = cursor.fetchone()[0]
 
-    for key in dates_in_between:
-      # If date is event end_date then break
-      if key == f'{end_month}/{end_day}/{end_year}':
-        break
-
-      # Start adding the event
-      if key == f'{start_month}/{start_day}/{start_year}':
-        add_event_hours = True
-        # dates_in_between[key].append(event) # testing
-        dates_in_between[key].append( (start_hour, end_hour) )
-
-        # If event does not repeat then break
-        if repeat_type == 1:
-          break
-        else:
-          continue
-
-      # If event started before our current date
-      if event.start_date.date() <= current_date:
-        add_event_hours = True
-
-      # If event is stil not being added
-      if not add_event_hours:
-        continue
-
-      key_date_values = key.split('/')
-      key_date = datetime.datetime(int(key_date_values[2]), int(key_date_values[0]), int(key_date_values[1]))
-
-      # If repeats daily, add it
-      if add_event_hours and repeat_type == 2:
-        # dates_in_between[key].append(event) # testing
-        dates_in_between[key].append( (start_hour, end_hour) )
-      # If repeats weekly, add it if week day is the same
-      elif add_event_hours and repeat_type == 3 and start_week_day == key_date.weekday():
-        # dates_in_between[key].append(event) # testing
-        dates_in_between[key].append( (start_hour, end_hour) )
-      # If repeats monthly, add if day is the same
-      elif add_event_hours and repeat_type == 4 and start_day == key_date.day:
-        # dates_in_between[key].append(event) # testing
-        dates_in_between[key].append( (start_hour, end_hour) )
-      # If repeats yearly, add if day, month are the same
-      elif add_event_hours and repeat_type == 5 and start_month == key_date.month and start_day == key_date.day:
-        # dates_in_between[key].append(event) # testing
-        dates_in_between[key].append( (start_hour, end_hour) )
-
-  # Contains the free time hours of the days in between
-  total_study_hours = exam.predicted_study_hours * 4 # 4 weeks worth of hours
-  total_study_hours_old = 0
-  study_hour_added = False
-
-  study_events = {}
-  study_event_exists = False
-
-  # Hide existing exam_study 
-  # ExamStudy.objects.filter(exam=exam.id).update(is_hidden=True)
-  ExamStudy.objects.filter(exam=exam.id).delete()
-  # Event.objects.filter(pk=exam.event.pk).update(is_hidden=True)
-  
-  while total_study_hours > 0 and total_study_hours_old != total_study_hours:
-    total_study_hours_old = total_study_hours
-    for key in dates_in_between:
-      key_date_values = key.split('/')
-
-      study_hour = 7
-
-      study_event = Event()
-
-      if available_hours[key] != []:
-        study_hour = available_hours[key][-1] + 1
-        study_event = study_events[key]
-        study_event_exists = True
-
-      if study_hour >= 24:
-        continue
-
-      if dates_in_between[key] == []:
-        study_hour_added = True
-        if study_event_exists:
-          study_event.end_time = datetime.time(study_hour, 59)
-        else:
-          # Add event data
-          study_event.event_type_id = 3
-          study_event.repeat_type_id = 1
-          study_event.title = f'{exam.title} study time'
-          study_event.description = f'{exam.title} study time based on predicted score'
-          study_event.start_time = datetime.time(study_hour, 0)
-          study_event.end_time = datetime.time(study_hour, 59)
-          study_event.start_date = datetime.datetime(int(key_date_values[2]), int(key_date_values[0]), int(key_date_values[1]))
-          study_event.user_id = exam.user_id
-
-          exam_study = ExamStudy()
-          exam_study.exam_id = exam.pk
-          exam_study.is_hidden = False
-      else:
-        for event_hours in dates_in_between[key]:
-          # If there's an event hour that conflicts with study_hour, change study hour to hour after event
-          if study_hour >= event_hours[0] and study_hour <= event_hours[1] :
-            study_hour = event_hours[1] + 1
-            study_hour_added = True
-          else:
-            study_hour_added = True
-
-          if study_hour_added:
-            if study_event_exists:
-              study_event.end_time = datetime.time(study_hour, 59)
-            else:
-              study_event.event_type_id = 3
-              study_event.repeat_type_id = 1
-              study_event.title = f'{exam.title} study time'
-              study_event.description = f'{exam.title} study time based on predicted score'
-              study_event.start_time = datetime.time(study_hour, 0)
-              study_event.end_time = datetime.time(study_hour, 59)
-              study_event.start_date = datetime.datetime(int(key_date_values[2]), int(key_date_values[0]), int(key_date_values[1]))
-              study_event.user_id = exam.user_id
-
-              exam_study = ExamStudy()
-              exam_study.exam_id = exam.pk
-              exam_study.is_hidden = False
-
-      if study_hour > 24:
-        study_hour = 24
-        continue
-
-      if study_hour_added:
-        available_hours[key].append(study_hour)
-        total_study_hours -= 1
-        study_event.save()
-
-        if not study_event_exists:
-          study_events[key] = study_event
-          exam_study.event_id = study_event.pk
-          exam_study.save()
-
-      if total_study_hours == 0:
-        break
-
-      study_hour_added = False
-      study_event_exists = False
-
-  x = 0
-
-  # Assign study events to those hours and an ExamStudy relation 
-  # for key in available_hours:
-
-
-
-
-  return 0
-
-
-
+  return remaining_hours
 
 # Search for exams 
 def search(request):
+  if not request.user.is_authenticated:
+    messages.error(request, 'Unauthorized. Must be logged in')
+    return redirect('login')
+
   queryset_list = Exam.objects.order_by('-created_date')
 
   # Title
@@ -478,6 +328,11 @@ def remove(request):
     exam.is_hidden = True
     exam.save()
 
+    with connection.cursor() as cursor:
+      # FIXME
+      # Remove Study events and ExamStudy records
+      cursor.execute("CALL update_study_events(%s)", [exam.pk])
+
     if 'is_detail' in request.POST:
       return redirect('exam_list')
     else:
@@ -485,6 +340,9 @@ def remove(request):
 
 # Gets the exam id that's linked to a event
 def get_exam_id(request):
+  if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
 
   event_id = request.GET['event_id']
   # exam = get_object_or_404(Exam, event_id=event_id, is_hidden=False)
@@ -515,8 +373,10 @@ def predict_score(request):
   exam_number = int(request.GET['exam_number'])
   course_id = int(request.GET['course_id'])
 
+  score = int(ml.get_exam_prediction(exam_number, course_id, study_hours))
+
   context = {
-    'score': int(ml.get_exam_prediction(exam_number, course_id, study_hours))
+    'score': score
   }
 
   context = json.dumps(context)
@@ -525,7 +385,6 @@ def predict_score(request):
 
 # Returns the predicted study hours
 def predict_study_hours(request):
-
   predicted_score = int(request.GET['predicted_score'])
   exam_number = int(request.GET['exam_number'])
   course_id = int(request.GET['course_id'])
@@ -537,3 +396,52 @@ def predict_study_hours(request):
   context = json.dumps(context)
 
   return HttpResponse(context)
+
+# Returns next available exam number
+def get_next_exam_number(request):
+  course_id = request.GET['course_id']
+
+  # No event exam without an exam exists
+  if course_id == '':
+    messages.error(request, 'No available event exam')
+    return redirect('exam_list')
+
+  course_id = int(course_id)
+
+  exam_id = request.GET['exam_id']
+
+  if exam_id == '':
+    exam_id = None
+  else:
+    exam_id = int(request.GET['exam_id'])
+
+  if exam_id != None:
+    exam = Exam.objects.filter(pk=exam_id, course_id=course_id, is_hidden=False, user_id=request.user.id).order_by('-exam_number').first()
+
+    # Exam for this course exists
+    if exam != None:
+      context = {
+        'number': exam.exam_number
+      }
+      context = json.dumps(context)
+      return HttpResponse(context)
+
+  exam = Exam.objects.filter(course_id=course_id, is_hidden=False, user_id=request.user.id).order_by('-exam_number').first()
+
+  number = 1
+
+  if exam != None:
+    number = exam.exam_number + 1
+
+  context = {
+    'number': number
+  }
+  context = json.dumps(context)
+  return HttpResponse(context)
+
+  
+
+  
+
+  
+

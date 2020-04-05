@@ -39,9 +39,9 @@ class ExamForm(forms.Form):
     label='Exam Number', 
     widget=forms.NumberInput(attrs={
       'id': 'exam_number', 
-      'class': 'form-control'}),
-      max_value=3,
-      min_value=1
+      'class': 'form-control',
+      'readonly': True}),
+    # disabled=True,
     )
   created_date = forms.DateTimeField(
     label='Created Date', 
@@ -87,40 +87,30 @@ class ExamForm(forms.Form):
     widget=forms.NumberInput(attrs={
       'id': 'predicted_study_hours', 
       'class': 'form-control'}),
-      min_value=1
-    )
-  predicted_weeks = forms.IntegerField(
-    label='Study Weeks', 
-    widget=forms.NumberInput(attrs={
-      'id': 'predicted_weeks', 
-      'class': 'form-control'}),
-      min_value=1
+      min_value=1,
+    initial=0
     )
   predicted_score = forms.IntegerField(
     label='Exam Score', 
     widget=forms.NumberInput(attrs={
       'id': 'predicted_score', 
       'class': 'form-control'}),
-      min_value=1
+    min_value=1,
+    initial=0
     )
   final_study_hours = forms.IntegerField(
     label='Study Hours', 
     widget=forms.NumberInput(attrs={
       'id': 'final_study_hours', 
       'class': 'form-control'}),
-      min_value=1
-    )
-  final_weeks = forms.IntegerField(
-    label='Study Weeks', 
-    widget=forms.NumberInput(attrs={
-      'id': 'final_weeks', 
-      'class': 'form-control'}),
-      min_value=1
+    min_value=0,
+    initial=0
     )
   final_score = forms.IntegerField(
     label='Exam Score', 
     widget=forms.NumberInput(attrs={
       'id': 'final_score', 
       'class': 'form-control'}),
-      min_value=1
+    max_value=100,
+    initial=0
     )

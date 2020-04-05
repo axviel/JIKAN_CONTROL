@@ -8,9 +8,6 @@
 
 {% block content %}
 
-<!-- Alerts -->
-{% include 'partials/_alerts.html' %}
-
 <!-- Breadcrumb -->
 <section id="bc" class="mt-3">
   <div class="container">
@@ -35,6 +32,10 @@
 
 <!-- Exam Section -->
 <section id="exam-detail" class="py-4 main-content">
+
+  <!-- Alerts -->
+  {% include 'partials/_alerts.html' %}
+
   <div class="container" style="width: 900px;">
     <div class="card shadow">
       <div class="card-header text-white text-center" style="background-color: #133757;">
@@ -111,21 +112,14 @@
               <!-- Predicted -->
               <h5>Predicted</h5>
               <div class="row mb-4">
-                <div class="col-4">
+                <div class="col-6">
                   <label for="{{ form.predicted_study_hours.name }}" class="col-form-label">
                     {{ form.predicted_study_hours.label }}{% if form.predicted_study_hours.field.required %}<span
                       class="required">*</span>{% endif %}
                   </label>
                   {{ form.predicted_study_hours }}
                 </div>
-                <div class="col-4">
-                  <label for="{{ form.predicted_weeks.name }}" class="col-form-label">
-                    {{ form.predicted_weeks.label }}{% if form.predicted_weeks.field.required %}<span
-                      class="required">*</span>{% endif %}
-                  </label>
-                  {{ form.predicted_weeks }}
-                </div>
-                <div class="col-4">
+                <div class="col-6">
                   <label for="{{ form.predicted_score.name }}" class="col-form-label">
                     {{ form.predicted_score.label }}{% if form.predicted_score.field.required %}<span
                       class="required">*</span>{% endif %}
@@ -143,21 +137,14 @@
               <!-- Final -->
               <h5>Final</h5>
               <div class="row">
-                <div class="col-4">
+                <div class="col-6">
                   <label for="{{ form.final_study_hours.name }}" class="col-form-label">
                     {{ form.final_study_hours.label }}{% if form.final_study_hours.field.required %}<span
                       class="required">*</span>{% endif %}
                   </label>
                   {{ form.final_study_hours }}
                 </div>
-                <div class="col-4">
-                  <label for="{{ form.final_weeks.name }}" class="col-form-label">
-                    {{ form.final_weeks.label }}{% if form.final_weeks.field.required %}<span
-                      class="required">*</span>{% endif %}
-                  </label>
-                  {{ form.final_weeks }}
-                </div>
-                <div class="col-4">
+                <div class="col-6">
                   <label for="{{ form.final_score.name }}" class="col-form-label">
                     {{ form.final_score.label }}{% if form.final_score.field.required %}<span
                       class="required">*</span>{% endif %}

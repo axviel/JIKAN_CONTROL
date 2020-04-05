@@ -2,8 +2,9 @@
 
 {% block content %}
 
-<!-- Alerts -->
-{% include 'partials/_alerts.html' %}
+{% load static %} 
+
+
 
 <!-- Breadcrumb -->
 <section id="bc" class="mt-3">
@@ -29,6 +30,10 @@
 
 <!-- Event Section -->
 <section id="event-detail" class="py-4 main-content">
+
+  <!-- Alerts -->
+  {% include 'partials/_alerts.html' %}
+
   <div class="container" style="width: 900px;">
     <div class="card shadow">
       <div class="card-header text-white text-center" style="background-color: #133757;">
@@ -45,10 +50,6 @@
           <li class="nav-item">
             <a class="nav-link" id="pills-notes-tab" data-toggle="pill" href="#notes" role="tab"
               aria-controls="pills-notes" aria-selected="false">Notes</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="pills-exams-tab" data-toggle="pill" href="#exams" role="tab"
-              aria-controls="pills-exams" aria-selected="false">Exams</a>
           </li>
         </ul>
         {% else %}
@@ -124,22 +125,24 @@
                 </div>
               </div>
 
+              <!-- <input type="text" name="" id="datepicker"> -->
+
               <button type="submit" class="btn btn-block btn-success mt-4">Save</button>
 
             </form>
 
             {% if form.event_id.value %}
-            {% if not form.end_date.value %}
-            <a href="javascript:{document.getElementById('complete').submit()}"" class=" btn btn-block btn-info text-white mt-4"
-              role="button" style="background-color: #17a2b8;
-              border-color: #17a2b8;">Complete</a>
-            <form action="{% url 'event_complete' %}" id="complete" method="POST">
-              {% csrf_token %}
-              {{ form.event_id }}
-              <input type="hidden" name="is_detail" value="true">
-              <input type="hidden">
-            </form>
-            {% endif %}
+              {% if not form.end_date.value %}
+              <a href="javascript:{document.getElementById('complete').submit()}"" class=" btn btn-block btn-info text-white mt-4"
+                role="button" style="background-color: #17a2b8;
+                border-color: #17a2b8;">Complete</a>
+              <form action="{% url 'event_complete' %}" id="complete" method="POST">
+                {% csrf_token %}
+                {{ form.event_id }}
+                <input type="hidden" name="is_detail" value="true">
+                <input type="hidden">
+              </form>
+              {% endif %}
             <a href="javascript:{document.getElementById('remove').submit()}"" class=" btn btn-block btn-danger
               text-white mt-4">Remove</a>
             <form action="{% url 'event_remove' %}" id="remove" method="POST">
@@ -148,7 +151,13 @@
               <input type="hidden" name="is_detail" value="true">
               <input type="hidden">
             </form>
+
+              <!-- Exam button -->
+              {% if form.event_type.value == 4 %}
+                <button class="btn btn-block btn-primary mt-3 d-none" id="exam-btn">Go to Exam</button>
+              {% endif %}
             {% endif %}
+            
 
           </div>
           {% if notes %}
@@ -190,51 +199,14 @@
               </tbody>
             </table>
           </div>
-          {% if exams %}
-          <!-- Exams -->
-          <div class="tab-pane fade" id="exams" role="tabpanel" aria-labelledby="pills-exams">
-            <table id="exam-list" class="table table-bordered table-hover">
-              <thead>
-                <tr>
-                  <th scope="col">Title</th>
-                  <th scope="col">Event</th>
-                  <th scope="col">Created Date</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody>
-
-                <!-- Display exams -->
-                {% if exams %}
-
-                {% for exam in exams %}
-
-                <tr>
-                  <td>{{ exam.title }}</td>
-                  <td>{{ exam.exam }}</td>
-                  <td>{{ exam.created_date }}</td>
-                  <!-- Call detail view method (Uses urls path name) -->
-                  <td><a href="{% url 'exam_detail' exam.id %}"><i class="fas fa-info-circle show-exam-detail"></i></a>
-                  </td>
-                </tr>
-
-                {% endfor %}
-
-                {% else %}
-
-                <!-- No exams message? -->
-
-                {% endif %}
-
-              </tbody>
-            </table>
-          </div>
-          {% endif %}
+          
           {% endif %}
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<script src="{% static 'js/event_detail.js' %}"></script>
 
 {% endblock %}

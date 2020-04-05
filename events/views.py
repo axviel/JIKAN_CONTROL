@@ -14,8 +14,12 @@ import json
 
 # Returns the list page with all events
 def index(request):
+  if not request.user.is_authenticated:
+    messages.error(request, 'Unauthorized. Must be logged in')
+    return redirect('login')
+
   # Fetch events from db
-  events = Event.objects.order_by('-start_date').filter(is_hidden=False)
+  events = Event.objects.order_by('-start_date').filter(is_hidden=False, user_id=request.user.id)
 
   # Pagination
   paginator = Paginator(events, 10)
@@ -36,7 +40,7 @@ def event(request, event_id=0):
     # Kick user if not logged in
     if not request.user.is_authenticated:
       messages.error(request, 'Unauthorized. Must be logged in')
-      return redirect('event_list')
+      return redirect('login')
 
     # Get the POST form
     form = EventForm(request.POST)
@@ -50,6 +54,10 @@ def event(request, event_id=0):
       start_date = form.cleaned_data['start_date']
       event_type_id = request.POST['event_type']
       repeat_type_id = request.POST['repeat_type']
+
+      # If event type is exam, make repeat type does not repeat
+      if event_type_id == 4:
+        repeat_type_id = 1
 
       event_type = get_object_or_404(EventType, pk=event_type_id)
       repeat_type = get_object_or_404(RepeatType, pk=repeat_type_id)
@@ -80,15 +88,18 @@ def event(request, event_id=0):
           end_date = end_date.strftime("%m/%d/%Y")
 
         context = {
-          'event_id': event.id,
+          'id': event.id,
           'title': event.title,
           'description': event.description,
+          'event_type': event.event_type.pk,
           'repeat_type': event.repeat_type.pk,
           'start_date': event.start_date.strftime("%m/%d/%Y"),
           'end_date': end_date,
           'start_time': event.start_time.strftime("%H:%M"), 
           'end_time': event.end_time.strftime("%H:%M"), 
-          'is_completed': (event.end_date != None)
+          'user_id': event.user_id,
+          'is_completed': event.is_completed,
+          'is_hidden': event.is_hidden
         }
         context = json.dumps(context)
         return HttpResponse(context)
@@ -117,11 +128,14 @@ def event(request, event_id=0):
     return render(request, 'events/event_detail.html', context)
 
   else:
+    if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
 
     # If GET request came from calendar
     if 'is_calendar_form' in request.GET:
       event_id = request.GET['event_id']
-      event = Event.objects.get(id=event_id)
+      event = Event.objects.get(id=event_id, user_id=request.user.id)
 
       context = {
         'event_id': event.id,
@@ -138,15 +152,11 @@ def event(request, event_id=0):
 
       return HttpResponse(context)
 
-    if not request.user.is_authenticated:
-      messages.error(request, 'Access denied. Must be logged in')
-      return redirect('event_list') #redirect(url path name)
-
     # If viewing detail of an existing event, fill the form with its values. if not, show form with blank and default values
     context = {}
 
     if event_id > 0:
-      event = get_object_or_404(Event, pk=event_id)
+      event = get_object_or_404(Event, pk=event_id, user_id=request.user.id)
 
       form = EventForm(initial={
         'event_id': event.id,
@@ -161,11 +171,9 @@ def event(request, event_id=0):
       })
       # Get event notes and exams
       notes = Note.objects.all().filter(event_id=event.id,is_hidden=False)
-      exams = Exam.objects.all().filter(event_id=event.id,is_hidden=False)
 
       context['form'] = form
       context['notes'] = notes
-      context['exams'] = exams
 
     else:
       form = EventForm(initial={
@@ -178,6 +186,10 @@ def event(request, event_id=0):
 
 # Search for events 
 def search(request):
+  if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
+
   queryset_list = Event.objects.order_by('-start_date')
 
   # Title
@@ -258,6 +270,10 @@ def search(request):
 # Marks an event as hidden
 def remove(request):
   if request.method == 'POST':
+    if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
+
     event_id = request.POST['event_id']
 
     event = Event.objects.get(id=event_id)
@@ -272,10 +288,15 @@ def remove(request):
 # Assings an end_date to the event, showing that it is completed
 def complete(request):
   if request.method == 'POST':
+    if not request.user.is_authenticated:
+      messages.error(request, 'Unauthorized. Must be logged in')
+      return redirect('login')
+
     event_id = request.POST['event_id']
 
     event = Event.objects.get(id=event_id)
     event.end_date = datetime.date.today()
+    event.is_completed = True
     event.save()
 
     if 'is_detail' in request.POST:
@@ -299,7 +320,3 @@ def search_form_defaults(form):
 
   form.fields['event_type'].empty_label = 'Any Type'
   form.fields['repeat_type'].empty_label = 'Any Type'
-
-# Returns event start and end hour
-def get_event_hours(event):
-  return event

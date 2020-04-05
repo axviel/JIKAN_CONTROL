@@ -52,7 +52,7 @@ def login(request):
       auth.login(request, user)
       # Show success 
       messages.success(request, 'Login successful')
-      return redirect('dashboard')
+      return redirect('calendar')
     else:
       # Show error
       messages.error(request, 'Invalid username or password')
@@ -68,4 +68,5 @@ def logout(request):
     return redirect('index')
 
 def dashboard(request):
-  return render(request, 'accounts/dashboard.html')
+  # return render(request, 'accounts/dashboard.html')
+  return redirect('calendar')
