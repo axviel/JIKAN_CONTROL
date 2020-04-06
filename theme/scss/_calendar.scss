@@ -9,8 +9,8 @@
     .calendar-change-year-slider {
       color: #737373; 
       border-bottom: 1px solid #999;
-      padding: 1rem 0;
-      margin: 1rem 0;
+      padding: 0.5rem 0;
+      margin: 0.5rem 0;
 
       .fa:hover {
         color: #404040; 
@@ -50,8 +50,7 @@
   }
 
   .calendar-month-list,
-  .calendar-week-list,
-  .calendar-day-list{
+  .calendar-week-list{
     text-align: center;
   }
 
@@ -68,7 +67,7 @@
   }
 
   .day-item{
-    height: 6rem;
+    height: 7.5rem;
     width: auto;
     border-top: 1px solid #bbb;
     border-right: 1px solid #bbb;
@@ -79,6 +78,7 @@
     }
 
     .day-number{
+      text-align: center;
       position: relative;
       z-index: 1;
 
@@ -118,6 +118,7 @@
       color: #fff;
       background: $primary;
       margin: 2px 4px;
+      padding-left: 0.5rem;
 
       &.event-small{
         display: none;
@@ -156,6 +157,16 @@
 
   .current-day-number {
     font-size: 92px; 
+  }
+}
+
+@media (min-width: 1500px){
+  #calendar .day-item .event.event-large{
+    display: block;
+    width: 22ch;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 

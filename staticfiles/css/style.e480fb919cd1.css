@@ -233,6 +233,14 @@ body {
 #current-day-modal .current-day-number {
   font-size: 92px; }
 
+@media (min-width: 1500px) {
+  #calendar .day-item .event.event-large {
+    display: block;
+    width: 25ch;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; } }
+
 @media (max-width: 1065px) {
   #calendar .day-item .event.event-large {
     display: block;
