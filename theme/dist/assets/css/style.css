@@ -4,6 +4,9 @@
   box-sizing: border-box;
   border-radius: 0 !important; }
 
+body {
+  overflow-y: visible !important; }
+
 .cursor-pointer {
   cursor: pointer; }
 
@@ -31,6 +34,17 @@
   /* Set the fixed height of the footer here */
   line-height: 60px;
   /* Vertically center the text there */ }
+
+.container-xxl {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto; }
+
+@media (min-width: 1200px) {
+  .container-xxl {
+    max-width: 1500px; } }
 
 #sidebar {
   width: 250px;
@@ -123,8 +137,8 @@
     #calendar .calendar-change-year .calendar-change-year-slider {
       color: #737373;
       border-bottom: 1px solid #999;
-      padding: 1rem 0;
-      margin: 1rem 0; }
+      padding: 0.5rem 0;
+      margin: 0.5rem 0; }
       #calendar .calendar-change-year .calendar-change-year-slider .fa:hover {
         color: #404040; }
   #calendar .calendar-month-list {
@@ -146,8 +160,7 @@
     border-bottom: 1px solid #bbb;
     border-left: 1px solid #bbb; }
   #calendar .calendar-month-list,
-  #calendar .calendar-week-list,
-  #calendar .calendar-day-list {
+  #calendar .calendar-week-list {
     text-align: center; }
   #calendar .month-item,
   #calendar .week-day-item,
@@ -158,7 +171,7 @@
     font-weight: 600;
     color: #737373; }
   #calendar .day-item {
-    height: 6rem;
+    height: 7.5rem;
     width: auto;
     border-top: 1px solid #bbb;
     border-right: 1px solid #bbb;
@@ -166,6 +179,7 @@
     #calendar .day-item.another-month .day-number {
       color: #bbb; }
     #calendar .day-item .day-number {
+      text-align: center;
       position: relative;
       z-index: 1; }
       #calendar .day-item .day-number:after {
@@ -192,7 +206,8 @@
     #calendar .day-item .event {
       color: #fff;
       background: #00539CFF;
-      margin: 2px 4px; }
+      margin: 2px 4px;
+      padding-left: 0.5rem; }
       #calendar .day-item .event.event-small {
         display: none; }
     #calendar .day-item.another-month {
@@ -217,6 +232,14 @@
 
 #current-day-modal .current-day-number {
   font-size: 92px; }
+
+@media (min-width: 1500px) {
+  #calendar .day-item .event.event-large {
+    display: block;
+    width: 22ch;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; } }
 
 @media (max-width: 1065px) {
   #calendar .day-item .event.event-large {

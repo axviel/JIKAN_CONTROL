@@ -4,9 +4,6 @@
   box-sizing: border-box;
   border-radius: 0 !important; }
 
-body {
-  overflow-y: visible !important; }
-
 .cursor-pointer {
   cursor: pointer; }
 
@@ -34,13 +31,6 @@ body {
   /* Set the fixed height of the footer here */
   line-height: 60px;
   /* Vertically center the text there */ }
-
-.container-xxl {
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto; }
 
 @media (min-width: 1200px) {
   .container-xxl {
@@ -165,13 +155,13 @@ body {
   #calendar .month-item,
   #calendar .week-day-item,
   #calendar .day-item {
-    height: 2rem;
+    height: 7.5rem;
     width: auto; }
   #calendar .week-day-item {
     font-weight: 600;
     color: #737373; }
   #calendar .day-item {
-    height: 7.5rem;
+    height: 6rem;
     width: auto;
     border-top: 1px solid #bbb;
     border-right: 1px solid #bbb;

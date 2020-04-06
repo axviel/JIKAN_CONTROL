@@ -168,19 +168,41 @@ class Calendar {
         let daysTemplate = "";
         let firstEvent = "";
         let secondEvent = "";
+        let thirdEvent = "";
         let smallEvent = "";
         let titleFormated = "";
+
+        let dayInnerHTML = ``;
 
         days.forEach(day => {
 
             if(day.hasEvent){
-                titleFormated = day.hasEvent[0].title.length <= 10 ? day.hasEvent[0].title : day.hasEvent[0].title.substring(0, 7) + '...'
-                firstEvent = `<div class="event event-large ${day.hasEvent[0].is_completed ? 'bg-info text-dark' : ''}">${day.hasEvent[0].start_time} ${titleFormated}</div>`;
-                if(day.hasEvent.length > 1){
-                    titleFormated = day.hasEvent[1].title.length <= 10 ? day.hasEvent[1].title : day.hasEvent[1].title.substring(0, 7) + '...'
-                    secondEvent = `<div class="event event-large ${day.hasEvent[1].is_completed ? 'bg-info text-dark' : ''}">${day.hasEvent.length === 2 ? day.hasEvent[1].start_time + ' ' + titleFormated : (day.hasEvent.length - 1) + ' more events'}</div>`;
+                for(let i = 0; i < day.hasEvent.length; i++){
+                    // If more than 3 events, show a shortened version in the last event slot
+                    if(day.hasEvent.length > 3 && i === 2){
+    
+                        dayInnerHTML += `
+                            <div class="event event-large text-center">
+                                ...
+                            </div>
+                        `;
+    
+                        break;
+                    }
+    
+                    dayInnerHTML += `
+                        <div class="event event-large ${day.hasEvent[i].is_completed ? 'bg-info text-dark' : ''}">
+                            ${day.hasEvent[i].start_time} ${day.hasEvent[i].title}
+                        </div>
+                    `;
                 }
-                smallEvent = `<div class="event event-small">${day.hasEvent.length === 1 ? '1 event' : day.hasEvent.length + ' events'}</div>`;
+    
+                // Small event that's displayed on small screens
+                dayInnerHTML += `
+                    <div class="event event-small">
+                        ${day.hasEvent.length === 1 ? '1 event' : day.hasEvent.length + ' events'}
+                    </div>
+                `;
             }
 
             daysTemplate += `
@@ -194,13 +216,11 @@ class Calendar {
                 data-toggle="modal" data-target="#current-day-modal"
                 >
                     <div class="day-number">${day.dayNumber}</div>
-                    ${day.hasEvent ? firstEvent + secondEvent + smallEvent : ''}
+                    ${day.hasEvent ? dayInnerHTML : ''}
                 </div>
             `
 
-            firstEvent = '';
-            secondEvent = '';
-            smallEvent = '';
+            dayInnerHTML = '';
         });
 
         this.elements.days.innerHTML = daysTemplate;
