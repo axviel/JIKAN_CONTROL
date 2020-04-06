@@ -37,15 +37,9 @@
       >
           <a href="{% url 'note_list' %}">Notes</a>
       </li>
-      {% if 'exams' in request.path %}
-        class="active"
-      {% endif %}
       <li>
           <a href="{% url 'exam_list' %}">Exams</a>
       </li>
-      {% if 'courses' in request.path %}
-        class="active"
-      {% endif %}
       <li>
           <a href="{% url 'course_list' %}">Courses</a>
       </li>
