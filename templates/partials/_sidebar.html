@@ -61,7 +61,7 @@
   <ul class="list-unstyled sidebar-buttons">
     {% if user.is_authenticated %}
       <li>
-        <a href="profile.html" class="sidebar-button-light">Profile</a>
+        <a href="{% url 'user_detail' %}" class="sidebar-button-light">Profile</a>
       </li>
       <li>
         <a class="sidebar-button-dark" href="javascript:{document.getElementById('logout').submit()}" id="logout-btn">Logout</a>

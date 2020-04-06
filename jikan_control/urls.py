@@ -8,6 +8,7 @@ urlpatterns = [
     path('events/', include('events.urls')),
     path('notes/', include('notes.urls')),
     path('exams/', include('exams.urls')),
+    path('user/', include('user.urls')),
     path('jikancalendar/', include('jikancalendar.urls')),
     path('admin/', admin.site.urls),
 ]
