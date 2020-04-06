@@ -1,8 +1,7 @@
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  border-radius: 0 !important; }
+  box-sizing: border-box; }
 
 body {
   overflow-y: visible !important; }
@@ -233,6 +232,14 @@ body {
 #current-day-modal .current-day-number {
   font-size: 92px; }
 
+@media (min-width: 1500px) {
+  #calendar .day-item .event.event-large {
+    display: block;
+    width: 22ch;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; } }
+
 @media (max-width: 1065px) {
   #calendar .day-item .event.event-large {
     display: block;
@@ -250,14 +257,3 @@ body {
 @media (max-width: 610px) {
   #calendar .day-item .event.event-small {
     font-size: 0.7rem; } }
-
-
-@media (min-width: 1500px){
-  #calendar .day-item .event.event-large{
-    display: block;
-    width: 22ch;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-}
