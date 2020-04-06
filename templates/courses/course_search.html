@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-  | Note Search
+  | Course Search
 {% endblock %}
 
 {% block content %}
@@ -21,7 +21,7 @@
             <i class="fas fa-home"></i> Home</a>
         </li>
         <li class="breadcrumb-item">
-          <a href="{% url 'note_list' %}">Notes</a>
+          <a href="{% url 'note_list' %}">Courses</a>
         </li>
         <li class="breadcrumb-item active">Search</li>
       </ol>
@@ -29,12 +29,12 @@
   </div>
 </section>
 
-<!-- Note Section -->
-<section id="notes" class="py-4 main-content">
+<!-- Course Section -->
+<section id="courses" class="py-4 main-content">
   <div class="container">
-    <!-- Note Search form Section -->
-    <h3>Note Search</h3>
-    <form action="{% url 'note_search' %}">
+    <!-- Course Search form Section -->
+    <h3>Course Search</h3>
+    <form action="{% url 'course_search' %}">
       {% csrf_token %}
       <div class="row pb-4">
         <div class="col-6">
@@ -44,10 +44,10 @@
           {{ form.title }}
         </div>
         <div class="col-6">
-          <label for="{{ form.created_date.name }}" class="col-form-label">
-            {{ form.created_date.label }}
+          <label for="{{ form.description.name }}" class="col-form-label">
+            {{ form.description.label }}
           </label>
-          {{ form.created_date }}
+          {{ form.description }}
         </div>
       </div>
 
@@ -55,35 +55,35 @@
 
     </form>
 
-    <!-- Note List -->
+    <!-- Course List -->
     <h4>Results</h4>
-    <table id="note-list" class="table table-bordered table-hover">
+    <table id="course-list" class="table table-bordered table-hover">
       <thead>
         <tr>
           <th scope="col">Title</th>
-          <th scope="col">Created Date</th>
+          <th scope="col">Description</th>
           <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
 
-        <!-- Display notes -->
-        {% if notes %}
+        <!-- Display courses -->
+        {% if courses %}
 
-          {% for note in notes %}
+          {% for course in courses %}
 
             <tr>
-              <td>{{ note.title }}</td>
-              <td>{{ note.created_date }}</td>
+              <td>{{ course.title }}</td>
+              <td>{{ course.description }}</td>
               <!-- Call detail view method (Uses urls path name) -->
-              <td><a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a></td>
+              <td><a href="{% url 'course_detail' course.id %}"><i class="fas fa-info-circle show-course-detail"></i></a></td>
             </tr>
 
           {% endfor %}
 
         {% else %}
 
-          <!-- No note message? -->
+          <!-- No course message? -->
 
         {% endif %}
 
@@ -93,6 +93,6 @@
   </div>
 </section>
 
-<script src="{% static 'js/notes.js' %}"></script>
+<script src="{% static 'js/courses.js' %}"></script>
 
 {% endblock %}

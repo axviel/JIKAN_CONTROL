@@ -4,7 +4,7 @@ from datetime import datetime
 from events.models import Event
 
 class Note(models.Model):
-  event = models.ForeignKey(Event, on_delete=models.DO_NOTHING)
+  events = models.ForeignKey(Event, on_delete=models.DO_NOTHING)
   title = models.CharField(max_length=200)
   description = models.TextField()
   created_date = models.DateTimeField(default=datetime.now, blank=True)

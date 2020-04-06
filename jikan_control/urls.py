@@ -7,6 +7,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('events/', include('events.urls')),
     path('notes/', include('notes.urls')),
+    path('courses/', include('courses.urls')),
     path('exams/', include('exams.urls')),
     path('user/', include('user.urls')),
     path('jikancalendar/', include('jikancalendar.urls')),
