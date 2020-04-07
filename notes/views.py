@@ -47,6 +47,8 @@ def note(request, note_id=0):
       created_date = datetime.date.today()
       event_id = request.POST['event']
 
+      event = get_object_or_404(Event, pk=event_id)
+
       # Searches the db for a note with the id and updates it. if not found, creates a new exam and returns is_created=True
       note, is_created = Note.objects.update_or_create(
           id=note_id,
@@ -55,7 +57,7 @@ def note(request, note_id=0):
             'title': title,
             'description': description,
             'created_date': created_date,
-	          'event_id': event_id
+	          'event': event
        },
       )
 
