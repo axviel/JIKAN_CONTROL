@@ -6,7 +6,7 @@ class Calendar {
         this.options = options;
         this.elements = {
             days: document.querySelector('.calendar-day-list'),
-            week: document.querySelector('.calendar-week-list'),
+            weekDays: document.querySelector('.calendar-weekdays-list'),
             year: document.querySelector('.calendar-current-year'),
             eventList: document.querySelector('.current-day-events-list'),
             eventAddBtn: document.querySelector('.add-event-day-btn'),
@@ -233,7 +233,7 @@ class Calendar {
             weekTemplate += `<div class="week-day-item">${week.slice(0, 3)}</div>`
         });
 
-        this.elements.week.innerHTML = weekTemplate;
+        this.elements.weekDays.innerHTML = weekTemplate;
     }
 
     // Convert 24 hour time to AM/PM

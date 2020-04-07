@@ -38,7 +38,7 @@
     }
   }
 
-  .calendar-week-list,
+  .calendar-weekdays-list,
   .calendar-day-list{
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -50,7 +50,7 @@
   }
 
   .calendar-month-list,
-  .calendar-week-list{
+  .calendar-weekdays-list{
     text-align: center;
   }
 

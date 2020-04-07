@@ -151,7 +151,7 @@ body {
     #calendar .calendar-month-list .month-item:hover {
       cursor: pointer;
       font-weight: 600; }
-  #calendar .calendar-week-list,
+  #calendar .calendar-weekdays-list,
   #calendar .calendar-day-list {
     display: grid;
     grid-template-columns: repeat(7, 1fr); }
@@ -159,7 +159,7 @@ body {
     border-bottom: 1px solid #bbb;
     border-left: 1px solid #bbb; }
   #calendar .calendar-month-list,
-  #calendar .calendar-week-list {
+  #calendar .calendar-weekdays-list {
     text-align: center; }
   #calendar .month-item,
   #calendar .week-day-item,
