@@ -1,8 +1,8 @@
 document.querySelector('#note-list').addEventListener('click', e => {
   //Remove
   if(e.target.classList.contains('remove-note')){
-    const noteeRow = e.target.parentElement.parentElement.parentElement;
-    const noteId = noteRow.getAttribute("notee-id");
+    const noteRow = e.target.parentElement.parentElement.parentElement;
+    const noteId = noteRow.getAttribute("note-id");
 
     $.ajax({
         type: 'POST',
@@ -10,12 +10,12 @@ document.querySelector('#note-list').addEventListener('click', e => {
         data:{
 	    note_id: noteId,
 	    //where is the csrf token coming from???
-	    csrfmiddlewaretoken: $(input[name=csrfmiddlewaretoken]').val()
+	    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
         },
         success:function(){
 	    //Remove from UI
 	    noteRow.remove();
-        }
+        } 
     });
   }
-
+})
