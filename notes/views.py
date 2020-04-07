@@ -45,9 +45,7 @@ def note(request, note_id=0):
       title = form.cleaned_data['title']
       description = form.cleaned_data['description']
       created_date = datetime.date.today()
-      events_id = request.POST['event_id']
-
-      event_id = get_object_or_404(Event, pk=events_id)
+      event_id = request.POST['event_id']
 
       # Searches the db for a note with the id and updates it. if not found, creates a new exam and returns is_created=True
       note, is_created = Note.objects.update_or_create(
@@ -57,7 +55,7 @@ def note(request, note_id=0):
             'title': title,
             'description': description,
             'created_date': created_date,
-	    'events_id': events_id
+	          'event_id': event_id
        },
       )
 
@@ -70,7 +68,7 @@ def note(request, note_id=0):
           'note_id': note.id,
           'title': note.title,
           'created_date': created_date,
-	  'event_id': event_id
+	        'event_id': event_id
         }
         context = json.dumps(context)
         return HttpResponse(context)
@@ -134,8 +132,8 @@ def note(request, note_id=0):
         'created_date': note.created_date
       })
       # Get exam notes and events
-      exams = Exam.objects.all().filter(event_id=note.events_id,is_hidden=False)
-      events = Event.objects.all().filter(id=note.events_id,is_hidden=False)
+      exams = Exam.objects.all().filter(event_id=note.event_id,is_hidden=False)
+      events = Event.objects.all().filter(id=note.event_id,is_hidden=False)
 
       context['form'] = form
       context['exams'] = exams
@@ -169,7 +167,7 @@ def search(request):
   # Request contains at least one form field, return the form with its field values
   if 'title' in request.GET:
     form = NotesForm(initial={
-	  'events_id': request.GET.get('events_id'),
+	  'event_id': request.GET.get('event_id'),
           'title': request.GET['title'],
           'created_date': request.GET['created_date'],
         })
