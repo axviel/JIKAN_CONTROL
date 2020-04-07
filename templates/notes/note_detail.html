@@ -59,11 +59,11 @@
               {{ form.title }}
             </div>
 	    <div class="col-6">
-	      <label for="{{ form.events.title }}" class="col-form-label">
-	        {{ form.event_id.label }}{% if form.event_id.field.required %}<span
+	      <label for="{{ form.event.title }}" class="col-form-label">
+	        {{ form.event.label }}{% if form.event.field.required %}<span
                   class="required">*</span>{% endif %}
 	      </label>
-	      {{ form.event_id }}
+	      {{ form.event }}
 	    </div>
             <div class="col-12">
               <label for="{{ form.description.name }}" class="col-form-label">

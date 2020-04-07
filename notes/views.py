@@ -45,7 +45,7 @@ def note(request, note_id=0):
       title = form.cleaned_data['title']
       description = form.cleaned_data['description']
       created_date = datetime.date.today()
-      event_id = request.POST['event_id']
+      event_id = request.POST['event']
 
       # Searches the db for a note with the id and updates it. if not found, creates a new exam and returns is_created=True
       note, is_created = Note.objects.update_or_create(
