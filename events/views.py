@@ -190,7 +190,7 @@ def search(request):
       messages.error(request, 'Unauthorized. Must be logged in')
       return redirect('login')
 
-  queryset_list = Event.objects.order_by('-start_date')
+  queryset_list = Event.objects.order_by('-start_date').filter(is_hidden=False, user_id=request.user.id)
 
   # Title
   if 'title' in request.GET:

@@ -15,7 +15,7 @@ def index(request):
     return redirect('login')
 
   # Fetch courses from db
-  courses = Course.objects.order_by('title').filter(is_hidden=False)
+  courses = Course.objects.order_by('title').filter(is_hidden=False, user_id=request.user.id)
 
   # Pagination
   paginator = Paginator(courses, 10)
@@ -52,7 +52,7 @@ def course(request, course_id=0):
           defaults={
             'title': title,
             'description': description,
-	    'user_id': request.user.id
+	          'user_id': request.user.id
             },
       )
 
@@ -66,7 +66,7 @@ def course(request, course_id=0):
           'id': course.id,
           'title': course.title,
           'description': course.description,
-	  'user_id': request.user.id
+	        'user_id': request.user.id
         }
         context = json.dumps(context)
         return HttpResponse(context)
@@ -130,7 +130,7 @@ def search(request):
       messages.error(request, 'Unauthorized. Must be logged in')
       return redirect('login')
 
-  queryset_list = Course.objects.order_by('title')
+  queryset_list = Course.objects.order_by('title').filter(is_hidden=False, user_id=request.user.id)
 
   # Title
   if 'title' in request.GET:
@@ -147,8 +147,7 @@ def search(request):
   # Request contains at least one form field, return the form with its field values
   if 'title' in request.GET:
     form = CourseForm(initial={
-          'title': request.GET['title'],
-          'description': request.GET['description']
+          'title': request.GET['title']
         })
 
     search_form_defaults(form)

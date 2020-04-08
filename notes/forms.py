@@ -40,7 +40,7 @@ class NotesForm(forms.Form):
   event = forms.ModelChoiceField( 
     label='Event',
     empty_label=None,
-    queryset=Event.objects.all(),
+    queryset=Event.objects.filter(is_hidden=False),
     widget=forms.Select(attrs={
       'id':'event',
       'class': 'form-control'})

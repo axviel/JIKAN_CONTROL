@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse
+from django.db.models import Q
 
 from .models import Note
 from .forms import NotesForm
@@ -12,9 +13,10 @@ from exams.models import Exam
 import datetime
 import json
 
+
 def index(request):
   # Fetch exams from db
-  notes = Note.objects.order_by('-created_date').filter(is_hidden=False)
+  notes = Note.objects.order_by('-created_date').filter(is_hidden=False, user_id=request.user.id)
 
   # Pagination
   paginator = Paginator(notes, 5)
@@ -76,7 +78,7 @@ def note(request, note_id=0):
         return HttpResponse(context)
 
       # UI success message
-      messages.success(request, 'Note created successfully')
+      messages.success(request, 'Note saved successfully')
 
       # If it was updated return the page and form
       if not is_created:
@@ -87,6 +89,9 @@ def note(request, note_id=0):
 
       # If it was created, redirect to url with id
       return redirect('note_detail', note_id=note.id) #redirect(url path name, id specified in the path)
+
+    event_choices = Event.objects.filter(Q(is_hidden=False, user_id=request.user.id) & ~Q(event_type_id=3))
+    form.fields['event'].queryset = event_choices
 
     # Form was invalid, so return it
     context = {
@@ -148,11 +153,14 @@ def note(request, note_id=0):
 
       context['form'] = form
 
+    event_choices = Event.objects.filter(Q(is_hidden=False, user_id=request.user.id) & ~Q(event_type_id=3))
+    context['form'].fields['event'].queryset = event_choices
+
     return render(request, 'notes/note_detail.html', context)
 
 # Search for notes 
 def search(request):
-  queryset_list = Note.objects.order_by('-created_date')
+  queryset_list = Note.objects.order_by('-created_date').filter(is_hidden=False, user_id=request.user.id)
 
   # Title
   if 'title' in request.GET:

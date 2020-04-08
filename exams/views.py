@@ -283,7 +283,7 @@ def search(request):
     messages.error(request, 'Unauthorized. Must be logged in')
     return redirect('login')
 
-  queryset_list = Exam.objects.order_by('-created_date')
+  queryset_list = Exam.objects.order_by('-created_date').filter(is_hidden=False, user_id=request.user.id)
 
   # Title
   if 'title' in request.GET:

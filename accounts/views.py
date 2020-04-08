@@ -51,7 +51,7 @@ def login(request):
       # Login user
       auth.login(request, user)
       # Show success 
-      messages.success(request, 'Login successful')
+      # messages.success(request, 'Login successful')
       return redirect('calendar')
     else:
       # Show error
