@@ -117,6 +117,9 @@ def exam(request, exam_id=0, event_id=0):
       
       form.fields['event'].queryset = event_choices
 
+      course_choices = Course.objects.filter(is_hidden=False, user_id=request.user.id)
+      form.fields['course'].queryset = course_choices
+
       # If it was updated return the page and form
       if not is_new:
         context = {
@@ -200,6 +203,9 @@ def exam(request, exam_id=0, event_id=0):
       
       form.fields['event'].queryset = event_choices
 
+      course_choices = Course.objects.filter(is_hidden=False, user_id=request.user.id)
+      form.fields['course'].queryset = course_choices
+
       context['form'] = form
 
     elif event_id > 0:
@@ -217,6 +223,9 @@ def exam(request, exam_id=0, event_id=0):
       event_choices = event_choices.exclude(id__in=exams_for_exclude)
       
       form.fields['event'].queryset = event_choices
+
+      course_choices = Course.objects.filter(is_hidden=False, user_id=request.user.id)
+      form.fields['course'].queryset = course_choices
 
       context['form'] = form
 
@@ -236,6 +245,9 @@ def exam(request, exam_id=0, event_id=0):
       event_choices = event_choices.exclude(id__in=exams_for_exclude)
       
       form.fields['event'].queryset = event_choices
+
+      course_choices = Course.objects.filter(is_hidden=False, user_id=request.user.id)
+      form.fields['course'].queryset = course_choices
 
       context['form'] = form
 
