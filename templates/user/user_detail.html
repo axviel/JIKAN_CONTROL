@@ -23,4 +23,70 @@
     </div>
   </section>
 
+<!-- User Section -->
+<section id="user-detail" class="py-4 main-content">
+
+  <!-- Alerts -->
+  {% include 'partials/_alerts.html' %}
+
+  <div class="container" style="width: 900px;">
+    <div class="card shadow">
+      <div class="card-header text-white text-center" style="background-color: #133757;">
+        <h4>Profile</h4>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title">Your Profile: {{user.username}}</h3>
+        <!-- Tab Content -->
+        <div class="tab-content" id="pills-tabContent">
+          <!-- Detail -->
+          <div class="tab-pane fade show active" id="detail" role="tabpanel" aria-labelledby="pills-detail">
+            <form method="POST">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-12">
+                  <label for="{{ form.username.name }}" class="col-form-label">
+                    {{ form.username.label }}{% if form.username.field.required %}<span class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.username }}
+                </div>
+                <div class="col-6">
+                  <label for="{{ form.first_name.name }}" class="col-form-label">
+                    {{ form.first_name.label }}{% if form.first_name.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.first_name }}
+                </div>
+                <div class="col-6">
+                  <label for="{{ form.last_name.name }}" class="col-form-label">
+                    {{ form.last_name.label }}{% if form.last_name.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.last_name }}
+                </div>
+                <div class="col-12">
+                  <label for="{{ form.email.name }}" class="col-form-label">
+                    {{ form.email.label }}{% if form.email.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.email }}
+                </div>
+                <div class="col-12">
+                  <label for="{{ form.password.name }}" class="col-form-label">
+                    {{ form.password.label }}{% if form.password.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.password }}
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-block btn-success mt-4">Save</button>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
