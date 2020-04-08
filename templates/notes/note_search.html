@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-  | Note Search
+| Note Search
 {% endblock %}
 
 {% block content %}
@@ -32,64 +32,69 @@
 <!-- Note Section -->
 <section id="notes" class="py-4 main-content">
   <div class="container">
-    <!-- Note Search form Section -->
-    <h3>Note Search</h3>
-    <form action="{% url 'note_search' %}">
-      {% csrf_token %}
-      <div class="row pb-4">
-        <div class="col-6">
-          <label for="{{ form.title.name }}" class="col-form-label">
-            {{ form.title.label }}
-          </label>
-          {{ form.title }}
-        </div>
-        <div class="col-6">
-          <label for="{{ form.created_date.name }}" class="col-form-label">
-            {{ form.created_date.label }}
-          </label>
-          {{ form.created_date }}
+    <div class="card shadow">
+      <div class="card-header text-white text-center" style="background-color: #133757;">
+        <h3>Note Search</h3>
+      </div>
+      <!-- Note Search form Section -->
+      <div class="card-body">
+        <div class="d-flex justify-content-center">
+          <form action="{% url 'note_search' %}" style="width: 700px;">
+            {% csrf_token %}
+            <div class="row pb-4">
+              <div class="col-6">
+                <label for="{{ form.title.name }}" class="col-form-label">
+                  {{ form.title.label }}
+                </label>
+                {{ form.title }}
+              </div>
+              <div class="col-6">
+                <label for="{{ form.created_date.name }}" class="col-form-label">
+                  {{ form.created_date.label }}
+                </label>
+                {{ form.created_date }}
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-block btn-success mb-4">Search</button>
+
+          </form>
         </div>
       </div>
-
-      <button type="submit" class="btn btn-block btn-secondary mb-4">Search</button>
-
-    </form>
+    </div>
 
     <!-- Note List -->
-    <h4>Results</h4>
-    <table id="note-list" class="table table-bordered table-hover">
-      <thead>
-        <tr>
-          <th scope="col">Title</th>
-          <th scope="col">Created Date</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
+    <div class="mx-0 shadow">
+      <div class="align-items-center row mx-0 bg-dark" style="height: 50px;">
+        <h4 class="text-light ml-3">Results:</h4>
+      </div>
+      <table id="note-list" class="table table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Created Date</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
 
-        <!-- Display notes -->
-        {% if notes %}
+          <!-- Display notes -->
 
           {% for note in notes %}
 
-            <tr>
-              <td>{{ note.title }}</td>
-              <td>{{ note.created_date }}</td>
-              <!-- Call detail view method (Uses urls path name) -->
-              <td><a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a></td>
-            </tr>
+          <tr>
+            <td>{{ note.title }}</td>
+            <td>{{ note.created_date }}</td>
+            <!-- Call detail view method (Uses urls path name) -->
+            <td><a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a>
+            </td>
+          </tr>
 
           {% endfor %}
 
-        {% else %}
-
-          <!-- No note message? -->
-
-        {% endif %}
-
-      </tbody>
-    </table>
-
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
