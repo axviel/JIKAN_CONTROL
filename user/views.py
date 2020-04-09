@@ -19,6 +19,7 @@ def profile(request):
       first_name = form.cleaned_data['first_name']
       last_name = form.cleaned_data['last_name']
       email = form.cleaned_data['email']
+      password = form.cleaned_data['password']
 
       user_model = get_user_model()
     
@@ -34,12 +35,19 @@ def profile(request):
       # Save in the db
       user.save()
 
+      if password != '':
+        user.set_password(password)
+        # changing the password causes the user to log out
+        user.save()
+        # so here we then log user back in
+        user = auth.authenticate(username=username, password=password)
+        auth.login(request, user)
+        # delete variable so its no longer stored in memory
+        del password
+
       # UI success message
       messages.success(request, 'Profile updated successfully')
-      context = {
-        'form': form
-      }
-      return render(request, 'user/user_detail.html', context)
+      return redirect('user_detail')
     
     # Form was invalid, so return it
     context = {
