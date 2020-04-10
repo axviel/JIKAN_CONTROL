@@ -28,6 +28,7 @@ class Calendar {
             examButton: document.querySelector('#exam-btn'),
             eventTypeSelect: document.querySelector('#event_type'),
             repeatTypeSelect: document.querySelector('#repeat_type'),
+            week: document.querySelector('.calendar-week-list'),
         };
 
         // Used to toggle modal event list and form states
@@ -48,6 +49,9 @@ class Calendar {
         // Number of days show in the calendar
         this.options.maxDays = 42;
 
+        // Number of hours in a week
+        this.options.maxHours = 168;
+
         // Initializes the events and draws all the days, weeks, years, and events
         this.init();
     }
@@ -66,6 +70,8 @@ class Calendar {
         this.drawCalendarDays();
         this.drawTopMonthYearAndCurrentDayNumberWeekday();
         this.drawCurrentDayEventList();
+
+        this.drawWeekView();
     }
 
     // Draws the event list for the current day modal
@@ -117,6 +123,145 @@ class Calendar {
         this.elements.currentWeekDay.innerHTML = AVAILABLE_WEEK_DAYS[calendar.active.week];
     }
 
+    // Draws the week view with events in their respective hours
+    drawWeekView(){
+        // Get current week days and their events
+        let calendar = this.getCalendar();
+        // Contains info of the current date 
+        // use the day/month/year to create a date and find the current week
+        // format each one of the 7 days into a key to access the visible elements obj and get the elements of that day
+
+        let curr = new Date(calendar.active.year, calendar.active.month, calendar.active.day);
+        let week = [];
+
+        for (let i = 0; i < 7; i++) {
+            let first = curr.getDate() - curr.getDay() + i;
+            let day = new Date(curr.setDate(first));
+            week.push(this.getFormattedDate(day));
+        }
+
+        // or save the days in a list and iterate over that list creating the html inner content like in the drawcalendarevents method
+
+        // can only fit 2 per hour. Show ... when multiple events
+
+        // if clicked event is not ..., open the modal directly in the form
+
+        // if click empty spot, open modal in the new form with start and end hour preselected. *gon be tricky
+
+        // style the grid item so it can fit 2 
+
+        // in drawWeekDays method, draw the day number that only shows on the weekly view
+
+        
+        debugger;//--------
+
+        let weekTemplate = ``;
+        let weekdayItemTemplate = ``;
+        let hourItemTemplate = ``;
+
+        let eventHours = {};
+        let startTimeKey = '';
+        let endHour;
+        let endMin;
+        let eventEndHour;
+        let eventEndMin;
+        let hour;
+        week.forEach(day => {
+            console.log(day);
+            if(day in this.visibleEvents){
+                this.visibleEvents[day].forEach(event =>{
+                    if(event.start_time in eventHours){
+                        eventHours[event.start_time].push(event)
+                    }
+                    else{
+                        eventHours[event.start_time] = [event];
+                    }
+                })
+
+                weekdayItemTemplate = `<div class="weekday-item">`;
+
+                hour = 0;
+                while(hour < 24){
+                    startTimeKey = hour < 10 ? '0' + hour + ':00' : hour + ':00';
+
+                    if(startTimeKey in eventHours){
+                        endHour = hour;
+                        endMin = 0;
+                        eventHours[startTimeKey].forEach(event => {
+                            eventEndHour = Number(event.end_time.substring(0, 2));
+                            eventEndMin = Number(event.end_time.substring(3, 5));
+                            if(endHour <= eventEndHour && endMin <= eventEndMin){
+                                endHour = eventEndHour;
+                                endMin = eventEndMin;
+                                if(hour === endHour){
+                                    console.log('Added event hour: ' + hour);
+                                    hour++;
+
+                                    hourItemTemplate = `<div class="hour-item"><h3>Single Hour Event</h3></div>`;
+                                    weekdayItemTemplate += hourItemTemplate;
+                                }
+                                else{
+                                    console.log('Added event hour from ' + hour + ':00 to ' + endHour + ':00');
+                                    hour = endHour;
+
+                                    hourItemTemplate = `<div class="hour-item"><h3>Multiple Hour Event</h3></div>`;
+                                    weekdayItemTemplate += hourItemTemplate;
+                                }
+                            }
+                        })
+                    }
+                    else{
+                        console.log('Added emtpy hour: ' + hour);
+                        hour++;
+
+                        hourItemTemplate = `<div class="hour-item"><h3>Empty Hour</h3></div>`;
+                        weekdayItemTemplate += hourItemTemplate;
+                    }
+
+                    
+                }
+
+                weekdayItemTemplate += `</div>`;
+                weekTemplate += weekdayItemTemplate;
+
+                // Clear after use
+                eventHours = {};
+            }
+            else{
+                console.log('Added emtpy entire day: ');
+                weekTemplate += `
+                    <div class="weekday-item">
+                        <div class="hour-item">
+                            <h3>Empty Complete Day</h3>
+                        </div>
+                    </div>
+                `;
+            }
+
+
+            // if(events){
+            //     weekEvents.push(this.visibleEvents[day]);
+            // }
+        });
+
+        // weekEvents.sort(this.compareStartTimes);
+
+        // console.log(weekEvents);
+
+        // loop through weekEvents and loop through the events and create the hour entires for the day
+
+        // the size of the evcent-item depends on the number of hours
+
+        // save events in a dict where key is the start hour. if key not in dict then create empty event
+
+        // asign a class that determines the size of the event-item and hardcode those size in css for each class
+
+        // 
+
+        this.elements.week.innerHTML = weekTemplate;
+        let x = 0;
+    }
+
     // Draws the calendar days with their events
     drawCalendarDays() {
         let calendar = this.getCalendar();
@@ -166,11 +311,6 @@ class Calendar {
         });
 
         let daysTemplate = "";
-        let firstEvent = "";
-        let secondEvent = "";
-        let thirdEvent = "";
-        let smallEvent = "";
-        let titleFormated = "";
 
         let dayInnerHTML = ``;
 
