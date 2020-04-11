@@ -1,4 +1,5 @@
 {% load static %}
+{% load webpush_notifications %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -24,6 +25,7 @@
   <script src="{% static 'js/main.js' %}"></script>
 
   <title>Jikan Control {% block title %}{% endblock %}</title>
+  {% webpush_header %}
 </head>
 
 <body>
@@ -33,6 +35,7 @@
 
   <!-- Main Page -->
   <div id="main-page">
+    {% webpush_button %}
     <!-- Navbar -->
     {% include 'partials/_navbar.html' %}
 

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'webpush',
 ]
 
 MIDDLEWARE = [
@@ -69,6 +70,12 @@ TEMPLATES = [
         },
     },
 ]
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": "BE67B3w1HywCEpjnZ1AKhmKefMDdqGFIloMeahozj2T87E-65Vn9KS-KCryi7mNGMHw9Pvrb8XIPs5ZBgG2o-Tc",
+    "VAPID_PRIVATE_KEY":"yLBzNha1wF9TVxjoub5kPMrT8wTnyHrJe980HPds8a8",
+    "VAPID_ADMIN_EMAIL": "admin@example.com"
+}
 
 WSGI_APPLICATION = 'jikan_control.wsgi.application'
 
