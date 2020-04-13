@@ -162,9 +162,6 @@ class Calendar {
     drawWeekView(){
         // Get current week days and their events
         let calendar = this.getCalendar();
-        // Contains info of the current date 
-        // use the day/month/year to create a date and find the current week
-        // format each one of the 7 days into a key to access the visible elements obj and get the elements of that day
 
         let curr = new Date(calendar.active.year, calendar.active.month, calendar.active.day);
         let week = [];
@@ -175,44 +172,22 @@ class Calendar {
             week.push(this.getFormattedDate(day));
         }
 
-        // or save the days in a list and iterate over that list creating the html inner content like in the drawcalendarevents method
-
-        // can only fit 2 per hour. Show ... when multiple events
-
-        // if clicked event is not ..., open the modal directly in the form
-
-        // if click empty spot, open modal in the new form with start and end hour preselected. *gon be tricky
-
-        // style the grid item so it can fit 2 
-
-        // in drawWeekDays method, draw the day number that only shows on the weekly view
-
-        
-        // debugger;//--------
-
         Array.from(document.querySelectorAll('.hour-item')).forEach(hourItem => {
             if(!hourItem.classList.contains('calendar-hour')){
                 hourItem.innerHTML = '';
             }
         });
 
-        let weekTemplate = ``;
-        let weekdayItemTemplate = ``;
-        let hourItemTemplate = ``;
-
         let hourItemElement;
-        let eventElement;
 
         let eventHours = {};
         let startTimeKey = '';
         let endHour;
         let endMin;
-        let eventEndHour;
-        let eventEndMin;
         let hour;
         let someKey;
+
         week.forEach( (day, index) => {
-            console.log(day);
             if(day in this.visibleEvents){
                 this.visibleEvents[day].forEach(event =>{
                     someKey = event.start_time.substring(0,2);
@@ -224,15 +199,19 @@ class Calendar {
                     }
                 });
 
-                // weekdayItemTemplate = `<div class="weekday-item">`;
-
                 hour = 0;
                 while(hour < 24){
-                    // startTimeKey = hour < 10 ? '0' + hour + ':00' : hour + ':00';
                     startTimeKey = hour < 10 ? '0' + hour : hour;
 
                     hourItemElement = document.querySelector(`[day="${index}"][hour="${hour}"]`);
                     hourItemElement.innerHTML = '';
+
+                    // If weekday belongs to a different month, add gray color
+                    // if(!alreadyAnotherMonth && true){
+                    //     hourItemElement.parentElement.classList.add('another-month');
+
+                    //     alreadyAnotherMonth = true;
+                    // }
 
                     if(startTimeKey in eventHours){
                         endHour = hour;
@@ -240,11 +219,39 @@ class Calendar {
                         for(let eventIndex = 0; eventIndex < eventHours[startTimeKey].length; eventIndex++) {
                             let event = eventHours[startTimeKey][eventIndex];
 
+                            let startHour = Number(event.start_time.substring(0,2));
+                            let endHour = Number(event.end_time.substring(0,2));
+                            let endMin = Number(event.end_time.substring(3,5));
+
+                            let hourDiff = endHour - startHour;
+
+                            // If event overlaps other hours
+                            if( hourDiff > 1 ||
+                                (hourDiff === 1 && endMin > 0)
+                            ){
+                                hourItemElement.innerHTML += `
+                                    <div 
+                                    class="event event-large event-multiple spread-${hourDiff}" 
+                                    start-hour="${startTimeKey}"
+                                    data-toggle="modal" 
+                                    data-target="#current-day-modal">
+                                        ${event.title} 
+                                        ${
+                                            (eventHours[startTimeKey].length > 1 && eventIndex == 0) || 
+                                            (eventHours[startTimeKey].length > 2 && eventIndex == 1) 
+                                            ? 'and more' : ''}
+                                    </div>
+                                `;
+                                break;
+                            }
+
                             if(eventHours[startTimeKey].length > 2 && eventIndex == 1){
                                 hourItemElement.innerHTML += `
                                     <div 
                                     class="event event-large text-center event-multiple" 
-                                    start-hour="${startTimeKey}">
+                                    start-hour="${startTimeKey}"
+                                    data-toggle="modal" 
+                                    data-target="#current-day-modal">
                                         ...
                                     </div>
                                 `;
@@ -253,104 +260,28 @@ class Calendar {
                             else{
                                 hourItemElement.innerHTML += `
                                     <div 
-                                    class="event event-large event-single" 
-                                    event-id="${event.id}">
-                                        ${event.start_time} ${event.title}
+                                    class="event event-large event-single ${event.is_completed ? "bg-info text-dark" : "" }" 
+                                    event-id="${event.id}"
+                                    data-toggle="modal" 
+                                    data-target="#current-day-modal">
+                                        ${event.title}
                                     </div>
                                 `;
                             }
-
-                            /*
-                            eventEndHour = Number(event.end_time.substring(0, 2));
-                            eventEndMin = Number(event.end_time.substring(3, 5));
-                            if(endHour <= eventEndHour && endMin <= eventEndMin){
-                                endHour = eventEndHour;
-                                endMin = eventEndMin;
-                                if(hour === endHour){
-                                    hourItemElement.innerHTML += `
-                                        <div class="event event-large">
-                                            ${event.start_time} ${event.title}
-                                        </div>
-                                    `;
-
-                                    console.log('Added event hour: ' + hour);
-                                    hour++;
-
-                                    
-
-                                    // hourItemTemplate = `<div class="hour-item"><h3>Single Hour Event</h3></div>`;
-                                    // weekdayItemTemplate += hourItemTemplate;
-                                }
-                                else{
-                                    let someContent = eventHours[startTimeKey].length > 1 ? '...' : `${event.start_time} ${event.title}`;
-                                    hourItemElement.innerHTML += `
-                                        <div class="event event-large">
-                                            ${someContent}
-                                        </div>
-                                    `;
-
-                                    console.log('Added event hour from ' + hour + ':00 to ' + endHour + ':00');
-                                    hour = endHour;
-
-                                    // hourItemTemplate = `<div class="hour-item"><h3>Multiple Hour Event</h3></div>`;
-                                    // weekdayItemTemplate += hourItemTemplate;
-                                }
-                            }
-                            */
                         }
 
                         hour++;
                     }
                     else{
-                        console.log('Added emtpy hour: ' + hour);
                         hour++;
-
-                        // hourItemTemplate = `<div class="hour-item"><h3>Empty Hour</h3></div>`;
-                        // weekdayItemTemplate += hourItemTemplate;
                     }
-
-                    
                 }
-
-                // weekdayItemTemplate += `</div>`;
-                // weekTemplate += weekdayItemTemplate;
 
                 // Clear after use
                 eventHours = {};
             }
-            else{
-                console.log('Added emtpy entire day: ');
-                // weekTemplate += `
-                //     <div class="weekday-item">
-                //         <div class="hour-item">
-                //             <h3>Empty Complete Day</h3>
-                //         </div>
-                //     </div>
-                // `;
-            }
 
-
-            // if(events){
-            //     weekEvents.push(this.visibleEvents[day]);
-            // }
         });
-
-        // weekEvents.sort(this.compareStartTimes);
-
-        // console.log(weekEvents);
-
-        // loop through weekEvents and loop through the events and create the hour entires for the day
-
-        // the size of the evcent-item depends on the number of hours
-
-        // save events in a dict where key is the start hour. if key not in dict then create empty event
-
-        // asign a class that determines the size of the event-item and hardcode those size in css for each class
-
-        // 
-
-        // this.elements.week.innerHTML = weekTemplate;
-        let x = 0;
     }
 
     // Draws the calendar days with their events
