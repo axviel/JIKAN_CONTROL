@@ -7,14 +7,18 @@ class Calendar {
         this.elements = {
             days: document.querySelector('.calendar-day-list'),
             weekDays: document.querySelector('.calendar-weekdays-list'),
+            weekDaysForWeekView: document.querySelector('.calendar-week-weekdays-list'),
             year: document.querySelector('.calendar-current-year'),
             eventList: document.querySelector('.current-day-events-list'),
             eventAddBtn: document.querySelector('.add-event-day-btn'),
             todayBtn: document.querySelector('.calendar-today-btn'),
+            viewBtn: document.querySelector('.calendar-view-btn'),
             currentDay: document.querySelector('.current-day-number'),
             currentWeekDay: document.querySelector('.current-day-of-week'),
             prevMonth: document.querySelector('.calendar-change-month-slider-prev'),
             nextMonth: document.querySelector('.calendar-change-month-slider-next'),
+            prevWeek: document.querySelector('.calendar-change-week-slider-prev'),
+            nextWeek: document.querySelector('.calendar-change-week-slider-next'),
             currentMonth: document.querySelector('.calendar-current-month'),
             currentDayModal: document.querySelector('#current-day-modal'),
             currentDayFooter: document.querySelector('.current-day-footer'),
@@ -28,6 +32,7 @@ class Calendar {
             examButton: document.querySelector('#exam-btn'),
             eventTypeSelect: document.querySelector('#event_type'),
             repeatTypeSelect: document.querySelector('#repeat_type'),
+            week: document.querySelector('.calendar-week-list'),
         };
 
         // Used to toggle modal event list and form states
@@ -48,6 +53,9 @@ class Calendar {
         // Number of days show in the calendar
         this.options.maxDays = 42;
 
+        // Default calendar view mode
+        this.monthView = true;
+
         // Initializes the events and draws all the days, weeks, years, and events
         this.init();
     }
@@ -56,16 +64,49 @@ class Calendar {
     init() {
         if (!this.options.id) return false;
         this.eventsTrigger();
+        this.drawWeekTemplate();
         this.drawAll();
     }
 
-    // draw Methods
+    // Draw Methods
     drawAll() {
         this.getAllEventInstancesInRange();
         this.drawWeekDays();
         this.drawCalendarDays();
         this.drawTopMonthYearAndCurrentDayNumberWeekday();
         this.drawCurrentDayEventList();
+
+        this.drawWeekView();
+    }
+
+    // Draws week view template
+    drawWeekTemplate(){
+        let weekViewTemplate = '';
+        for(let weekdayIndex = -1; weekdayIndex < 7; weekdayIndex++){
+            weekViewTemplate += '<div class="weekday-item">';
+
+            for(let hourIndex = 0; hourIndex < 24; hourIndex++){
+
+                if(weekdayIndex === -1){
+                    weekViewTemplate += `
+                    <div class="hour-item text-center calendar-hour">
+                        ${hourIndex < 10 ? '0' + hourIndex + ':00' : hourIndex + ':00'}
+                    </div>`;
+                    continue;
+                }
+                weekViewTemplate += `<div 
+                class="hour-item"
+                day="${weekdayIndex}" 
+                hour="${hourIndex}"
+                data-toggle="modal" 
+                data-target="#current-day-modal">
+                </div>`;
+            }
+
+            weekViewTemplate += '</div>';
+        }
+
+        this.elements.week.innerHTML = weekViewTemplate;
     }
 
     // Draws the event list for the current day modal
@@ -117,6 +158,132 @@ class Calendar {
         this.elements.currentWeekDay.innerHTML = AVAILABLE_WEEK_DAYS[calendar.active.week];
     }
 
+    // Draws the week view with events in their respective hours
+    drawWeekView(){
+        // Get current week days and their events
+        let calendar = this.getCalendar();
+
+        let curr = new Date(calendar.active.year, calendar.active.month, calendar.active.day);
+        let week = [];
+
+        for (let i = 0; i < 7; i++) {
+            let first = curr.getDate() - curr.getDay() + i;
+            let day = new Date(curr.setDate(first));
+            week.push(this.getFormattedDate(day));
+        }
+
+        Array.from(document.querySelectorAll('.hour-item')).forEach(hourItem => {
+            if(!hourItem.classList.contains('calendar-hour')){
+                hourItem.innerHTML = '';
+            }
+        });
+
+        let hourItemElement;
+
+        let eventHours = {};
+        let startTimeKey = '';
+        let endHour;
+        let endMin;
+        let hour;
+        let someKey;
+
+        week.forEach( (day, index) => {
+            if(day in this.visibleEvents){
+                this.visibleEvents[day].forEach(event =>{
+                    someKey = event.start_time.substring(0,2);
+                    if(someKey in eventHours){
+                        eventHours[someKey].push(event)
+                    }
+                    else{
+                        eventHours[someKey] = [event];
+                    }
+                });
+
+                hour = 0;
+                while(hour < 24){
+                    startTimeKey = hour < 10 ? '0' + hour : hour;
+
+                    hourItemElement = document.querySelector(`[day="${index}"][hour="${hour}"]`);
+                    hourItemElement.innerHTML = '';
+
+                    // If weekday belongs to a different month, add gray color
+                    // if(!alreadyAnotherMonth && true){
+                    //     hourItemElement.parentElement.classList.add('another-month');
+
+                    //     alreadyAnotherMonth = true;
+                    // }
+
+                    if(startTimeKey in eventHours){
+                        endHour = hour;
+                        endMin = 0;
+                        for(let eventIndex = 0; eventIndex < eventHours[startTimeKey].length; eventIndex++) {
+                            let event = eventHours[startTimeKey][eventIndex];
+
+                            let startHour = Number(event.start_time.substring(0,2));
+                            let endHour = Number(event.end_time.substring(0,2));
+                            let endMin = Number(event.end_time.substring(3,5));
+
+                            let hourDiff = endHour - startHour;
+
+                            // If event overlaps other hours
+                            if( hourDiff > 1 ||
+                                (hourDiff === 1 && endMin > 0)
+                            ){
+                                hourItemElement.innerHTML += `
+                                    <div 
+                                    class="event event-large event-multiple spread-${hourDiff}" 
+                                    start-hour="${startTimeKey}"
+                                    data-toggle="modal" 
+                                    data-target="#current-day-modal">
+                                        ${event.title} 
+                                        ${
+                                            (eventHours[startTimeKey].length > 1 && eventIndex == 0) || 
+                                            (eventHours[startTimeKey].length > 2 && eventIndex == 1) 
+                                            ? 'and more' : ''}
+                                    </div>
+                                `;
+                                break;
+                            }
+
+                            if(eventHours[startTimeKey].length > 2 && eventIndex == 1){
+                                hourItemElement.innerHTML += `
+                                    <div 
+                                    class="event event-large text-center event-multiple" 
+                                    start-hour="${startTimeKey}"
+                                    data-toggle="modal" 
+                                    data-target="#current-day-modal">
+                                        ...
+                                    </div>
+                                `;
+                                break;
+                            }
+                            else{
+                                hourItemElement.innerHTML += `
+                                    <div 
+                                    class="event event-large event-single ${event.is_completed ? "bg-info text-dark" : "" }" 
+                                    event-id="${event.id}"
+                                    data-toggle="modal" 
+                                    data-target="#current-day-modal">
+                                        ${event.title}
+                                    </div>
+                                `;
+                            }
+                        }
+
+                        hour++;
+                    }
+                    else{
+                        hour++;
+                    }
+                }
+
+                // Clear after use
+                eventHours = {};
+            }
+
+        });
+    }
+
     // Draws the calendar days with their events
     drawCalendarDays() {
         let calendar = this.getCalendar();
@@ -166,11 +333,6 @@ class Calendar {
         });
 
         let daysTemplate = "";
-        let firstEvent = "";
-        let secondEvent = "";
-        let thirdEvent = "";
-        let smallEvent = "";
-        let titleFormated = "";
 
         let dayInnerHTML = ``;
 
@@ -228,12 +390,35 @@ class Calendar {
 
     // Draws the calendar week days
     drawWeekDays() {
+        let calendar = this.getCalendar();
+
+        let curr = new Date(calendar.active.year, calendar.active.month, calendar.active.day);
+        let weekList = [];
+
+        for (let i = 0; i < 7; i++) {
+            let first = curr.getDate() - curr.getDay() + i;
+            let day = new Date(curr.setDate(first));
+            weekList.push(day.getDate());
+        }
+
         let weekTemplate = "";
-        AVAILABLE_WEEK_DAYS.forEach(week => {
+
+        // Month View Weekdays
+        AVAILABLE_WEEK_DAYS.forEach( (week, index) => {
             weekTemplate += `<div class="week-day-item">${week.slice(0, 3)}</div>`
         });
 
         this.elements.weekDays.innerHTML = weekTemplate;
+
+        // Week View weekdays
+
+        weekTemplate = `<div class="week-day-item"></div>`;
+
+        AVAILABLE_WEEK_DAYS.forEach( (week, index) => {
+            weekTemplate += `<div class="week-day-item">${week.slice(0, 3)} <span class="weekday-number d-none'"><br>${weekList[index]}</span></div>`
+        });
+
+        this.elements.weekDaysForWeekView.innerHTML = weekTemplate;
     }
 
     // Convert 24 hour time to AM/PM
@@ -419,6 +604,7 @@ class Calendar {
     // Clears the add evnt form, shows the event list state, and re-draws everything
     clearAddEventFormState(isNewEvent = false){
         // Clear fields
+        document.querySelector('#event_id').value = "";
         document.querySelector('#title').value = "";
         document.querySelector('#description').value = "";
         document.querySelector('#event_type').value = "1";
@@ -482,6 +668,8 @@ class Calendar {
                 formatted: this.getFormattedDate(time),
                 tm: +time
             },
+            pWeek: new Date(time.getFullYear(), time.getMonth(), time.getDate() - 7 - time.getDay()),
+            nWeek: new Date(time.getFullYear(), time.getMonth(), time.getDate() + 7 - time.getDay()),
             pMonth: new Date(time.getFullYear(), time.getMonth() - 1, 1),
             nMonth: new Date(time.getFullYear(), time.getMonth() + 1, 1),
             pYear: new Date(new Date(time).getFullYear() - 1, 0, 1),
@@ -540,6 +728,20 @@ class Calendar {
             this.drawAll()
         });
 
+        // Show pervious week
+        this.elements.prevWeek.addEventListener('click', e => {
+            let calendar = this.getCalendar();
+            this.updateTime(calendar.pWeek);
+            this.drawAll()
+        });
+
+        // Show next week
+        this.elements.nextWeek.addEventListener('click', e => {
+            let calendar = this.getCalendar();
+            this.updateTime(calendar.nWeek);
+            this.drawAll()
+        });
+
         // Go to day
         this.elements.days.addEventListener('click', e => {
 
@@ -557,6 +759,36 @@ class Calendar {
             }
 
             let strDate = `${Number(month) + 1}/${day}/${year}`;
+            this.updateTime(strDate);
+            this.drawAll()
+        });
+
+        // Go to weekday
+        this.elements.week.addEventListener('click', e => {
+            let element = e.srcElement;
+
+            // If current element does not have the attribute, use the parent element
+            element = element.getAttribute('day') ? element : element.parentElement;
+
+            let weekday = element.getAttribute('day');
+
+            if (!weekday) {
+                return false;
+            }
+            let calendar = this.getCalendar();
+
+            let curr = new Date(calendar.active.year, calendar.active.month, calendar.active.day);
+            let weekList = [];
+
+            for (let i = 0; i < 7; i++) {
+                let first = curr.getDate() - curr.getDay() + i;
+                let day = new Date(curr.setDate(first));
+                weekList.push(day);
+            }
+
+            let selectedDay = weekList[Number(weekday)];
+
+            let strDate = this.getFormattedDate(selectedDay);
             this.updateTime(strDate);
             this.drawAll()
         });
@@ -778,7 +1010,61 @@ class Calendar {
         // Go to today
         this.elements.todayBtn.addEventListener('click', e => {
             this.updateTime(new Date());
-            this.drawAll()
+            this.drawAll();
+        });
+
+        // Change Calendar View Mode from Month to Week and vice versa
+        this.elements.viewBtn.addEventListener('click', e => {
+            // Show week
+            if(this.monthView){
+                this.elements.days.classList.add('d-none');
+                this.elements.weekDays.classList.add('d-none');
+                this.elements.week.classList.remove('d-none');
+                this.elements.weekDaysForWeekView.classList.remove('d-none');
+                Array.from(document.querySelectorAll('.change-month')).forEach(arrow => {
+                    arrow.classList.add('d-none');
+                });
+                Array.from(document.querySelectorAll('.change-week')).forEach(arrow => {
+                    arrow.classList.remove('d-none');
+                });
+
+                // Show weekday number
+                this.elements.weekDays.classList.add('mb-3');
+                let weekdayNumbers = Array.from(document.querySelectorAll('.weekday-number'));
+                weekdayNumbers.forEach(weekday => {
+                    weekday.classList.remove('d-none');
+                });
+
+                // Button text
+                e.target.textContent = 'Month';
+
+                this.monthView = !this.monthView;
+            }
+            // Show month
+            else{
+                this.elements.days.classList.remove('d-none');
+                this.elements.weekDays.classList.remove('d-none');
+                this.elements.week.classList.add('d-none');
+                this.elements.weekDaysForWeekView.classList.add('d-none');
+                Array.from(document.querySelectorAll('.change-month')).forEach(arrow => {
+                    arrow.classList.remove('d-none');
+                });
+                Array.from(document.querySelectorAll('.change-week')).forEach(arrow => {
+                    arrow.classList.add('d-none');
+                });
+
+                // Hide weekday number
+                this.elements.weekDays.classList.remove('mb-3');
+                let weekdayNumbers = Array.from(document.querySelectorAll('.weekday-number'));
+                weekdayNumbers.forEach(weekday => {
+                    weekday.classList.add('d-none');
+                });
+
+                // Button text
+                e.target.textContent = 'Week';
+
+                this.monthView = !this.monthView;
+            }
         });
 
         // Disable Repeat Type if Event Type is exam
@@ -791,8 +1077,6 @@ class Calendar {
                 this.elements.repeatTypeSelect.removeAttribute('disabled');
             }
         });
-
-        
 
         // -- Current Day Modal Events --
 
