@@ -1,0 +1,73 @@
+{% load static %}
+
+{% if user.is_authenticated %}
+<!-- Then put toasts within -->
+<div class="toast fixed-top" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="false"
+    style="margin: 0 auto;">
+    <div class="toast-header">
+        <img src="..." class="rounded mr-2" alt="...">
+        <strong class="mr-auto">Bootstrap</strong>
+        <small>11 mins ago</small>
+        <button id="close-toast" type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body">
+        Hello, world! This is a toast message.
+        <button id="webpush-subscribe-button" data-url="/webpush/save_information">
+            Subscribe
+        </button>
+    </div>
+</div>
+<script>
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+    var time = 1;
+    var permission = Notification.permission;
+    if (permission == "default") {
+        var toast = getCookie("toast")
+        if (toast != "n") {
+            $('.toast').toast('show');
+            subBtn = document.getElementById('webpush-subscribe-button');
+            subBtn.addEventListener('click',
+                function () {
+                    setCookie("toast", "y", time)
+                    $('.toast').toast('dispose');
+                });
+            closeBtn = document.getElementById('close-toast');
+            closeBtn.addEventListener('click',
+                function () {
+                    setCookie("toast", "n", time)
+                    $('.toast').toast('dispose');
+                });
+        }
+    } else if (permission == "denied") {
+        setCookie("toast", "n", time)
+        $('.toast').toast('dispose');
+    } else if (permission == "granted") {
+        setCookie("toast", "y", time)
+        $('.toast').toast('dispose');
+    } else {
+        $('.toast').toast('dispose');
+    }
+</script>
+{% endif %}
