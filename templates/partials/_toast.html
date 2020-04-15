@@ -3,20 +3,22 @@
 {% if user.is_authenticated %}
 <!-- Then put toasts within -->
 <div class="toast fixed-top" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="false"
-    style="margin: 0 auto;">
+    style="margin: 0 auto; margin-top: 8px;">
     <div class="toast-header">
-        <img src="..." class="rounded mr-2" alt="...">
-        <strong class="mr-auto">Bootstrap</strong>
-        <small>11 mins ago</small>
+        <img src="{% static 'img/general/clock.jpeg' %}" class="rounded mr-2" alt="..." style="height: 30px;">
+        <strong class="mr-auto">Jikan Control</strong>
+        <small>close</small>
         <button id="close-toast" type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-    <div class="toast-body">
-        Hello, world! This is a toast message.
-        <button id="webpush-subscribe-button" data-url="/webpush/save_information">
-            Subscribe
-        </button>
+    <div class="toast-body" style="background-color: rgba(255, 255, 255, 0.85);">
+        <div class="d-flex flex-column">
+            <p>Would you like to receive push notifications?</p>
+            <button class="btn btn-success btn-sm" id="webpush-subscribe-button" data-url="/webpush/save_information">
+                Yes
+            </button>
+        </div>
     </div>
 </div>
 <script>
