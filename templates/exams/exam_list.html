@@ -50,9 +50,9 @@
             <th scope="col">Title</th>
             <th scope="col">Course</th>
             <th scope="col">Exam Number</th>
-            <th scope="col">Predicted Score</th>
-            <th scope="col">Final Score</th>
-            <th scope="col">Created Date</th>
+            <th class="d-none d-md-table-cell" scope="col">Predicted Score</th>
+            <th class="d-none d-md-table-cell" scope="col">Final Score</th>
+            <th class="d-none d-md-table-cell" scope="col">Created Date</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
@@ -66,16 +66,16 @@
             <td>{{ exam.title }}</td>
             <td>{{ exam.course }}</td>
             <td>{{ exam.exam_number }}</td>
-            <td>{{ exam.predicted_score }}</td>
-            <td>{{ exam.final_score }}</td>
-            <td>{{ exam.created_date | date:"M d, Y" }}</td>
+            <td class="d-none d-md-table-cell">{{ exam.predicted_score }}</td>
+            <td class="d-none d-md-table-cell">{{ exam.final_score }}</td>
+            <td class="d-none d-md-table-cell">{{ exam.created_date | date:"M d, Y" }}</td>
             <!-- Call detail view method (Uses urls path name) -->
             <td>
               <div class="grid-actions text-center">
                 <a href="{% url 'exam_detail' exam.id %}"><i
                     class="fas fa-info-circle cursor-pointer show-exam-detail"></i>
                 </a>
-                <i class="fas fa-trash-alt cursor-pointer text-danger remove-exam mr-2"></i>
+                <i class="fas fa-trash-alt cursor-pointer text-danger remove-exam mr-2 d-none d-md-inline-block"></i>
               </div>
             </td>
           </tr>

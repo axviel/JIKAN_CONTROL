@@ -29,7 +29,7 @@
   <!-- Alerts -->
   {% include 'partials/_alerts.html' %}
 
-  <div class="container" style="width: 900px;">
+  <div class="container">
     <div class="card shadow">
       <div class="card-header text-white text-center" style="background-color: #133757;">
         <h4>Profile</h4>
@@ -43,20 +43,13 @@
             <form method="POST">
               {% csrf_token %}
               <div class="row">
-                <div class="col-12">
-                  <label for="{{ form.username.name }}" class="col-form-label">
-                    {{ form.username.label }}{% if form.username.field.required %}<span class="required">*</span>{% endif %}
-                  </label>
-                  {{ form.username }}
-                </div>
-                <div class="col-6">
+                <div class="col-md-6 col-sm-12">
                   <label for="{{ form.first_name.name }}" class="col-form-label">
-                    {{ form.first_name.label }}{% if form.first_name.field.required %}<span
-                      class="required">*</span>{% endif %}
+                    {{ form.first_name.label }}{% if form.first_name.field.required %}<span class="required">*</span>{% endif %}
                   </label>
                   {{ form.first_name }}
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 col-sm-12">
                   <label for="{{ form.last_name.name }}" class="col-form-label">
                     {{ form.last_name.label }}{% if form.last_name.field.required %}<span
                       class="required">*</span>{% endif %}

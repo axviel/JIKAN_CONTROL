@@ -49,9 +49,9 @@
           <tr>
             <th scope="col">Title</th>
             <th scope="col">Type</th>
-            <th scope="col">Start Time</th>
-            <th scope="col">End Time</th>
-            <th scope="col">Repeat</th>
+            <th class="d-none d-md-table-cell" scope="col">Start Time</th>
+            <th class="d-none d-md-table-cell" scope="col">End Time</th>
+            <th class="d-none d-md-table-cell" scope="col">Repeat</th>
             <th scope="col">Date</th>
             <th scope="col">Actions</th>
           </tr>
@@ -66,9 +66,9 @@
           <tr event-id="{{ event.id }}">
             <td>{{ event.title }}</td>
             <td>{{ event.event_type }}</td>
-            <td>{{ event.start_time }}</td>
-            <td>{{ event.end_time }}</td>
-            <td>{{ event.repeat_type }}</td>
+            <td class="d-none d-md-table-cell">{{ event.start_time }}</td>
+            <td class="d-none d-md-table-cell">{{ event.end_time }}</td>
+            <td class="d-none d-md-table-cell">{{ event.repeat_type }}</td>
             <!-- Use humanize app to format date? (41) -->
             <td>{{ event.start_date }}</td>
             <!-- Call detail view method (Uses urls path name) -->
@@ -77,9 +77,9 @@
                 <a href="{% url 'event_detail' event.id %}"><i
                     class="fas fa-info-circle cursor-pointer show-event-detail"></i></a>
                 {% if not event.end_date %}
-                <i class="fas fa-check cursor-pointer text-success complete-event mx-2"></i>
+                <i class="fas fa-check cursor-pointer text-success complete-event mx-2 d-none d-md-inline-block"></i>
                 {% endif %}
-                <i class="fas fa-trash-alt cursor-pointer text-danger remove-event mr-2"></i>
+                <i class="fas fa-trash-alt cursor-pointer text-danger remove-event mr-2 d-none d-md-inline-block"></i>
               </div>
             </td>
           </tr>

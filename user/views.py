@@ -15,7 +15,6 @@ def profile(request):
     form = UserForm(request.POST)
 
     if form.is_valid():
-      username = form.cleaned_data['username']
       first_name = form.cleaned_data['first_name']
       last_name = form.cleaned_data['last_name']
       email = form.cleaned_data['email']
@@ -26,7 +25,6 @@ def profile(request):
       user, is_created = user_model.objects.update_or_create(
             id=request.user.id,
             defaults={
-              'username': username,
               'first_name': first_name,
               'last_name': last_name,
               'email': email
@@ -40,7 +38,7 @@ def profile(request):
         # changing the password causes the user to log out
         user.save()
         # so here we then log user back in
-        user = auth.authenticate(username=username, password=password)
+        user = auth.authenticate(username=request.user.username, password=password)
         auth.login(request, user)
         # delete variable so its no longer stored in memory
         del password
@@ -68,7 +66,6 @@ def profile(request):
     context = {}
 
     form = UserForm(initial={
-      'username': user.username,
       'first_name': user.first_name,
       'last_name': user.last_name,
       'email': user.email,

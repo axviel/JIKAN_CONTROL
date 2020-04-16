@@ -42,13 +42,13 @@
           <form action="{% url 'note_search' %}" style="width: 700px;">
             {% csrf_token %}
             <div class="row pb-4">
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.title.name }}" class="col-form-label">
                   {{ form.title.label }}
                 </label>
                 {{ form.title }}
               </div>
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.created_date.name }}" class="col-form-label">
                   {{ form.created_date.label }}
                 </label>

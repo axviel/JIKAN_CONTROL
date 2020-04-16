@@ -42,7 +42,7 @@
           <form action="{% url 'course_search' %}" style="width: 700px;">
             {% csrf_token %}
             <div class="row pb-4">
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.title.name }}" class="col-form-label">
                   {{ form.title.label }}
                 </label>

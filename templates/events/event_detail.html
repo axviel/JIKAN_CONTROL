@@ -4,8 +4,6 @@
 
 {% load static %} 
 
-
-
 <!-- Breadcrumb -->
 <section id="bc" class="mt-3">
   <div class="container">
@@ -34,7 +32,7 @@
   <!-- Alerts -->
   {% include 'partials/_alerts.html' %}
 
-  <div class="container" style="width: 900px;">
+  <div class="container">
     <div class="card shadow">
       <div class="card-header text-white text-center" style="background-color: #133757;">
         <h4>Event</h4>
@@ -78,14 +76,14 @@
                   </label>
                   {{ form.description }}
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 col-sm-12">
                   <label for="{{ form.event_type.name }}" class="col-form-label">
                     {{ form.event_type.label }}{% if form.event_type.field.required %}<span
                       class="required">*</span>{% endif %}
                   </label>
                   {{ form.event_type }}
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 col-sm-12">
                   <label for="{{ form.repeat_type.name }}" class="col-form-label">
                     {{ form.repeat_type.label }}{% if form.repeat_type.field.required %}<span
                       class="required">*</span>{% endif %}

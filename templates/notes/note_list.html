@@ -49,7 +49,7 @@
           <tr>
             <th scope="col">Title</th>
             <th scope="col">Event</th>
-            <th scope="col">Created Date</th>
+            <th class="d-none d-md-table-cell" scope="col">Created Date</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
@@ -63,13 +63,13 @@
           <tr note-id="{{ note.id }}">
             <td>{{ note.title }}</td>
             <td>{{ note.event }}</td>
-            <td>{{ note.created_date }}</td>
+            <td class="d-none d-md-table-cell">{{ note.created_date }}</td>
             <!-- Call detail view method (Uses urls path name) -->
             <td>
               <div class="grid-actions text-center">
                 <a href="{% url 'note_detail' note.id %}"><i
                     class="fas fa-info-circle cursor-pointer show-note-detail"></i></a>
-                <i class="fas fa-trash-alt cursor-pointer text-danger remove-note mr-2"></i>
+                <i class="fas fa-trash-alt cursor-pointer text-danger remove-note mr-2 d-none d-md-inline-block"></i>
               </div>
             </td>
           </tr>
