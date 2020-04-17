@@ -360,11 +360,11 @@ class Calendar {
                 }
     
                 // Small event that's displayed on small screens
-                dayInnerHTML += `
-                    <div class="event event-small">
-                        ${day.hasEvent.length === 1 ? '1 event' : day.hasEvent.length + ' events'}
-                    </div>
-                `;
+                // dayInnerHTML += `
+                //     <div class="event event-small">
+                //         ${day.hasEvent.length === 1 ? '1 event' : day.hasEvent.length + ' events'}
+                //     </div>
+                // `;
             }
 
             daysTemplate += `
@@ -405,7 +405,12 @@ class Calendar {
 
         // Month View Weekdays
         AVAILABLE_WEEK_DAYS.forEach( (week, index) => {
-            weekTemplate += `<div class="week-day-item">${week.slice(0, 3)}</div>`
+            weekTemplate += `
+            <div class="week-day-item">
+                <p class="weekday-large">${week.slice(0, 3)}</p>
+                <p class="weekday-small">${week.slice(0, 1)}</p>
+            </div>
+            `;
         });
 
         this.elements.weekDays.innerHTML = weekTemplate;
@@ -415,7 +420,25 @@ class Calendar {
         weekTemplate = `<div class="week-day-item"></div>`;
 
         AVAILABLE_WEEK_DAYS.forEach( (week, index) => {
-            weekTemplate += `<div class="week-day-item">${week.slice(0, 3)} <span class="weekday-number d-none'"><br>${weekList[index]}</span></div>`
+            weekTemplate += `
+            <div class="week-day-item">
+                <p class="weekday-large">
+                    ${week.slice(0, 3)} 
+                    <span class="weekday-number d-none'">
+                        <br>
+                        ${weekList[index]}
+                    </span>
+                </p>
+
+                <p class="weekday-small">
+                    ${week.slice(0, 1)}
+                    <span class="weekday-number d-none'">
+                            <br>
+                            ${weekList[index]}
+                    </span>
+                </p>
+                
+            </div>`
         });
 
         this.elements.weekDaysForWeekView.innerHTML = weekTemplate;

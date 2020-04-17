@@ -30,16 +30,15 @@
 <section id="notes" class="py-4 main-content">
   <div class="container">
     <div class="mx-0 shadow">
-      <div class="align-items-center row justify-content-between mx-0 rounded-top"
-        style="background-color: #133757; height: 80px;">
+      <div class="align-items-center row justify-content-between mx-0 rounded-top list-head">
         <h2 class="text-light ml-3">Notes</h2>
         <div class="btn-group mr-3" role="group" aria-label="Basic example">
           {% if notes %}
-          <a class="btn btn-light rounded-left" href="{% url 'note_search' %}">Search Notes</a>
+          <a class="btn btn-light btn-responsive rounded-left" href="{% url 'note_search' %}">Search Notes</a>
           {% else %}
-          <a href="#" class="btn btn-light rounded-left disabled" role="button" aria-disabled="true">Search Notes</a>
+          <a href="#" class="btn btn-light btn-responsive rounded-left disabled" role="button" aria-disabled="true">Search Notes</a>
           {% endif %}
-          <a class="btn btn-light rounded-right" href="{% url 'note_detail' %}">New Note</a>
+          <a class="btn btn-light btn-responsive rounded-right" href="{% url 'note_detail' %}">New Note</a>
         </div>
       </div>
 
