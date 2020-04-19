@@ -126,13 +126,13 @@
 
               <!-- <input type="text" name="" id="datepicker"> -->
 
-              <button type="submit" class="btn btn-block btn-success mt-4">Save</button>
+              <button type="submit" id="save-event-btn" class="btn btn-block btn-success mt-4">Save</button>
 
             </form>
 
             {% if form.event_id.value %}
               {% if not form.end_date.value %}
-              <a href="javascript:{document.getElementById('complete').submit()}"" class=" btn btn-block btn-info text-white mt-4"
+              <a href="javascript:{document.getElementById('complete').submit()}""  class=" btn btn-block btn-info text-white mt-4"
                 role="button" style="background-color: #17a2b8;
                 border-color: #17a2b8;">Complete</a>
               <form action="{% url 'event_complete' %}" id="complete" method="POST">
@@ -142,7 +142,7 @@
                 <input type="hidden">
               </form>
               {% endif %}
-            <a href="javascript:{document.getElementById('remove').submit()}"" class=" btn btn-block btn-danger
+            <a id="remove-event-btn" href="javascript:{document.getElementById('remove').submit()}"" class=" btn btn-block btn-danger
               text-white mt-4">Remove</a>
             <form action="{% url 'event_remove' %}" id="remove" method="POST">
               {% csrf_token %}

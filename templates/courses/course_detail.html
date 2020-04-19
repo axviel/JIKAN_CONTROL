@@ -67,12 +67,12 @@
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-block btn-success mt-4">Save</button>
+              <button type="submit" id="save-course-btn" class="btn btn-block btn-success mt-4">Save</button>
 
             </form>
 
             {% if form.course_id.value %}
-            <a href="javascript:{document.getElementById('remove').submit()}"
+            <a href="javascript:{document.getElementById('remove').submit()}" id="remove-course-btn"
               class="btn btn-block btn-danger text-white mt-4">Remove</a>
             <form action="{% url 'course_remove' %}" id="remove" method="POST">
               {% csrf_token %}
