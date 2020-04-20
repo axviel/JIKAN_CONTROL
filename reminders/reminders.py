@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from webpush import send_user_notification
 from django.core import serializers
 from events.models import Event
+from eventtypes.models import EventType
 from queue import PriorityQueue
 
 import multiprocessing 
@@ -56,6 +57,9 @@ def reminder(uid):
     eventModel['fields']['start_date'] = eventModel['fields']['start_date'].strftime("%m/%d/%Y")
     if eventModel['fields']['end_date'] != None:
       eventModel['fields']['end_date'] = eventModel['fields']['end_date'].strftime("%m/%d/%Y")
+    
+    e_type = get_object_or_404(EventType, pk=eventModel['fields']['event_type'])
+    eventModel['fields']['event_type'] = e_type.title
   
   datetimeFormat = '%m/%d/%Y %H:%M:%S.%f'
   reminders = PriorityQueue()
@@ -70,7 +74,7 @@ def reminder(uid):
         if edate == None:
           event_t = datetime.datetime.strptime(start, datetimeFormat)
           secs = next_reminder(event_t, event)
-          rem = (secs, event['title'], event['description'], event['repeat_type'], None)
+          rem = (secs, event['event_type']+ ': ' + event['title'], event['description'], event['repeat_type'], None)
           reminders.put(rem)
         else:
           end = edate + ' ' + event['start_time'] + ':0.0'
@@ -78,11 +82,11 @@ def reminder(uid):
           if end > current_time:
             event_t = datetime.datetime.strptime(start, datetimeFormat)
             secs = next_reminder(event_t, event)
-            rem = (secs, event['title'], event['description'], event['repeat_type'], edate)
+            rem = (secs, event['event_type']+ ': ' + event['title'], event['description'], event['repeat_type'], edate)
             reminders.put(rem)
       elif datetime.datetime.strptime(start, datetimeFormat) > current_time:
         event_t = datetime.datetime.strptime(start, datetimeFormat) - current_time
-        rem = (event_t.total_seconds(), event['title'], event['description'], 1)
+        rem = (event_t.total_seconds(), event['event_type']+ ': ' + event['title'], event['description'], 1)
         reminders.put(rem)
   
   return reminders
@@ -101,6 +105,7 @@ def multithread(uid):
     all_processes.append(process)
     process.start()
     process.join()
+    all_processes.remove(process)
     if process.exitcode != 0:
       break
     elapsed_time = elapsed_time + timer
@@ -119,19 +124,15 @@ def multithread(uid):
         result = total.total_seconds() + elapsed_time
         reminders.put((result, rem[1], rem[2], rem[3], rem[4]))
 
-    payload = {"head": "Event started: " + rem[1], "body": rem[2]}
+    payload = {"head": rem[1], "body": rem[2]}
     send_user_notification(user=user, payload=payload, ttl=1000)
 
 
 def main(uid):
   pcs = all_processes
-  remove = None
   for p in pcs:
     if p.name == "%s" % uid:
-      p.kill()
-      remove = p
-      break
-  if remove != None:
-    all_processes.remove(remove)
+      p.terminate()
+
   t = threading.Thread(target=multithread, args=(uid,), name="Reminder-%s" % (uid))
   t.start()

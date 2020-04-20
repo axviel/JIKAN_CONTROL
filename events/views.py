@@ -9,6 +9,8 @@ from .forms import EventForm
 from notes.models import Note
 from exams.models import Exam
 
+from reminders import reminders
+
 import datetime
 import json
 
@@ -79,6 +81,7 @@ def event(request, event_id=0):
 
       # Save in the db
       event.save()
+      reminders.main(request.user.id)
 
       # If event was created via calendar page, return the id
       if 'is_calendar_form' in request.POST:
