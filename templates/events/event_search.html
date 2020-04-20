@@ -42,43 +42,43 @@
           <form action="{% url 'event_search' %}" style="width: 700px;">
             {% csrf_token %}
             <div class="row pb-4">
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.title.name }}" class="col-form-label">
                   {{ form.title.label }}
                 </label>
                 {{ form.title }}
               </div>
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.event_type.name }}" class="col-form-label">
                   {{ form.event_type.label }}
                 </label>
                 {{ form.event_type }}
               </div>
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.repeat_type.name }}" class="col-form-label">
                   {{ form.repeat_type.label }}
                 </label>
                 {{ form.repeat_type }}
               </div>
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.start_date.name }}" class="col-form-label">
                   {{ form.start_date.label }}
                 </label>
                 {{ form.start_date }}
               </div>
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.end_date.name }}" class="col-form-label">
                   {{ form.end_date.label }}
                 </label>
                 {{ form.end_date }}
               </div>
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.start_time.name }}" class="col-form-label">
                   {{ form.start_time.label }}
                 </label>
                 {{ form.start_time }}
               </div>
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.end_time.name }}" class="col-form-label">
                   {{ form.end_time.label }}
                 </label>
@@ -103,9 +103,9 @@
           <tr>
             <th scope="col">Title</th>
             <th scope="col">Type</th>
-            <th scope="col">Start</th>
-            <th scope="col">End</th>
-            <th scope="col">Repeat</th>
+            <th class="d-none d-md-table-cell" scope="col">Start</th>
+            <th class="d-none d-md-table-cell" scope="col">End</th>
+            <th class="d-none d-md-table-cell" scope="col">Repeat</th>
             <th scope="col">Date</th>
             <th scope="col">Actions</th>
           </tr>
@@ -118,9 +118,9 @@
           <tr>
             <td>{{ event.title }}</td>
             <td>{{ event.event_type }}</td>
-            <td>{{ event.start_time }}</td>
-            <td>{{ event.end_time }}</td>
-            <td>{{ event.repeat_type }}</td>
+            <td class="d-none d-md-table-cell">{{ event.start_time }}</td>
+            <td class="d-none d-md-table-cell">{{ event.end_time }}</td>
+            <td class="d-none d-md-table-cell">{{ event.repeat_type }}</td>
             <!-- Use humanize app to format date? (41) -->
             <td>{{ event.start_date }}</td>
             <!-- Call detail view method (Uses urls path name) -->

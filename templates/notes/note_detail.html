@@ -28,7 +28,7 @@
 <section id="note-detail" class="py-4 main-content">
   <!-- Alerts -->
   {% include 'partials/_alerts.html' %}
-  <div class="container" style="width: 900px;">
+  <div class="container">
     <div class="card shadow">
       <div class="card-header text-white text-center" style="background-color: #133757;">
         <h4>Note</h4>
@@ -56,7 +56,7 @@
                   </label>
                   {{ form.title }}
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 col-sm-12">
                   <label for="{{ form.event.title }}" class="col-form-label">
                     {{ form.event.label }}{% if form.event.field.required %}<span class="required">*</span>{% endif %}
                   </label>
@@ -71,12 +71,12 @@
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-block btn-success mt-4">Save</button>
+              <button type="submit" id="save-note-btn" class="btn btn-block btn-success mt-4">Save</button>
 
             </form>
 
             {% if form.note_id.value %}
-            <a href="javascript:{document.getElementById('remove').submit()}"" class=" btn btn-block btn-danger
+            <a href="javascript:{document.getElementById('remove').submit()}"" id="remove-note-btn" class=" btn btn-block btn-danger
               text-white mt-4">Remove</a>
             <form action="{% url 'note_remove' %}" id="remove" method="POST">
               {% csrf_token %}

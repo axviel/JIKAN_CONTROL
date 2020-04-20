@@ -51,8 +51,25 @@ body{
   margin-left: auto;
 }
 
+.list-head{
+  background-color: #133757; 
+  height: 80px;
+}
+
 @media (min-width: 1200px){
   .container-xxl {
       max-width: 1500px;
+  }
+}
+
+@media (max-width: 576px){
+  .btn-responsive{
+    padding:4px 9px;
+    font-size:95%;
+  }
+
+  #courses .btn-responsive{
+    padding:4px 5px;
+    font-size:90%;
   }
 }

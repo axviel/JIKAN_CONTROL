@@ -28,7 +28,7 @@
 <section id="course-detail" class="py-4 main-content">
   <!-- Alerts -->
   {% include 'partials/_alerts.html' %}
-  <div class="container" style="width: 900px;">
+  <div class="container">
     <div class="card shadow">
       <div class="card-header text-white text-center" style="background-color: #133757;">
         <h4>Course</h4>
@@ -67,12 +67,12 @@
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-block btn-success mt-4">Save</button>
+              <button type="submit" id="save-course-btn" class="btn btn-block btn-success mt-4">Save</button>
 
             </form>
 
             {% if form.course_id.value %}
-            <a href="javascript:{document.getElementById('remove').submit()}"
+            <a href="javascript:{document.getElementById('remove').submit()}" id="remove-course-btn"
               class="btn btn-block btn-danger text-white mt-4">Remove</a>
             <form action="{% url 'course_remove' %}" id="remove" method="POST">
               {% csrf_token %}

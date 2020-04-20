@@ -4,8 +4,6 @@
 
 {% load static %} 
 
-
-
 <!-- Breadcrumb -->
 <section id="bc" class="mt-3">
   <div class="container">
@@ -34,7 +32,7 @@
   <!-- Alerts -->
   {% include 'partials/_alerts.html' %}
 
-  <div class="container" style="width: 900px;">
+  <div class="container">
     <div class="card shadow">
       <div class="card-header text-white text-center" style="background-color: #133757;">
         <h4>Event</h4>
@@ -78,14 +76,14 @@
                   </label>
                   {{ form.description }}
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 col-sm-12">
                   <label for="{{ form.event_type.name }}" class="col-form-label">
                     {{ form.event_type.label }}{% if form.event_type.field.required %}<span
                       class="required">*</span>{% endif %}
                   </label>
                   {{ form.event_type }}
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 col-sm-12">
                   <label for="{{ form.repeat_type.name }}" class="col-form-label">
                     {{ form.repeat_type.label }}{% if form.repeat_type.field.required %}<span
                       class="required">*</span>{% endif %}
@@ -128,13 +126,13 @@
 
               <!-- <input type="text" name="" id="datepicker"> -->
 
-              <button type="submit" class="btn btn-block btn-success mt-4">Save</button>
+              <button type="submit" id="save-event-btn" class="btn btn-block btn-success mt-4">Save</button>
 
             </form>
 
             {% if form.event_id.value %}
               {% if not form.end_date.value %}
-              <a href="javascript:{document.getElementById('complete').submit()}"" class=" btn btn-block btn-info text-white mt-4"
+              <a href="javascript:{document.getElementById('complete').submit()}""  class=" btn btn-block btn-info text-white mt-4"
                 role="button" style="background-color: #17a2b8;
                 border-color: #17a2b8;">Complete</a>
               <form action="{% url 'event_complete' %}" id="complete" method="POST">
@@ -144,7 +142,7 @@
                 <input type="hidden">
               </form>
               {% endif %}
-            <a href="javascript:{document.getElementById('remove').submit()}"" class=" btn btn-block btn-danger
+            <a id="remove-event-btn" href="javascript:{document.getElementById('remove').submit()}"" class=" btn btn-block btn-danger
               text-white mt-4">Remove</a>
             <form action="{% url 'event_remove' %}" id="remove" method="POST">
               {% csrf_token %}

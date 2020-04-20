@@ -42,13 +42,13 @@
           <form action="{% url 'exam_search' %}" style="width: 700px;">
             {% csrf_token %}
             <div class="row pb-4">
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.title.name }}" class="col-form-label">
                   {{ form.title.label }}
                 </label>
                 {{ form.title }}
               </div>
-              <div class="col-6">
+              <div class="col-md-6 col-sm-12">
                 <label for="{{ form.created_date.name }}" class="col-form-label">
                   {{ form.created_date.label }}
                 </label>
@@ -76,8 +76,8 @@
             <th scope="col">Title</th>
             <th scope="col">Exam Number</th>
             <th scope="col">Event</th>
-            <th scope="col">Predicted Score</th>
-            <th scope="col">Created Date</th>
+            <th class="d-none d-md-table-cell" scope="col">Predicted Score</th>
+            <th class="d-none d-md-table-cell" scope="col">Created Date</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
@@ -91,8 +91,8 @@
             <td>{{ exam.title }}</td>
             <td>{{ exam.exam_number }}</td>
             <td>{{ exam.event }}</td>
-            <td>{{ exam.predicted_score }}</td>
-            <td>{{ exam.created_date }}</td>
+            <td class="d-none d-md-table-cell">{{ exam.predicted_score }}</td>
+            <td class="d-none d-md-table-cell">{{ exam.created_date }}</td>
             <td><a href="{% url 'exam_detail' exam.id %}"><i class="fas fa-info-circle show-exam-detail"></i></a>
             </td>
           </tr>
