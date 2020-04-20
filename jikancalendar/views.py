@@ -5,10 +5,7 @@ from django.contrib import messages
 from events.models import Event
 from events.forms import EventForm
 
-import time
-import datetime
-
-from asgiref.sync import async_to_sync
+from reminders import reminders
 
 # Gets all of the user's events and the Event Form
 def index(request):
@@ -38,53 +35,6 @@ def index(request):
   # Disable date field
   context['form'].fields['start_date'].widget.attrs['disabled'] = True
   context['form'].fields['end_date'].widget.attrs['disabled'] = True
-  reminder(json_events)
+
+  reminders.main(request.user.id)
   return render(request, 'calendar/calendar.html', context)
-
-
-def next_reminder(time, repeat):
-  if repeat == 2:
-    return time + datetime.timedelta(days=1)
-  elif repeat == 3:
-    return time + datetime.timedelta(days=7)
-  elif repeat == 4:
-    return time + datetime.timedelta(days=30)
-  elif repeat == 5:
-    return time + datetime.timedelta(days=365)
-
-
-def reminder(events):
-  datetimeFormat = '%m/%d/%Y %H:%M:%S.%f'
-  current_time = datetime.datetime.now()
-  reminders = []
-  for e in events:
-    event = e['fields']
-    if event['is_hidden'] == False and event['is_completed'] == False:
-      start = event['start_date'] + ' ' + event['start_time'] + ':0.0'
-      if event['repeat_type'] > 1:
-        edate = event['end_date']
-        etime = event['end_time']
-        if edate == None or etime == None:
-          time = datetime.datetime.strptime(start, datetimeFormat)
-          while time < current_time:
-            time = next_reminder(time, event['repeat_type'])
-          time = time - current_time
-          rem = (time.total_seconds(), event['title'], event['repeat_type'], None)
-          reminders.append(rem)
-        else:
-          end = event['end_date'] + ' ' + event['end_time'] + ':0.0'
-          if datetime.datetime.strptime(end, datetimeFormat) > current_time:
-            time = datetime.datetime.strptime(start, datetimeFormat)
-            while time < current_time:
-              time = next_reminder(time, event['repeat_type'])
-            time = time - current_time
-            rem = (time.total_seconds(), event['title'], event['repeat_type'], None)
-            reminders.append(rem)
-      elif datetime.datetime.strptime(start, datetimeFormat) > current_time:
-        time = datetime.datetime.strptime(start, datetimeFormat) - current_time
-        rem = (time.total_seconds(), event['title'], 1)
-        reminders.append(rem)
-
-  local_time = 70
-  local_time = local_time * 60
-  # time.sleep(local_time)

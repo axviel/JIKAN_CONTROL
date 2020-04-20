@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages, auth
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from webpush import send_user_notification
 
 from .forms import UserForm
 
@@ -45,11 +44,6 @@ def profile(request):
         auth.login(request, user)
         # delete variable so its no longer stored in memory
         del password
-
-      
-      payload = {"head": "Updated successfully!", "body": "Your profile updated successfully"}
-
-      send_user_notification(user=user, payload=payload, ttl=1000)
 
       # UI success message
       messages.success(request, 'Profile updated successfully')
