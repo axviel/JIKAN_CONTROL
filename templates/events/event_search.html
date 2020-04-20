@@ -1,10 +1,12 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} 
 
-{% load static %}
+{% load static %} 
 
-{% block title %}
-| Event Search
-{% endblock %}
+{% block title %} 
+
+| Event Search 
+
+{% endblock %} 
 
 {% block content %}
 
@@ -17,8 +19,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="{% url 'calendar' %}">
-            <i class="fas fa-home"></i> Home</a>
+          <a href="{% url 'calendar' %}"> <i class="fas fa-home"></i> Home</a>
         </li>
         <li class="breadcrumb-item">
           <a href="{% url 'event_list' %}">Events</a>
@@ -33,7 +34,10 @@
 <section id="events" class="py-4 main-content">
   <div class="container">
     <div class="card shadow">
-      <div class="card-header text-white text-center" style="background-color: #133757;">
+      <div
+        class="card-header text-white text-center"
+        style="background-color: #133757;"
+      >
         <h3>Event Search</h3>
       </div>
       <!-- Event Search form Section -->
@@ -86,8 +90,9 @@
               </div>
             </div>
 
-            <button type="submit" class="btn btn-block btn-success mb-4">Search</button>
-
+            <button type="submit" class="btn btn-block btn-success mb-4">
+              Search
+            </button>
           </form>
         </div>
       </div>
@@ -111,9 +116,8 @@
           </tr>
         </thead>
         <tbody>
-
           <!-- Display events -->
-          {% for event in events %}
+          {% if events %} {% for event in events %}
 
           <tr>
             <td>{{ event.title }}</td>
@@ -124,12 +128,23 @@
             <!-- Use humanize app to format date? (41) -->
             <td>{{ event.start_date }}</td>
             <!-- Call detail view method (Uses urls path name) -->
-            <td><a href="{% url 'event_detail' event.id %}"><i class="fas fa-info-circle show-event-detail"></i></a>
+            <td>
+              <a href="{% url 'event_detail' event.id %}"
+                ><i class="fas fa-info-circle show-event-detail"></i
+              ></a>
             </td>
           </tr>
 
-          {% endfor %}
+          {% endfor %} {% else %}
 
+          <!-- No events message? -->
+          <tr>
+            <td colspan="10">
+              <h4 class="text-center">No Results</h4>
+            </td>
+          </tr>
+
+          {% endif %}
         </tbody>
       </table>
     </div>

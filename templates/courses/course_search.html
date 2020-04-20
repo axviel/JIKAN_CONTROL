@@ -1,9 +1,11 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} 
 
-{% load static %}
+{% load static %} 
 
-{% block title %}
-| Course Search
+{% block title %} 
+
+| Course Search 
+
 {% endblock %}
 
 {% block content %}
@@ -17,8 +19,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="{% url 'calendar' %}">
-            <i class="fas fa-home"></i> Home</a>
+          <a href="{% url 'calendar' %}"> <i class="fas fa-home"></i> Home</a>
         </li>
         <li class="breadcrumb-item">
           <a href="{% url 'course_list' %}">Courses</a>
@@ -33,7 +34,10 @@
 <section id="courses" class="py-4 main-content">
   <div class="container">
     <div class="card shadow">
-      <div class="card-header text-white text-center" style="background-color: #133757;">
+      <div
+        class="card-header text-white text-center"
+        style="background-color: #133757;"
+      >
         <h3>Course Search</h3>
       </div>
       <!-- Course Search form Section -->
@@ -50,8 +54,9 @@
               </div>
             </div>
 
-            <button type="submit" class="btn btn-block btn-success mb-4">Search</button>
-
+            <button type="submit" class="btn btn-block btn-success mb-4">
+              Search
+            </button>
           </form>
         </div>
       </div>
@@ -71,21 +76,30 @@
           </tr>
         </thead>
         <tbody>
-
           <!-- Display courses -->
-
-          {% for course in courses %}
+          {% if courses %} {% for course in courses %}
 
           <tr>
             <td>{{ course.title }}</td>
             <td>{{ course.description }}</td>
             <!-- Call detail view method (Uses urls path name) -->
-            <td><a href="{% url 'course_detail' course.id %}"><i class="fas fa-info-circle show-course-detail"></i></a>
+            <td>
+              <a href="{% url 'course_detail' course.id %}"
+                ><i class="fas fa-info-circle show-course-detail"></i
+              ></a>
             </td>
           </tr>
 
-          {% endfor %}
+          {% endfor %} {% else %}
 
+          <!-- No courses message? -->
+          <tr>
+            <td colspan="10">
+              <h4 class="text-center">No Results</h4>
+            </td>
+          </tr>
+
+          {% endif %}
         </tbody>
       </table>
     </div>

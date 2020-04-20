@@ -1,10 +1,12 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} 
 
-{% load static %}
+{% load static %} 
 
-{% block title %}
-| Note Search
-{% endblock %}
+{% block title %} 
+
+| Note Search 
+
+{% endblock %} 
 
 {% block content %}
 
@@ -17,8 +19,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="{% url 'calendar' %}">
-            <i class="fas fa-home"></i> Home</a>
+          <a href="{% url 'calendar' %}"> <i class="fas fa-home"></i> Home</a>
         </li>
         <li class="breadcrumb-item">
           <a href="{% url 'note_list' %}">Notes</a>
@@ -33,7 +34,10 @@
 <section id="notes" class="py-4 main-content">
   <div class="container">
     <div class="card shadow">
-      <div class="card-header text-white text-center" style="background-color: #133757;">
+      <div
+        class="card-header text-white text-center"
+        style="background-color: #133757;"
+      >
         <h3>Note Search</h3>
       </div>
       <!-- Note Search form Section -->
@@ -49,15 +53,19 @@
                 {{ form.title }}
               </div>
               <div class="col-md-6 col-sm-12">
-                <label for="{{ form.created_date.name }}" class="col-form-label">
+                <label
+                  for="{{ form.created_date.name }}"
+                  class="col-form-label"
+                >
                   {{ form.created_date.label }}
                 </label>
                 {{ form.created_date }}
               </div>
             </div>
 
-            <button type="submit" class="btn btn-block btn-success mb-4">Search</button>
-
+            <button type="submit" class="btn btn-block btn-success mb-4">
+              Search
+            </button>
           </form>
         </div>
       </div>
@@ -77,21 +85,30 @@
           </tr>
         </thead>
         <tbody>
-
           <!-- Display notes -->
-
-          {% for note in notes %}
+          {% if notes %} {% for note in notes %}
 
           <tr>
             <td>{{ note.title }}</td>
             <td>{{ note.created_date }}</td>
             <!-- Call detail view method (Uses urls path name) -->
-            <td><a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a>
+            <td>
+              <a href="{% url 'note_detail' note.id %}"
+                ><i class="fas fa-info-circle show-note-detail"></i
+              ></a>
             </td>
           </tr>
 
-          {% endfor %}
+          {% endfor %} {% else %}
 
+          <!-- No notes message? -->
+          <tr>
+            <td colspan="10">
+              <h4 class="text-center">No Results</h4>
+            </td>
+          </tr>
+
+          {% endif %}
         </tbody>
       </table>
     </div>
