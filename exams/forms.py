@@ -114,3 +114,15 @@ class ExamForm(forms.Form):
     max_value=100,
     initial=0
     )
+  start_time = forms.TimeField(
+    label='Start Time', 
+    widget=TimeInput(attrs={
+      'id': 'start_time', 
+      'class': 'form-control'})
+    )
+  end_time = forms.TimeField(
+    label='End Time', 
+    widget=TimeInput(attrs={
+      'id': 'end_time', 
+      'class': 'form-control'})
+    )

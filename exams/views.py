@@ -64,6 +64,10 @@ def exam(request, exam_id=0, event_id=0):
       final_score = form.cleaned_data['final_score']
       created_date = datetime.date.today()
 
+      
+      start_time = form.cleaned_data['start_time']
+      end_time = form.cleaned_data['end_time']
+
       # Used to determine if study events will be generated
       prev_predicted_study_hours = 0
       # Used to determine the return response
@@ -106,7 +110,7 @@ def exam(request, exam_id=0, event_id=0):
       # TODO Handle remaining_hours > 0
       remaining_hours = 0
       if prev_predicted_study_hours == 0 or predicted_study_hours != prev_predicted_study_hours:
-        remaining_hours = generate_study_time_events(exam, event)
+        remaining_hours = generate_study_time_events(exam, event, start_time, end_time)
 
       # UI success message
       messages.success(request, 'Exam saved successfully')
@@ -255,7 +259,7 @@ def exam(request, exam_id=0, event_id=0):
     return render(request, 'exams/exam_detail.html', context)
 
 # When there is a change in predicted study hours, generate the study time events
-def generate_study_time_events(exam, event):
+def generate_study_time_events(exam, event, start_time, end_time):
   # Find the day of the exam
   event_date = event.start_date
   # Find today
@@ -271,8 +275,8 @@ def generate_study_time_events(exam, event):
   params = []
   params.append(current_date + relativedelta.relativedelta(days=1)) # start_date
   params.append(event_date - relativedelta.relativedelta(days=1)) # end_date
-  params.append(datetime.time(7,0,0)) # first_hour
-  params.append(datetime.time(0,0,0)) # last_hour
+  params.append(start_time) # first_hour
+  params.append(end_time) # last_hour
   params.append(remaining_hours) # remaining_hours
   params.append(exam.pk) # exam_id
   params.append(exam.title) # exam_title

@@ -121,20 +121,39 @@
 
               <!-- Final -->
               <h5>Final</h5>
-              <div class="row">
-                <div class="col-md-6 col-sm-12">
+              <div class="row mb-4">
+                <div class="col-lg-4 col-md-6 col-sm-12">
                   <label for="{{ form.final_study_hours.name }}" class="col-form-label">
                     {{ form.final_study_hours.label }}{% if form.final_study_hours.field.required %}<span
                       class="required">*</span>{% endif %}
                   </label>
                   {{ form.final_study_hours }}
                 </div>
-                <div class="col-md-6 col-sm-12">
+                <div class="col-lg-4 col-md-6 col-sm-12">
                   <label for="{{ form.final_score.name }}" class="col-form-label">
                     {{ form.final_score.label }}{% if form.final_score.field.required %}<span
                       class="required">*</span>{% endif %}
                   </label>
                   {{ form.final_score }}
+                </div>
+              </div>
+
+              <!-- Start and End Times for Study -->
+              <h5>Valid Study Range Period</h5>
+              <div class="row mb-4">
+                <div class="col-md-6 col-sm-12">
+                  <label for="{{ form.start_time.name }}" class="col-form-label">
+                    {{ form.start_time.label }}{% if form.start_time.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.start_time }}
+                </div>
+                <div class="col-md-6 col-sm-12">
+                  <label for="{{ form.end_time.name }}" class="col-form-label">
+                    {{ form.end_time.label }}{% if form.end_time.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.end_time }}
                 </div>
               </div>
 
