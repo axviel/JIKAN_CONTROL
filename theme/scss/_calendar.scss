@@ -48,7 +48,9 @@
     }
   }
 
-
+  .weekday-small{
+    display: none;
+  }
 
   .calendar-day-list{
     border-bottom: 1px solid #bbb;
@@ -365,7 +367,7 @@
   }
 
   .weekday-small{
-    display: block;
+    display: block !important;
   }
 
   .weekday-large{

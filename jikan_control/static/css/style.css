@@ -170,6 +170,8 @@ body {
     #calendar .calendar-weekdays-list .weekday-small,
     #calendar .calendar-day-list .weekday-small {
       display: none; }
+  #calendar .weekday-small {
+    display: none; }
   #calendar .calendar-day-list {
     border-bottom: 1px solid #bbb;
     border-left: 1px solid #bbb; }
@@ -404,7 +406,7 @@ body {
   .calendar-current-year {
     font-size: 1.25rem; }
   .weekday-small {
-    display: block; }
+    display: block !important; }
   .weekday-large {
     display: none; }
   .event,
