@@ -55,7 +55,7 @@ def add_new_data(x, y, model_name):
     save_model(model, model_name)
 
 
-def get_exam_prediction(exam_number, course_id, study_hours):
+def get_exam_prediction(exam_number, course_id, study_hours, absences):
     if(exam_number > 2):
         exam_number = 3
 
@@ -78,20 +78,20 @@ def get_exam_prediction(exam_number, course_id, study_hours):
         previous_exams_score.insert(0, score)
 
     if exam_number > 2:
-        return (model.predict(np.array( [ [previous_exams_score[0], previous_exams_score[1], -(study_hours)] ] ))[0])/20 * 100
+        return (model.predict(np.array( [ [previous_exams_score[0], previous_exams_score[1], -(study_hours), absences] ] ))[0])/20 * 100
     elif exam_number == 2:
-        return (model.predict(np.array( [ [previous_exams_score[0], study_hours] ] ))[0])/20 * 100
+        return (model.predict(np.array( [ [previous_exams_score[0], study_hours, absences] ] ))[0])/20 * 100
     else:
-        return (model.predict(np.array( [ [ study_hours ] ] ))[0])/20 * 100
+        return (model.predict(np.array( [ [ study_hours, absences ] ] ))[0])/20 * 100
      
-def get_hours_prediction(exam_number, course_id, predicted_score):
+def get_hours_prediction(exam_number, course_id, predicted_score, absences):
     # Get the model
     model = get_model_by_exam_number(exam_number)
 
     best_hours = 1
     best_difference = 0
     for x in range(0, 100):
-        exam_score = get_exam_prediction(exam_number, course_id, x)
+        exam_score = get_exam_prediction(exam_number, course_id, x, absences)
 
         # If exam hasn't be graded, return
         if exam_score == -1:
@@ -128,13 +128,13 @@ por = pd.read_csv("ml/data/student-por.csv", sep=";")
 data = math.append(por)
 
 # data to predict
-predict = "G3"
+# predict = "G3"
 # predict = "G2"
-# predict = "G1"
+predict = "G1"
 
-data = data[["G1", "G2", "G3", "studytime"]]
-# data = data[["G1", "G2", "studytime"]]
-# data = data[["G1", "studytime"]]
+# data = data[["G1", "G2", "G3", "studytime", "absences"]]
+# data = data[["G1", "G2", "studytime", "absences"]]
+data = data[["G1", "studytime", "absences"]]
 
 # data = data[["G1", "G2", "G3", "studytime", "failures", "absences", "sex"]]
 # data["sex"].replace({"F": "0", "M": "1"}, inplace=True)
@@ -144,12 +144,12 @@ data = data[["G1", "G2", "G3", "studytime"]]
 model = get_best_model(predict, 15)
 # save_model(model, "exam3.bi")
 # save_model(model, "exam2.bi")
-# save_model(model, "exam1.bi")
+save_model(model, "exam1.bi")
 """
 
 """
-model = get_model("exam3.bi")
-# model = get_model("exam2.bi")
+# model = get_model("exam3.bi")
+model = get_model("exam1.bi")
 # model = get_model("exam1.bi")
 """
 

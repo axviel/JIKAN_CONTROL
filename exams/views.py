@@ -388,8 +388,9 @@ def predict_score(request):
   study_hours = int(request.GET['predicted_study_hours'])
   exam_number = int(request.GET['exam_number'])
   course_id = int(request.GET['course_id'])
+  absences = int(request.GET['absences'])
 
-  score = int(ml.get_exam_prediction(exam_number, course_id, study_hours))
+  score = int(ml.get_exam_prediction(exam_number, course_id, study_hours, absences))
 
   context = {
     'score': score
@@ -404,9 +405,10 @@ def predict_study_hours(request):
   predicted_score = int(request.GET['predicted_score'])
   exam_number = int(request.GET['exam_number'])
   course_id = int(request.GET['course_id'])
+  absences = int(request.GET['absences'])
 
   context = {
-    'hours': int(ml.get_hours_prediction(exam_number, course_id, predicted_score))
+    'hours': int(ml.get_hours_prediction(exam_number, course_id, predicted_score, absences))
   }
   
   context = json.dumps(context)

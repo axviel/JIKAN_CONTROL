@@ -98,6 +98,14 @@ class ExamForm(forms.Form):
     min_value=1,
     initial=0
     )
+  absences = forms.IntegerField(
+    label='Absences', 
+    widget=forms.NumberInput(attrs={
+      'id': 'absences', 
+      'class': 'form-control'}),
+      min_value=0,
+    initial=0
+    )
   final_study_hours = forms.IntegerField(
     label='Study Hours', 
     widget=forms.NumberInput(attrs={

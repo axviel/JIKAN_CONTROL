@@ -19,6 +19,7 @@ document.querySelector('#predict-score').addEventListener('click', e => {
         predicted_study_hours: document.querySelector('#predicted_study_hours').value,
         course_id: document.querySelector('#course').value,
         exam_number: document.querySelector('#exam_number').value,
+        absences: document.querySelector('#absences').value
     },
     success: function(data){
       let scoreData = JSON.parse(data);
@@ -51,6 +52,7 @@ document.querySelector('#predict-hours').addEventListener('click', e => {
         predicted_score: document.querySelector('#predicted_score').value,
         course_id: document.querySelector('#course').value,
         exam_number: document.querySelector('#exam_number').value,
+        absences: document.querySelector('#absences').value
     },
     success: function(data){
       let hoursData = JSON.parse(data);

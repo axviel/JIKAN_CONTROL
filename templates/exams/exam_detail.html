@@ -97,14 +97,21 @@
               <!-- Predicted -->
               <h5>Predicted</h5>
               <div class="row mb-4">
-                <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="col-md-4 col-sm-12">
                   <label for="{{ form.predicted_study_hours.name }}" class="col-form-label">
                     {{ form.predicted_study_hours.label }}{% if form.predicted_study_hours.field.required %}<span
                       class="required">*</span>{% endif %}
                   </label>
                   {{ form.predicted_study_hours }}
                 </div>
-                <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="col-md-4 col-sm-12">
+                  <label for="{{ form.absences.name }}" class="col-form-label">
+                    {{ form.absences.label }}{% if form.absences.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.absences }}
+                </div>
+                <div class="col-md-4 col-sm-12">
                   <label for="{{ form.predicted_score.name }}" class="col-form-label">
                     {{ form.predicted_score.label }}{% if form.predicted_score.field.required %}<span
                       class="required">*</span>{% endif %}
@@ -122,14 +129,14 @@
               <!-- Final -->
               <h5>Final</h5>
               <div class="row mb-4">
-                <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="col-lg-6 col-md-4 col-sm-12">
                   <label for="{{ form.final_study_hours.name }}" class="col-form-label">
                     {{ form.final_study_hours.label }}{% if form.final_study_hours.field.required %}<span
                       class="required">*</span>{% endif %}
                   </label>
                   {{ form.final_study_hours }}
                 </div>
-                <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="col-lg-6 col-md-4 col-sm-12">
                   <label for="{{ form.final_score.name }}" class="col-form-label">
                     {{ form.final_score.label }}{% if form.final_score.field.required %}<span
                       class="required">*</span>{% endif %}
