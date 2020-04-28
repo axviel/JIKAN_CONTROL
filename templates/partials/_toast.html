@@ -54,23 +54,23 @@
             subBtn.addEventListener('click',
                 function () {
                     setCookie("toast", "y", time)
-                    $('.toast').toast('dispose');
+                    $('.toast').toast('hide');
                 });
             closeBtn = document.getElementById('close-toast');
             closeBtn.addEventListener('click',
                 function () {
                     setCookie("toast", "n", time)
-                    $('.toast').toast('dispose');
+                    $('.toast').toast('hide');
                 });
         }
     } else if (permission == "denied") {
         setCookie("toast", "n", time)
-        $('.toast').toast('dispose');
+        $('.toast').remove();
     } else if (permission == "granted") {
         setCookie("toast", "y", time)
-        $('.toast').toast('dispose');
+        $('.toast').remove();
     } else {
-        $('.toast').toast('dispose');
+        $('.toast').remove();
     }
 </script>
 {% endif %}
