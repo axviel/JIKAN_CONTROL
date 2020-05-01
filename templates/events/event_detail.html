@@ -4,22 +4,30 @@
 
 {% load static %} 
 
+<style>
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: "";
+  }
+</style>
+
 <!-- Breadcrumb -->
 <section id="bc" class="mt-3">
   <div class="container">
     <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
+      <ol class="breadcrumb" style="box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12); background-color: #166339;">
         <li class="breadcrumb-item">
-          <a href="{% url 'calendar' %}">
+          <a class="text-white" href="{% url 'calendar' %}">
             <i class="fas fa-home"></i> Home</a>
+            <i class="fas fa-chevron-right mx-2 text-white" aria-hidden="true"></i>
         </li>
-        <li class="breadcrumb-item">
-          <a href="{% url 'event_list' %}">Events</a>
+        <li class="breadcrumb-item p-0">
+          <a class="text-white" href="{% url 'event_list' %}">Events</a>
+          <i class="fas fa-chevron-right mx-2 text-white" aria-hidden="true"></i>
         </li>
         {% if  form.event_id.value %}
-        <li class="breadcrumb-item active">{{ form.title.value }}</li>
+        <li class="breadcrumb-item active text-white-50 p-0">{{ form.title.value }}</li>
         {% else %}
-        <li class="breadcrumb-item active">New</li>
+        <li class="breadcrumb-item active text-white-50 p-0">New</li>
         {% endif %}
       </ol>
     </nav>
