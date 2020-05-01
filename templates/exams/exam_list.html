@@ -13,7 +13,10 @@
 
 <style>
   .breadcrumb-item + .breadcrumb-item::before {
-    content: "";
+    font-family: "Font Awesome 5 Free"; 
+    font-weight: 900;
+    color: white;
+    content: "\f138"
   }
 </style>
 
@@ -25,9 +28,8 @@
         <li class="breadcrumb-item">
           <a class="text-white" href="{% url 'calendar' %}">
             <i class="fas fa-home"></i> Home</a>
-            <i class="fas fa-chevron-circle-right mx-2 text-white" aria-hidden="true"></i>
         </li>
-        <li class="breadcrumb-item active text-white-50 p-0">Exams</li>
+        <li class="breadcrumb-item active text-white-50">Exams</li>
       </ol>
     </nav>
   </div>

@@ -8,16 +8,25 @@
 
 {% block content %}
 
+<style>
+  .breadcrumb-item + .breadcrumb-item::before {
+    font-family: "Font Awesome 5 Free"; 
+    font-weight: 900;
+    color: white;
+    content: "\f138"
+  }
+</style>
+
 <!-- Breadcrumb -->
 <section id="bc" class="mt-3">
     <div class="container">
       <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb" style="box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12); background-color: #166339;">
           <li class="breadcrumb-item">
-            <a href="{% url 'calendar' %}">
+            <a class="text-white" href="{% url 'calendar' %}">
               <i class="fas fa-home"></i> Home</a>
           </li>
-            <li class="breadcrumb-item active">{{user.username}}</li>
+            <li class="breadcrumb-item active text-white-50">{{user.username}}</li>
         </ol>
       </nav>
     </div>
