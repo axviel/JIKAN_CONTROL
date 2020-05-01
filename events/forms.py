@@ -1,3 +1,4 @@
+from bootstrap_datepicker_plus import TimePickerInput
 from django import forms
 from .models import EventType, RepeatType
 
@@ -32,15 +33,11 @@ class EventForm(forms.Form):
     )
   start_time = forms.TimeField(
     label='Start Time', 
-    widget=TimeInput(attrs={
-      'id': 'start_time', 
-      'class': 'form-control'})
+    widget =TimePickerInput()
     )
   end_time = forms.TimeField(
     label='End Time', 
-    widget=TimeInput(attrs={
-      'id': 'end_time', 
-      'class': 'form-control'})
+    widget=TimePickerInput()
     )
   start_date = forms.DateTimeField(
     label='Start Date', 

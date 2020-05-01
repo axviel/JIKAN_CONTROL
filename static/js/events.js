@@ -18,7 +18,6 @@ document.querySelector('#event-list').addEventListener('click', e => {
         }
     });
   }
-  
   // Mark as completed
   if(e.target.classList.contains('complete-event')){
     if(e.target.classList.contains('complete-event')){
