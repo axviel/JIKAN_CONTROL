@@ -10,8 +10,10 @@ import multiprocessing
 import threading
 import time
 import datetime
+import pytz
 
 all_processes = []
+timezone = pytz.timezone("America/Puerto_Rico")
 
 def repeats(time, repeat):
   if repeat == 1:
@@ -39,7 +41,7 @@ def repeats(time, repeat):
 
 
 def next_reminder(time, event):
-  current_time = datetime.datetime.now()
+  current_time = datetime.datetime.now(timezone)
   while time < current_time:
     time = repeats(time, event['repeat_type'])
   time = time - current_time
@@ -68,24 +70,27 @@ def reminder(uid):
     event = e['fields']
     if not event['is_hidden'] and not event['is_completed']:
       start = event['start_date'] + ' ' + event['start_time'] + ':0.0'
-      current_time = datetime.datetime.now()
+      current_time = datetime.datetime.now(timezone)
       if event['repeat_type'] > 1:
         edate = event['end_date']
         if edate == None:
           event_t = datetime.datetime.strptime(start, datetimeFormat)
+          event_t = timezone.localize(event_t)
           secs = next_reminder(event_t, event)
           rem = (secs, event['event_type']+ ': ' + event['title'], event['description'], event['repeat_type'], None)
           reminders.put(rem)
         else:
           end = edate + ' ' + event['start_time'] + ':0.0'
           end = datetime.datetime.strptime(end, datetimeFormat)
+          end = timezone.localize(end)
           if end > current_time:
             event_t = datetime.datetime.strptime(start, datetimeFormat)
+            event_t = timezone.localize(event_t)
             secs = next_reminder(event_t, event)
             rem = (secs, event['event_type']+ ': ' + event['title'], event['description'], event['repeat_type'], edate)
             reminders.put(rem)
-      elif datetime.datetime.strptime(start, datetimeFormat) > current_time:
-        event_t = datetime.datetime.strptime(start, datetimeFormat) - current_time
+      elif timezone.localize(datetime.datetime.strptime(start, datetimeFormat)) > current_time:
+        event_t = timezone.localize(datetime.datetime.strptime(start, datetimeFormat)) - current_time
         rem = (event_t.total_seconds(), event['event_type']+ ': ' + event['title'], event['description'], 1)
         reminders.put(rem)
   
@@ -110,7 +115,7 @@ def multithread(uid):
       break
     elapsed_time = elapsed_time + timer
 
-    currt = datetime.datetime.now()
+    currt = datetime.datetime.now(timezone)
     next_r = repeats(currt, rem[3])
     if next_r != None:
       next_r.replace(second=0, microsecond=0)
