@@ -101,9 +101,9 @@
             <td>{{ note.created_date }}</td>
             <!-- Call detail view method (Uses urls path name) -->
             <td>
-              <a href="{% url 'note_detail' note.id %}"
-                ><i class="fas fa-info-circle show-note-detail"></i
-              ></a>
+              <a href="{% url 'note_detail' note.id %}" class="btn btn-primary show-note-detail">
+                Detail
+              </a>
             </td>
           </tr>
 
