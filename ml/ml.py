@@ -136,6 +136,9 @@ predict = "G1"
 # data = data[["G1", "G2", "studytime", "absences"]]
 data = data[["G1", "studytime", "absences"]]
 
+# adjust absences
+data['absences'] = data['absences'] / 3
+
 # data = data[["G1", "G2", "G3", "studytime", "failures", "absences", "sex"]]
 # data["sex"].replace({"F": "0", "M": "1"}, inplace=True)
 """
@@ -149,8 +152,8 @@ save_model(model, "exam1.bi")
 
 """
 # model = get_model("exam3.bi")
+# model = get_model("exam2.bi")
 model = get_model("exam1.bi")
-# model = get_model("exam1.bi")
 """
 
 """

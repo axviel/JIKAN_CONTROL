@@ -92,9 +92,9 @@
             <td>{{ course.description }}</td>
             <!-- Call detail view method (Uses urls path name) -->
             <td>
-              <a href="{% url 'course_detail' course.id %}"
-                ><i class="fas fa-info-circle show-course-detail"></i
-              ></a>
+              <a href="{% url 'course_detail' course.id %}" class="btn btn-primary show-course-detail">
+                Detail
+              </a>
             </td>
           </tr>
 

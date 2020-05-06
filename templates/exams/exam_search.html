@@ -107,9 +107,9 @@
             <td class="d-none d-md-table-cell">{{ exam.predicted_score }}</td>
             <td class="d-none d-md-table-cell">{{ exam.created_date }}</td>
             <td>
-              <a href="{% url 'exam_detail' exam.id %}"
-                ><i class="fas fa-info-circle show-exam-detail"></i
-              ></a>
+              <a href="{% url 'exam_detail' exam.id %}" class="btn btn-primary show-exam-detail">
+                Detail
+              </a>
             </td>
           </tr>
 

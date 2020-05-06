@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse
+from django.db import connection
 
 from .models import Event, EventType, RepeatType
 from .forms import EventForm
@@ -282,6 +283,28 @@ def remove(request):
     event = Event.objects.get(id=event_id)
     event.is_hidden = True
     event.save()
+
+    if event.event_type.id == 4:
+      with connection.cursor() as cursor:
+        cursor.execute(
+        """
+          DO $$ 
+          DECLARE
+            r_exam_id int;
+          BEGIN 
+            select id into r_exam_id from exams_exam where event_id = %s;
+            
+            -- Delete study events
+            delete from events_event where id in (select event_id from examstudy_examstudy where exam_id = r_exam_id);
+            
+            -- Delete exam study
+            delete from examstudy_examstudy where exam_id = r_exam_id;
+            
+            -- Delete exam
+            delete from exams_exam where id = r_exam_id;
+            
+          END $$;
+        """, [event.pk])
 
     if 'is_detail' in request.POST:
       return redirect('event_list')

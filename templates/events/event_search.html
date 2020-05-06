@@ -137,9 +137,9 @@
             <td>{{ event.start_date }}</td>
             <!-- Call detail view method (Uses urls path name) -->
             <td>
-              <a href="{% url 'event_detail' event.id %}"
-                ><i class="fas fa-info-circle show-event-detail"></i
-              ></a>
+              <a href="{% url 'event_detail' event.id %}" class="btn btn-primary show-event-detail">
+                Detail
+              </a>
             </td>
           </tr>
 

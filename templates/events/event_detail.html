@@ -57,10 +57,12 @@
             <a class="nav-link active" id="pills-detail-tab" data-toggle="pill" href="#detail" role="tab"
               aria-controls="pills-detail" aria-selected="true">Detail</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" id="pills-notes-tab" data-toggle="pill" href="#notes" role="tab"
-              aria-controls="pills-notes" aria-selected="false">Notes</a>
-          </li>
+          {% if notes %}
+            <li class="nav-item">
+              <a class="nav-link" id="pills-notes-tab" data-toggle="pill" href="#notes" role="tab"
+                aria-controls="pills-notes" aria-selected="false">Notes</a>
+            </li>
+          {% endif %}
         </ul>
         {% else %}
         <h3 class="card-title">Create New Event</h3>
@@ -177,8 +179,7 @@
               <thead>
                 <tr>
                   <th scope="col">Title</th>
-                  <th scope="col">Event</th>
-                  <th scope="col">Created Date</th>
+                  <th scope="col">Description</th>
                   <th scope="col"></th>
                 </tr>
               </thead>
@@ -191,8 +192,7 @@
 
                 <tr>
                   <td>{{ note.title }}</td>
-                  <td>{{ note.event }}</td>
-                  <td>{{ note.created_date }}</td>
+                  <td>{{ note.description }}</td>
                   <!-- Call detail view method (Uses urls path name) -->
                   <td><a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a>
                   </td>

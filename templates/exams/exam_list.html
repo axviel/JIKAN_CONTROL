@@ -80,10 +80,13 @@
             <!-- Call detail view method (Uses urls path name) -->
             <td>
               <div class="grid-actions text-center">
-                <a href="{% url 'exam_detail' exam.id %}"><i
+                <a href="{% url 'exam_detail' exam.id %}" class="d-none d-md-inline-block"><i
                     class="fas fa-info-circle cursor-pointer show-exam-detail"></i>
                 </a>
                 <i class="fas fa-trash-alt cursor-pointer text-danger remove-exam mr-2 d-none d-md-inline-block"></i>
+                <a href="{% url 'exam_detail' exam.id %}" class="btn btn-primary show-exam-detail d-md-none d-sm-inline-block">
+                  Detail
+                </a>
               </div>
             </td>
           </tr>
