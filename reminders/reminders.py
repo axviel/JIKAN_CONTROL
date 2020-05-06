@@ -137,7 +137,7 @@ def main(uid):
   pcs = all_processes
   for p in pcs:
     if p.name == "%s" % uid:
-      p.terminate()
+      p.kill()
 
   t = threading.Thread(target=multithread, args=(uid,), name="Reminder-%s" % (uid))
   t.start()
