@@ -20,10 +20,18 @@ class UserForm(forms.Form):
       'id': 'email', 
       'class': 'form-control'})
     )
+
+
+class PasswordForm(forms.Form):
   password = forms.CharField(
     label='Password', 
     widget=forms.PasswordInput(attrs={
       'id': 'password', 
-      'class': 'form-control'}),
-      required=False
+      'class': 'form-control'})
+    )
+  password2 = forms.CharField(
+    label='Confirm Password', 
+    widget=forms.PasswordInput(attrs={
+      'id': 'password2', 
+      'class': 'form-control'})
     )
