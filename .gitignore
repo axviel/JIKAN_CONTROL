@@ -144,3 +144,7 @@ cython_debug/
 # static files generated from Django application using `collectstatic`
 media
 # static
+
+# Node Js
+node_modules/*
+/node_modules
