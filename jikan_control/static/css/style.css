@@ -355,10 +355,15 @@ body {
 .spread-23 {
   height: 1200px; }
 
-  .gj-timepicker button{
-    color: #8b8b8b !important;
-    border-color: #ced4da !important;
-  }
+.gj-timepicker button{
+  color: #8b8b8b !important;
+  border-color: #ced4da !important;
+}
+
+.day-item.another-month:first-child,
+#calendar > div > div.calendar-day-list > .day-item.another-month:nth-child(36){
+  border-left: 1px solid #bbb;
+}
 
 @media (min-width: 1500px) {
   #calendar .day-item .event.event-large,
