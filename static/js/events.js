@@ -18,7 +18,8 @@ document.querySelector('#event-list').addEventListener('click', e => {
         }
     });
   }
-  // Mark as completed
+
+//Mark as completed
   if(e.target.classList.contains('complete-event')){
     if(e.target.classList.contains('complete-event')){
       const eventRow = e.target.parentElement.parentElement.parentElement;
@@ -37,6 +38,5 @@ document.querySelector('#event-list').addEventListener('click', e => {
               e.target.remove(); // Green checkmark
           }
       });
-    }
   }
 });
