@@ -56,6 +56,11 @@ body{
   height: 80px;
 }
 
+.gj-timepicker button{
+  color: #8b8b8b !important;
+  border-color: #ced4da !important;
+}
+
 @media (min-width: 1200px){
   .container-xxl {
       max-width: 1500px;

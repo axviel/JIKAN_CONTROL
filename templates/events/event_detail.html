@@ -1,8 +1,5 @@
 {% extends 'base.html' %}
-{% load bootstrap4 %}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery='full'%}
-{{ EventForm.media }}
+
 {% block content %}
 
 {% load static %} 
@@ -39,12 +36,6 @@
 
 <!-- Event Section -->
 <section id="event-detail" class="py-4 main-content">
-<!-- Time Picker -->
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
-    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
   <!-- Alerts -->
   {% include 'partials/_alerts.html' %}
 
@@ -126,22 +117,30 @@
                 </div>
                 {% endif %}
 
-    <div class="col-6">
-    <input id="start_time" width="225" />
-    <script>
-        $('#start_time').timepicker({
-            uiLibrary: 'bootstrap4'
-        });
-    </script>
-    </div>
-    <div class="col-6">
-    <input id="end_time" width="225" />
-    <script>
-        $('#end_time').timepicker({
-            uiLibrary: 'bootstrap4'
-        });
-    </script>
-    </div>
+                <div class="col-6">
+                  <label for="{{ form.start_time.name }}" class="col-form-label">
+                    {{ form.start_time.label }}{% if form.start_time.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.start_time }}
+                  <script>
+                      $('#start_time').timepicker({
+                          uiLibrary: 'bootstrap4'
+                      });
+                  </script>
+                </div>
+                <div class="col-6">
+                  <label for="{{ form.end_time.name }}" class="col-form-label">
+                    {{ form.end_time.label }}{% if form.end_time.field.required %}<span
+                      class="required">*</span>{% endif %}
+                  </label>
+                  {{ form.end_time }}
+                  <script>
+                      $('#end_time').timepicker({
+                          uiLibrary: 'bootstrap4'
+                      });
+                  </script>
+                </div>
 
               <button type="submit" id="save-event-btn" class="btn btn-block btn-success mt-4">Save</button>
 

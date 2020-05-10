@@ -33,9 +33,12 @@ class EventForm(forms.Form):
     )
   start_time = forms.TimeField(
     label='Start Time', 
-    widget =TimePickerInput(attrs={
+    widget =TimeInput(attrs={
       'id': 'start_time',
       'class': 'form-control'})
+    # widget =TimePickerInput(attrs={
+    #   'id': 'start_time',
+    #   'class': 'form-control'})
     )
   end_time = forms.TimeField(
     label='End Time', 
