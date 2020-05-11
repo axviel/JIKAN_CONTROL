@@ -175,6 +175,8 @@
             
 
           </div>
+
+        </div> <!--mystery div-->
           {% if notes %}
           <!-- Notes -->
           <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="pills-notes">
@@ -197,7 +199,11 @@
                   <td>{{ note.title }}</td>
                   <td>{{ note.description }}</td>
                   <!-- Call detail view method (Uses urls path name) -->
-                  <td><a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a>
+                  <td class="text-center">
+                    <!-- <a href="{% url 'note_detail' note.id %}"><i class="fas fa-info-circle show-note-detail"></i></a> -->
+                    <a href="{% url 'note_detail' note.id %}" class="btn btn-primary">
+                      Detail
+                    </a>
                   </td>
                 </tr>
 
@@ -212,10 +218,9 @@
               </tbody>
             </table>
           </div>
-          
           {% endif %}
         </div>
-      </div>
+      <!-- </div> -->
     </div>
   </div>
 </section>
