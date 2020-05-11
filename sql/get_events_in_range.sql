@@ -185,4 +185,4 @@ LANGUAGE 'plpgsql';
 
 -----------------------------------------------
 -- TEST
-select * from get_events_in_range(date('2020-03-30'), date('2020-04-30'), 1);
+--select * from get_events_in_range(date('2020-03-30'), date('2020-04-30'), 1);

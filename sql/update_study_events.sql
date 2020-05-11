@@ -43,7 +43,7 @@ $$;
 
 ----------------------
 
-CALL update_study_events(26)
+--CALL update_study_events(26)
 
-select * from events_event
-select * from examstudy_examstudy
+--select * from events_event
+--select * from examstudy_examstudy

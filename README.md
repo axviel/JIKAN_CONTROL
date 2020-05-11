@@ -28,6 +28,11 @@ Finally, this is a web application, so it can be accessed from any desktop, lapt
 * Exam score/studytime predictions
 * Mobile friendly
 
+sudo docker-compose up -d --build
+
+sudo docker-compose exec web python manage.py migrate --noinput
+
+sudo docker-compose exec db psql -f defaultVals.sql -f get_events_in_range.sql -f generate_study_events.sql -f update_study_events.sql --username=postgres --dbname=jikan_control_db
 
 ## Extra Information
 

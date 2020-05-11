@@ -158,9 +158,9 @@ $$
 LANGUAGE plpgsql;
 
 ---------------- TEST
-select * from  generate_study_events(date('2020-03-31'), date('2020-04-29'), '07:00:00'::time, '00:00:00'::time, 48, 26, 'Test Title', 1);
+--select * from  generate_study_events(date('2020-03-31'), date('2020-04-29'), '07:00:00'::time, '00:00:00'::time, 48, 26, 'Test Title', 1);
 
-delete from events_event where event_type_id = 3
-delete from examstudy_examstudy;
-select * from examstudy_examstudy;
+--delete from events_event where event_type_id = 3
+--delete from examstudy_examstudy;
+--select * from examstudy_examstudy;
 

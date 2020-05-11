@@ -1,0 +1,6 @@
+# pull official base image
+FROM postgres:12.2
+
+WORKDIR /sql
+
+COPY ./sql/ /sql/
