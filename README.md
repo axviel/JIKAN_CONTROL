@@ -39,8 +39,14 @@ Click [here](https://google.com) to go to the Use Manual.
 
 Click [here](https://google.com) to go to the Project Report.
 
+### Icons Provided By
+
+* [Font Awesome](https://fontawesome.com/)
+
 ## Contributors
 
 * [Axviel A. Benítez Dorta](https://github.com/axviel)
 * [Fernando Guzmán Fernández](https://github.com/FernandoLGuzman)
 * [Angel Rivera Camacho](https://github.com/anrarivera)
+
+
