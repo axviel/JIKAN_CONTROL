@@ -28,11 +28,47 @@ Finally, this is a web application, so it can be accessed from any desktop, lapt
 * Exam score/studytime predictions
 * Mobile friendly
 
+
+## How to Run on Docker
+
+### Prerequisites
+
+#### Windows/Mac
+Your system needs [Docker Desktop](https://www.docker.com/products/docker-desktop) installed
+
+#### Linux
+You need both [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
+
+### Commands
+Once you have the prerequisites go to the root of the project and run the command below to run and build the docker (on Linux you might need run all commands with superuser privilege).
+
+```
 sudo docker-compose up -d --build
+```
 
+When the above finishes you will need to run the next two commands **only the first time**
+```
 sudo docker-compose exec web python manage.py migrate --noinput
-
+```
+```
 sudo docker-compose exec db psql -f defaultVals.sql -f get_events_in_range.sql -f generate_study_events.sql -f update_study_events.sql --username=postgres --dbname=jikan_control_db
+```
+Now the project should show up in your browser on [localhost:8000](http://localhost:8000/).
+
+To stop the application you can look up running containers with:
+```
+docker container ps
+```
+And stop them with:
+```
+docker container stop [CONTAINER]
+```
+
+The next time you want to run the application you don't need to build it, therefore you can simply run:
+```
+docker-compose up
+```
+*You can add the* ```-d``` *tag if you wish to detach the container from the terminal and run it in the background*
 
 ## Extra Information
 
