@@ -40,20 +40,20 @@ Your system needs [Docker Desktop](https://www.docker.com/products/docker-deskto
 You need both [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
 
 ### Commands
-Once you have the prerequisites go to the root of the project and run the command below to run and build the docker (on Linux you might need run all commands with superuser privilege).
+Once you have the prerequisites, go to the root of the project and run the command below to build and run the docker (on Linux you might need run all commands with superuser privilege).
 
 ```
-sudo docker-compose up -d --build
+docker-compose up -d --build
 ```
 
-When the above finishes you will need to run the next two commands **only the first time**
+When the above finishes you will need to run the next two commands **only on the first time**
 ```
-sudo docker-compose exec web python manage.py migrate --noinput
+docker-compose exec web python manage.py migrate --noinput
 ```
 ```
-sudo docker-compose exec db psql -f defaultVals.sql -f get_events_in_range.sql -f generate_study_events.sql -f update_study_events.sql --username=postgres --dbname=jikan_control_db
+docker-compose exec db psql -f defaultVals.sql -f get_events_in_range.sql -f generate_study_events.sql -f update_study_events.sql --username=postgres --dbname=jikan_control_db
 ```
-Now the project should show up in your browser on [localhost:8000](http://localhost:8000/).
+Now the project should show up in your browser at [localhost:8000](http://localhost:8000/).
 
 To stop the application you can look up running containers with:
 ```
