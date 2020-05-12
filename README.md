@@ -40,7 +40,7 @@ Your system needs [Docker Desktop](https://www.docker.com/products/docker-deskto
 You need both [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
 
 ### Commands
-Once you have the prerequisites, go to the root of the project and run the command below to build and run the docker (on Linux you might need run all commands with superuser privilege).
+Once you have the prerequisites, go to the root of the project and run the command below to build and run the docker (on Linux you might need to run all commands with superuser privilege).
 
 ```
 docker-compose up -d --build
