@@ -74,7 +74,7 @@ docker-compose up
 
 ### How to use - Manual
 
-Click [here](https://google.com) to go to the Use Manual.
+Click [here](https://github.com/axviel/JIKAN_CONTROL/wiki/Manual) to go to the User Manual.
 
 ### Project Report
 
