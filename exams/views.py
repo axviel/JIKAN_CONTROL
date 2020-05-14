@@ -198,6 +198,8 @@ def exam(request, exam_id=0, event_id=0):
         'created_date': exam.created_date,
         'event': exam.event.pk,
         'course': exam.course.pk,
+        'start_time': datetime.time(7,0,0),
+        'end_time': datetime.time(23,0,0)
       })
 
       # Set custom event field filtering
@@ -218,7 +220,9 @@ def exam(request, exam_id=0, event_id=0):
         'exam_number': 1,
         'predicted_weeks': 4,
         'final_weeks': 4,
-        'event': event_id
+        'event': event_id,
+        'start_time': datetime.time(7,0,0),
+        'end_time': datetime.time(23,0,0)
       })
 
       # Set custom event field filtering
@@ -239,6 +243,8 @@ def exam(request, exam_id=0, event_id=0):
         'exam_number': 1,
         'predicted_weeks': 4,
         'final_weeks': 4,
+        'start_time': datetime.time(7,0,0),
+        'end_time': datetime.time(23,0,0)
       })
 
       # Set custom event field filtering

@@ -147,17 +147,6 @@
             </form>
 
             {% if form.event_id.value %}
-              {% if not form.end_date.value %}
-              <a href="javascript:{document.getElementById('complete').submit()}""  class=" btn btn-block btn-info text-white mt-4"
-                role="button" style="background-color: #17a2b8;
-                border-color: #17a2b8;">Complete</a>
-              <form action="{% url 'event_complete' %}" id="complete" method="POST">
-                {% csrf_token %}
-                {{ form.event_id }}
-                <input type="hidden" name="is_detail" value="true">
-                <input type="hidden">
-              </form>
-              {% endif %}
             <a id="remove-event-btn" href="javascript:{document.getElementById('remove').submit()}"" class=" btn btn-block btn-danger
               text-white mt-4">Remove</a>
             <form action="{% url 'event_remove' %}" id="remove" method="POST">

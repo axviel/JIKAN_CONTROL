@@ -85,9 +85,6 @@
                 <a href="{% url 'event_detail' event.id %}" class="d-none d-md-inline-block"><i
                     class="fas fa-info-circle cursor-pointer show-event-detail"></i>
                 </a>
-                {% if not event.end_date %}
-                <i class="fas fa-check cursor-pointer text-success complete-event mx-2 d-none d-md-inline-block"></i>
-                {% endif %}
                 <i class="fas fa-trash-alt cursor-pointer text-danger remove-event mr-2 d-none d-md-inline-block"></i>
                 <a href="{% url 'event_detail' event.id %}" class="btn btn-primary show-event-detail d-md-none d-sm-inline-block">
                   Detail
