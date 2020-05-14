@@ -84,6 +84,10 @@ Click [here](https://github.com/axviel/JIKAN_CONTROL/wiki/files/Jikan_Control_Re
 
 Click [here](https://github.com/axviel/JIKAN_CONTROL/wiki/files/Jikan_Control_Presentation.pptx) to download the Powerpoint Presentation.
 
+### Live Production Version
+
+Click [here](https://jikancontrol.herokuapp.com/) to use a live version of Jikan Control.
+
 ### Icons Provided By
 
 [Font Awesome](https://fontawesome.com/)
