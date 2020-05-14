@@ -78,7 +78,7 @@ Click [here](https://github.com/axviel/JIKAN_CONTROL/wiki/Manual) to go to the U
 
 ### Project Report
 
-Click [here](https://github.com/axviel/JIKAN_CONTROL/wiki/files/Jikan_Control_ Report.pdf) to download the Project Report.
+Click [here](https://github.com/axviel/JIKAN_CONTROL/wiki/files/Jikan_Control_Report.pdf) to download the Project Report.
 
 ### Project Presentation
 
@@ -86,7 +86,7 @@ Click [here](https://github.com/axviel/JIKAN_CONTROL/wiki/files/Jikan_Control_Pr
 
 ### Icons Provided By
 
-* [Font Awesome](https://fontawesome.com/)
+[Font Awesome](https://fontawesome.com/)
 
 ## Contributors
 
