@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
 from django.contrib import auth, messages
 from django.contrib.auth.models import User
 
@@ -52,7 +53,9 @@ def login(request):
       auth.login(request, user)
       # Show success 
       # messages.success(request, 'Login successful')
-      return redirect('calendar')
+      response = HttpResponseRedirect('/jikancalendar/')
+      response.set_cookie('toast','r')
+      return response
     else:
       # Show error
       messages.error(request, 'Invalid username or password')
