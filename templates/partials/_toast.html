@@ -46,8 +46,8 @@
     }
     var time = 1;
     var permission = Notification.permission;
-    var toast = getCookie("toast")
-    if (permission == "default" || toast == "r") {
+    if (permission == "default") {
+        var toast = getCookie("toast")
         if (toast != "n") {
             $('.toast').toast('show');
             subBtn = document.getElementById('webpush-subscribe-button');
