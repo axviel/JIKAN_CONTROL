@@ -21,7 +21,7 @@ class TestProject(StaticLiveServerTestCase):
     self.browser = webdriver.Chrome('functional_tests/chromedriver.exe')
     self.browser.maximize_window()
     # self.url = self.live_server_url
-    self.url = 'http://127.0.0.1:8000'
+    self.url = 'http://127.0.0.1:7000'
     self.browser.get(self.url)
 
   def tearDown(self):
@@ -58,6 +58,7 @@ class TestProject(StaticLiveServerTestCase):
 
     # Validate if was redirected to Calendar page
     calendar_url = self.url + '/jikancalendar/'
+
 
     self.assertEquals(
       self.browser.current_url,
@@ -318,6 +319,7 @@ class TestProject(StaticLiveServerTestCase):
       expected_url,
       'Did not delete note'
     )
+    
 
   def test10_delete_exam(self):
     self.login()
@@ -499,9 +501,6 @@ class TestProject(StaticLiveServerTestCase):
     WebDriverWait(self.browser, self.delay).until(EC.presence_of_element_located((By.ID, 'message')))
 
   def login(self):
-    # Sign Up Process
-    # self.sign_up()
-
     # Fill login form
     self.browser.find_element_by_id('username').send_keys('SeleniumTest')
     self.browser.find_element_by_id('password').send_keys('12345')
@@ -511,6 +510,11 @@ class TestProject(StaticLiveServerTestCase):
 
     # Wait calendar section appears
     WebDriverWait(self.browser, self.delay).until(EC.presence_of_element_located((By.ID, 'calendar')))
+
+    # Accept push notif
+    WebDriverWait(self.browser, self.delay).until(EC.visibility_of_element_located((By.ID, 'webpush-subscribe-button')))
+    self.browser.find_element_by_id('webpush-subscribe-button').click()
+    WebDriverWait(self.browser, self.delay).until(EC.invisibility_of_element((By.ID, 'webpush-subscribe-button')))
 
   def menu_navigation(self, item):
     self.browser.find_element_by_id('sidebar-collapse').click()
